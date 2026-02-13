@@ -1,4 +1,15 @@
+import { UserRole } from '@/types/auth.types';
+import { ROUTES } from './constants';
+
 export const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+export const getDashboardPath = (role: UserRole): string => {
+  const roleRoutes: Record<UserRole, string> = {
+    admin: ROUTES.ADMIN_DASHBOARD,
+    salesman: ROUTES.SALESMAN_DASHBOARD,
+  };
+  return roleRoutes[role] || ROUTES.LOGIN;
+};
 
 export const formatDate = (date: string | Date): string => {
   return new Date(date).toLocaleDateString('en-IN', {

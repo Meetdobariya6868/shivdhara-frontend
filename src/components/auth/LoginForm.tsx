@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
 import { Input } from '@/components/common/Input';
 import { Button } from '@/components/common/Button';
 import { useAuth } from '@/hooks/useAuth';
 import { LoginCredentials } from '@/types/auth.types';
+import { getDashboardPath } from '@/utils/helpers';
 
 export const LoginForm: React.FC = () => {
   const { login, loading } = useAuth();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState<LoginCredentials>({
     userId: '',
     password: '',
@@ -35,13 +38,14 @@ export const LoginForm: React.FC = () => {
     if (!validateForm()) return;
 
     try {
-      await login(formData);
+      const user = await login(formData);
+      navigate(getDashboardPath(user.role), { replace: true });
     } catch (error: unknown) {
-  const errorMessage = error instanceof Error 
-    ? error.message 
-    : 'Invalid credentials. Please try again.';
-  setErrors({ userId: errorMessage });
-}
+      const errorMessage = error instanceof Error
+        ? error.message
+        : 'Invalid credentials. Please try again.';
+      setErrors({ userId: errorMessage });
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {

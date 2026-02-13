@@ -5,8 +5,9 @@ export const APP_VERSION = import.meta.env.VITE_APP_VERSION || '1.0.0';
 export const ROUTES = {
   SPLASH: '/',
   LOGIN: '/login',
-  DASHBOARD: '/dashboard',
-  PROFILE: '/profile',
+  ADMIN_DASHBOARD: '/admin/dashboard',
+  SALESMAN_DASHBOARD: '/salesman/dashboard',
+  UNAUTHORIZED: '/unauthorized',
 } as const;
 
 export const STORAGE_KEYS = {
@@ -17,6 +18,5 @@ export const STORAGE_KEYS = {
 
 export const ROLES = {
   ADMIN: 'admin',
-  MANAGER: 'manager',
-  USER: 'user',
+  SALESMAN: 'salesman',
 } as const;

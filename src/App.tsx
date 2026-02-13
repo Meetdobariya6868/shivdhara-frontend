@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
+import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { Splash } from './pages/Splash';
-import { Login } from './pages/Login';
+import { AppRoutes } from './routes/AppRoutes';
 
 const App: React.FC = () => {
   const [showSplash, setShowSplash] = useState(true);
@@ -11,9 +12,11 @@ const App: React.FC = () => {
   }
 
   return (
-    <AuthProvider>
-      <Login />
-    </AuthProvider>
+    <BrowserRouter>
+      <AuthProvider>
+        <AppRoutes />
+      </AuthProvider>
+    </BrowserRouter>
   );
 };
 
