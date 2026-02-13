@@ -33,7 +33,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setIsAuthenticated(true);
       return response.user;
     } catch (error) {
-      console.error('Login failed:', error);
+      console.error('Login failed to:', error);
       throw error;
     } finally {
       setLoading(false);
