@@ -21,7 +21,7 @@ export const LoginForm: React.FC = () => {
     const newErrors: Partial<LoginCredentials> = {};
 
     if (!formData.userId.trim()) {
-      newErrors.userId = 'User ID is required';
+      newErrors.userId = 'User ID is required to ';
     }
 
     if (!formData.password) {
