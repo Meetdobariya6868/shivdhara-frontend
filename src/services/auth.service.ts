@@ -1,22 +1,54 @@
-import { apiService } from './api';
 import { LoginCredentials, LoginResponse, User } from '@/types/auth.types';
 import { STORAGE_KEYS } from '@/utils/constants';
 
+// Static user credentials for development
+const STATIC_USERS = {
+  meet: {
+    userId: 'meet',
+    password: '123456',
+    user: {
+      id: 1,
+      userId: 'meet',
+      name: 'Meet Dev',
+      email: 'meet@shivdhara.com',
+      role: 'salesman' as const,
+    },
+  },
+  admin: {
+    userId: 'admin',
+    password: '123456',
+    user: {
+      id: 2,
+      userId: 'admin',
+      name: 'Admin User',
+      email: 'admin@shivdhara.com',
+      role: 'admin' as const,
+    },
+  },
+};
+
 class AuthService {
   async login(credentials: LoginCredentials): Promise<LoginResponse> {
-    try {
-      const response = await apiService.post<LoginResponse>('/auth/login', credentials);
-      
-      if (response.data?.token) {
-        this.setToken(response.data.token);
-        this.setUser(response.data.user);
-      }
-      
-      return response.data!;
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Login failed';
-      throw new Error(errorMessage);
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    const staticUser = STATIC_USERS[credentials.userId as keyof typeof STATIC_USERS];
+
+    if (!staticUser || staticUser.password !== credentials.password) {
+      throw new Error('Invalid credentials. Please check your username and password.');
     }
+
+    const token = `static-token-${staticUser.userId}-${Date.now()}`;
+    const response: LoginResponse = {
+      token,
+      user: staticUser.user,
+      message: 'Login successful',
+    };
+
+    this.setToken(response.token);
+    this.setUser(response.user);
+
+    return response;
   }
 
   logout(): void {
@@ -46,8 +78,11 @@ class AuthService {
   }
 
   async getCurrentUser(): Promise<User> {
-    const response = await apiService.get<User>('/auth/me');
-    return response.data!;
+    const user = this.getUser();
+    if (!user) {
+      throw new Error('No authenticated user found');
+    }
+    return user;
   }
 }
 

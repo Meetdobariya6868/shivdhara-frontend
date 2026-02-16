@@ -3,6 +3,10 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { Login } from '@/pages/Login';
 import { Unauthorized } from '@/pages/Unauthorized';
 import { AdminDashboard } from '@/pages/admin/Dashboard';
+import { Orders } from '@/pages/admin/Orders';
+import { AddSalesman } from '@/pages/admin/AddSalesman';
+import { AddDetail } from '@/pages/admin/AddDetail';
+import { Profile } from '@/pages/admin/Profile';
 import { SalesmanDashboard } from '@/pages/salesman/Dashboard';
 import { ProtectedRoute } from './ProtectedRoute';
 import { useAuth } from '@/hooks/useAuth';
@@ -29,6 +33,10 @@ export const AppRoutes: React.FC = () => {
       {/* Admin routes */}
       <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
         <Route path={ROUTES.ADMIN_DASHBOARD} element={<AdminDashboard />} />
+        <Route path={ROUTES.ADMIN_ORDERS} element={<Orders />} />
+        <Route path={ROUTES.ADMIN_ADD_SALESMAN} element={<AddSalesman />} />
+        <Route path={ROUTES.ADMIN_DETAILS} element={<AddDetail />} />
+        <Route path={ROUTES.ADMIN_PROFILE} element={<Profile />} />
       </Route>
 
       {/* Salesman routes */}

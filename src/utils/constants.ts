@@ -6,6 +6,10 @@ export const ROUTES = {
   SPLASH: '/',
   LOGIN: '/login',
   ADMIN_DASHBOARD: '/admin/dashboard',
+  ADMIN_ORDERS: '/admin/orders',
+  ADMIN_ADD_SALESMAN: '/admin/add-salesman',
+  ADMIN_DETAILS: '/admin/details',
+  ADMIN_PROFILE: '/admin/profile',
   SALESMAN_DASHBOARD: '/salesman/dashboard',
   UNAUTHORIZED: '/unauthorized',
 } as const;
