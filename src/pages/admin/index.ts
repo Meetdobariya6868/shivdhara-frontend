@@ -10,3 +10,5 @@ export { Products } from './Products';
 export { MyProducts } from './MyProducts';
 export { SalesmanDetail } from './SalesmanDetail';
 export { OrderDetail } from './OrderDetail';
+export { ProductDetail } from './ProductDetail';
+export { EditProduct } from './EditProduct';

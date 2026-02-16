@@ -106,6 +106,11 @@ export const OrderDetail: React.FC = () => {
     // Navigate to edit page or open edit modal
   };
 
+  const handleProductImageClick = (product: Product) => {
+    // Navigate to product detail page
+    navigate(`/admin/product/${product.id}`);
+  };
+
   const handleDownloadCode = () => {
     console.log('Download code');
     // Implement download functionality
@@ -304,6 +309,7 @@ export const OrderDetail: React.FC = () => {
                   index={index + 1}
                   onQuantityChange={handleQuantityChange}
                   onEdit={handleProductEdit}
+                  onImageClick={handleProductImageClick}
                   editable={orderData.status === 'pending'}
                 />
               ))}

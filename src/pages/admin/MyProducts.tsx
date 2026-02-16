@@ -82,9 +82,8 @@ export const MyProducts: React.FC = () => {
   }, [searchQuery]);
 
   const handleOrderClick = (order: UserOrder) => {
-    console.log('Order clicked:', order);
-    // Navigate to order detail page or show modal
-    // navigate(`/admin/orders/${order.id}`);
+    // Navigate to order detail page
+    navigate(`/admin/order/${order.id}`);
   };
 
   const handleBack = () => {

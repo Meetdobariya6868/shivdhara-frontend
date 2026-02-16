@@ -15,6 +15,7 @@ interface ProductItemProps {
   index: number;
   onQuantityChange?: (productId: string, quantity: number) => void;
   onEdit?: (product: Product) => void;
+  onImageClick?: (product: Product) => void;
   editable?: boolean;
 }
 
@@ -23,6 +24,7 @@ export const ProductItem: React.FC<ProductItemProps> = ({
   index,
   onQuantityChange,
   onEdit,
+  onImageClick,
   editable = true,
 }) => {
   const [quantity, setQuantity] = useState(product.quantity);
@@ -53,19 +55,23 @@ export const ProductItem: React.FC<ProductItemProps> = ({
       <div className="bg-gradient-to-br from-green-50 to-green-100/80 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all">
         <div className="flex items-center gap-4">
           {/* Product Image */}
-          <div className="flex-shrink-0">
+          <button
+            onClick={() => onImageClick?.(product)}
+            className="flex-shrink-0 hover:opacity-80 transition-opacity"
+            aria-label={`View ${product.name} details`}
+          >
             {product.imageUrl ? (
               <img
                 src={product.imageUrl}
                 alt={product.name}
-                className="w-20 h-20 md:w-24 md:h-24 rounded-lg object-cover bg-white"
+                className="w-20 h-20 md:w-24 md:h-24 rounded-lg object-cover bg-white cursor-pointer"
               />
             ) : (
-              <div className="w-20 h-20 md:w-24 md:h-24 rounded-lg bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
+              <div className="w-20 h-20 md:w-24 md:h-24 rounded-lg bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center cursor-pointer">
                 <span className="text-gray-500 text-xs">No Image</span>
               </div>
             )}
-          </div>
+          </button>
 
           {/* Product Details */}
           <div className="flex-1 min-w-0">

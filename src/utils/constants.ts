@@ -16,8 +16,12 @@ export const ROUTES = {
   ADMIN_MY_PRODUCTS: '/admin/my-products',
   ADMIN_SALESMAN_DETAIL: '/admin/salesman/:id',
   ADMIN_ORDER_DETAIL: '/admin/order/:id',
+  ADMIN_PRODUCT_DETAIL: '/admin/product/:id',
+  ADMIN_EDIT_PRODUCT: '/admin/product/:id/edit',
   SALESMAN_DASHBOARD: '/salesman/dashboard',
   SALESMAN_ORDER_DETAIL: '/salesman/order/:id',
+  SALESMAN_PRODUCT_DETAIL: '/salesman/product/:id',
+  SALESMAN_EDIT_PRODUCT: '/salesman/product/:id/edit',
   UNAUTHORIZED: '/unauthorized',
 } as const;
 

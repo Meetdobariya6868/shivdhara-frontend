@@ -13,8 +13,12 @@ import { Products } from '@/pages/admin/Products';
 import { MyProducts } from '@/pages/admin/MyProducts';
 import { SalesmanDetail } from '@/pages/admin/SalesmanDetail';
 import { OrderDetail as AdminOrderDetail } from '@/pages/admin/OrderDetail';
+import { ProductDetail as AdminProductDetail } from '@/pages/admin/ProductDetail';
+import { EditProduct as AdminEditProduct } from '@/pages/admin/EditProduct';
 import { SalesmanDashboard } from '@/pages/salesman/Dashboard';
 import { OrderDetail as SalesmanOrderDetail } from '@/pages/salesman/OrderDetail';
+import { ProductDetail as SalesmanProductDetail } from '@/pages/salesman/ProductDetail';
+import { EditProduct as SalesmanEditProduct } from '@/pages/salesman/EditProduct';
 import { ProtectedRoute } from './ProtectedRoute';
 import { useAuth } from '@/hooks/useAuth';
 import { ROUTES } from '@/utils/constants';
@@ -50,12 +54,16 @@ export const AppRoutes: React.FC = () => {
         <Route path={ROUTES.ADMIN_MY_PRODUCTS} element={<MyProducts />} />
         <Route path={ROUTES.ADMIN_SALESMAN_DETAIL} element={<SalesmanDetail />} />
         <Route path={ROUTES.ADMIN_ORDER_DETAIL} element={<AdminOrderDetail />} />
+        <Route path={ROUTES.ADMIN_PRODUCT_DETAIL} element={<AdminProductDetail />} />
+        <Route path={ROUTES.ADMIN_EDIT_PRODUCT} element={<AdminEditProduct />} />
       </Route>
 
       {/* Salesman routes */}
       <Route element={<ProtectedRoute allowedRoles={['salesman']} />}>
         <Route path={ROUTES.SALESMAN_DASHBOARD} element={<SalesmanDashboard />} />
         <Route path={ROUTES.SALESMAN_ORDER_DETAIL} element={<SalesmanOrderDetail />} />
+        <Route path={ROUTES.SALESMAN_PRODUCT_DETAIL} element={<SalesmanProductDetail />} />
+        <Route path={ROUTES.SALESMAN_EDIT_PRODUCT} element={<SalesmanEditProduct />} />
       </Route>
 
       {/* Root redirect */}

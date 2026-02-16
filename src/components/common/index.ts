@@ -6,3 +6,5 @@ export { BottomNav } from './BottomNav';
 export { PageContainer } from './PageContainer';
 export { SearchInput } from './SearchInput';
 export { ProductItem, type Product } from './ProductItem';
+export { ImageUpload } from './ImageUpload';
+export { DatePicker } from './DatePicker';
