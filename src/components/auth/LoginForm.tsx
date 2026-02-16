@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
-import { Input } from '@/components/common/Input';
-import { Button } from '@/components/common/Button';
+import { Input } from '@/components/shared/ui/Input';
+import { Button } from '@/components/shared/ui/Button';
 import { useAuth } from '@/hooks/useAuth';
 import { LoginCredentials } from '@/types/auth.types';
 import { getDashboardPath } from '@/utils/helpers';

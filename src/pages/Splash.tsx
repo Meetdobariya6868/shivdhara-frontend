@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Logo } from '@/components/common/Logo';
+import { Logo } from '@/components/shared/layout/Logo';
 
 interface SplashProps {
   onComplete: () => void;

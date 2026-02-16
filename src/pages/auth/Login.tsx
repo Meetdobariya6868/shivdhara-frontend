@@ -1,5 +1,5 @@
 import React from 'react';
-import { Logo } from '@/components/common/Logo';
+import { Logo } from '@/components/shared/layout/Logo';
 import { LoginForm } from '@/components/auth/LoginForm';
 
 export const Login: React.FC = () => {

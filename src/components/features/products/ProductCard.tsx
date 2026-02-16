@@ -1,19 +1,9 @@
 import React from 'react';
-
-export interface Product {
-  id: string;
-  name: string;
-  code: string;
-  date: string;
-  quantity: {
-    boxes: number;
-    piecesPerBox: number;
-  };
-}
+import { ProductWithBoxes } from '@/types/common/product.types';
 
 interface ProductCardProps {
-  product: Product;
-  onClick?: (product: Product) => void;
+  product: ProductWithBoxes;
+  onClick?: (product: ProductWithBoxes) => void;
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {

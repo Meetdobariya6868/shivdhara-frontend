@@ -1,9 +1,9 @@
 import React, { useState, useMemo } from 'react';
 import { ArrowLeft, Package } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { PageContainer } from '@/components/common/PageContainer';
-import { SearchInput } from '@/components/common/SearchInput';
-import { OrderCard, UserOrder } from '@/components/admin/OrderCard';
+import { PageContainer } from '@/components/shared/layout/PageContainer';
+import { SearchInput } from '@/components/shared/ui/SearchInput';
+import { OrderCard, UserOrder } from '@/components/features/orders/OrderCard';
 
 // Mock data - replace with API call
 const MOCK_ORDERS: UserOrder[] = [

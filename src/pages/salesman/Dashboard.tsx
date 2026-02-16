@@ -3,7 +3,8 @@ import { Package, TrendingUp, DollarSign, Calendar, LogOut, Bell } from 'lucide-
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/utils/constants';
-import { Logo } from '@/components/common/Logo';
+import { Logo } from '@/components/shared/layout/Logo';
+import { getGreeting } from '@/utils/helpers/time.helpers';
 
 export const SalesmanDashboard: React.FC = () => {
   const { user, logout } = useAuth();
@@ -12,13 +13,6 @@ export const SalesmanDashboard: React.FC = () => {
   const handleLogout = () => {
     logout();
     navigate(ROUTES.LOGIN, { replace: true });
-  };
-
-  const getGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return 'Good Morning';
-    if (hour < 17) return 'Good Afternoon';
-    return 'Good Evening';
   };
 
   const stats = [

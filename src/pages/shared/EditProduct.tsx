@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, ChevronDown } from 'lucide-react';
-import { PageContainer } from '@/components/common/PageContainer';
-import { ImageUpload } from '@/components/common/ImageUpload';
-import { DatePicker } from '@/components/common/DatePicker';
+import { PageContainer } from '@/components/shared/layout/PageContainer';
+import { ImageUpload } from '@/components/shared/ui/ImageUpload';
+import { DatePicker } from '@/components/shared/ui/DatePicker';
 
 interface ProductFormData {
   id: string;

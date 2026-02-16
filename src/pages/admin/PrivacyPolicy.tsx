@@ -1,7 +1,7 @@
 import React from 'react';
 import { Shield, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { PageContainer } from '@/components/common/PageContainer';
+import { PageContainer } from '@/components/shared/layout/PageContainer';
 
 export const PrivacyPolicy: React.FC = () => {
   const navigate = useNavigate();

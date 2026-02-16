@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Edit2 } from 'lucide-react';
+import { ProductDetail } from '@/types/common/product.types';
 
 export interface Product {
   id: string;

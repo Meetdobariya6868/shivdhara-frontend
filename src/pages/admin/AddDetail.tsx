@@ -1,7 +1,7 @@
 import React from 'react';
 import { FileText, Upload, Image, FileSpreadsheet } from 'lucide-react';
-import { DashboardHeader } from '@/components/admin/DashboardHeader';
-import { PageContainer } from '@/components/common/PageContainer';
+import { DashboardHeader } from '@/components/shared/dashboard/DashboardHeader';
+import { PageContainer } from '@/components/shared/layout/PageContainer';
 
 export const AddDetail: React.FC = () => {
   return (

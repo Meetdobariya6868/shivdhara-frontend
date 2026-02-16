@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { UserPlus, User, Phone, Lock, Check, AlertCircle } from 'lucide-react';
-import { DashboardHeader } from '@/components/admin/DashboardHeader';
-import { PageContainer } from '@/components/common/PageContainer';
-import { Button } from '@/components/common/Button';
+import { DashboardHeader } from '@/components/shared/dashboard/DashboardHeader';
+import { PageContainer } from '@/components/shared/layout/PageContainer';
+import { Button } from '@/components/shared/ui/Button';
 
 interface FormData {
   name: string;

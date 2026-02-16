@@ -1,13 +1,14 @@
 import React, { useState, useMemo } from 'react';
 import { ArrowLeft, Download } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { PageContainer } from '@/components/common/PageContainer';
-import { SearchInput } from '@/components/common/SearchInput';
-import { ProductCard, Product } from '@/components/admin/ProductCard';
-import { Button } from '@/components/common/Button';
+import { PageContainer } from '@/components/shared/layout/PageContainer';
+import { SearchInput } from '@/components/shared/ui/SearchInput';
+import { ProductCard } from '@/components/features/products/ProductCard';
+import { ProductWithBoxes } from '@/types/common/product.types';
+import { Button } from '@/components/shared/ui/Button';
 
 // Mock data - replace with API call
-const MOCK_PRODUCTS: Product[] = [
+const MOCK_PRODUCTS: ProductWithBoxes[] = [
   {
     id: '1',
     name: 'MARQUINA INTENSO SOFT NATURALE',
@@ -62,8 +63,8 @@ export const Products: React.FC = () => {
     );
   }, [searchQuery]);
 
-  const handleProductClick = (product: Product) => {
-    console.log('Product clicked:', product);
+  const handleProductWithBoxesClick = (product: ProductWithBoxes) => {
+    console.log('ProductWithBoxes clicked:', product);
     // Navigate to product detail page or show modal
     // navigate(`/admin/products/${product.id}`);
   };
@@ -80,7 +81,7 @@ export const Products: React.FC = () => {
 
       // Example: Create CSV content
       const csvContent = [
-        ['Date', 'Product Name', 'Code', 'Boxes', 'Pieces/Box', 'Total'],
+        ['Date', 'ProductWithBoxes Name', 'Code', 'Boxes', 'Pieces/Box', 'Total'],
         ...filteredProducts.map(p => [
           p.date,
           p.name,
@@ -150,7 +151,7 @@ export const Products: React.FC = () => {
                   <ProductCard
                     key={product.id}
                     product={product}
-                    onClick={handleProductClick}
+                    onClick={handleProductWithBoxesClick}
                   />
                 ))}
               </div>

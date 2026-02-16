@@ -9,9 +9,9 @@ import {
   LogOut,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { ProfileMenuItem } from '@/components/admin/ProfileMenuItem';
-import { ProfileAvatar } from '@/components/admin/ProfileAvatar';
-import { PageContainer } from '@/components/common/PageContainer';
+import { ProfileMenuItem } from '@/components/shared/profile/ProfileMenuItem';
+import { ProfileAvatar } from '@/components/shared/profile/ProfileAvatar';
+import { PageContainer } from '@/components/shared/layout/PageContainer';
 import { useAuth } from '@/hooks/useAuth';
 
 export const ProfileMenu: React.FC = () => {

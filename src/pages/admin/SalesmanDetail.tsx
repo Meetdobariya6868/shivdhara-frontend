@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, MoreVertical, Edit, Phone, User as UserIcon } from 'lucide-react';
-import { PageContainer } from '@/components/common/PageContainer';
-import { SearchInput } from '@/components/common/SearchInput';
-import { OrderCard, UserOrder } from '@/components/admin/OrderCard';
+import { PageContainer } from '@/components/shared/layout/PageContainer';
+import { SearchInput } from '@/components/shared/ui/SearchInput';
+import { OrderCard, UserOrder } from '@/components/features/orders/OrderCard';
 
 interface SalesmanData {
   id: string;

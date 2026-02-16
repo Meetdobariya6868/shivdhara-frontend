@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { User, Mail, Phone, Lock, Edit2, Save, X, Shield, Calendar } from 'lucide-react';
-import { DashboardHeader } from '@/components/admin/DashboardHeader';
-import { PageContainer } from '@/components/common/PageContainer';
+import { DashboardHeader } from '@/components/shared/dashboard/DashboardHeader';
+import { PageContainer } from '@/components/shared/layout/PageContainer';
 import { useAuth } from '@/hooks/useAuth';
-import { Button } from '@/components/common/Button';
+import { Button } from '@/components/shared/ui/Button';
 
 export const Profile: React.FC = () => {
   const { user } = useAuth();

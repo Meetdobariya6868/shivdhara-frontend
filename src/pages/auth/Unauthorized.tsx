@@ -2,7 +2,7 @@ import React from 'react';
 import { ShieldOff } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { ROUTES } from '@/utils/constants';
-import { Button } from '@/components/common/Button';
+import { Button } from '@/components/shared/ui/Button';
 
 export const Unauthorized: React.FC = () => {
   return (

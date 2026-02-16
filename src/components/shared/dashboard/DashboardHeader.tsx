@@ -3,7 +3,7 @@ import { LogOut, Bell, Menu } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/utils/constants';
-import { Logo } from '@/components/common/Logo';
+import { Logo } from '@/components/shared/layout/Logo';
 
 export const DashboardHeader: React.FC = () => {
   const { user, logout } = useAuth();

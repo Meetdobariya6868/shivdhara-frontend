@@ -1,21 +1,13 @@
 import React, { useState } from 'react';
 import { Users, TrendingUp, DollarSign, Package } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
-import { DashboardHeader } from '@/components/admin/DashboardHeader';
-import { StatCard } from '@/components/admin/StatCard';
-import { UserCard } from '@/components/admin/UserCard';
-import { SearchBar } from '@/components/admin/SearchBar';
-import { PageContainer } from '@/components/common/PageContainer';
-
-// Mock salesman data
-const mockSalesmen = [
-  { id: 1, name: 'Yogesh Patel', userId: '96653', avatar: null, sales: 45, performance: 92 },
-  { id: 2, name: 'Rajubhai Mehta', userId: '56557', avatar: 'https://i.pravatar.cc/150?img=1', sales: 38, performance: 88 },
-  { id: 3, name: 'Kevalbhai Ambani', userId: '15246', avatar: null, sales: 52, performance: 95 },
-  { id: 4, name: 'VIVEK KORAT', userId: '59666', avatar: null, sales: 41, performance: 85 },
-  { id: 5, name: 'Prakash Shah', userId: '78942', avatar: null, sales: 33, performance: 78 },
-  { id: 6, name: 'Ramesh Patel', userId: '45123', avatar: null, sales: 29, performance: 72 },
-];
+import { DashboardHeader } from '@/components/shared/dashboard/DashboardHeader';
+import { StatCard } from '@/components/shared/dashboard/StatCard';
+import { UserCard } from '@/components/features/salesmen/UserCard';
+import { SearchInput } from '@/components/shared/ui/SearchInput';
+import { PageContainer } from '@/components/shared/layout/PageContainer';
+import { mockSalesmen } from '@/mocks/salesmen.mock';
+import { getGreeting } from '@/utils/helpers/time.helpers';
 
 const stats = [
   { id: 1, title: 'Total Salesmen', value: '24', icon: Users, color: 'bg-blue-500', change: '+12%' },
@@ -34,13 +26,6 @@ export const AdminDashboard: React.FC = () => {
     salesman.userId.includes(searchQuery)
   );
 
-  const getGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return 'Good Morning';
-    if (hour < 17) return 'Good Afternoon';
-    return 'Good Evening';
-  };
-
   return (
     <PageContainer>
       <DashboardHeader />
@@ -57,9 +42,10 @@ export const AdminDashboard: React.FC = () => {
         </div>
 
         {/* Search Bar */}
-        <SearchBar
+        <SearchInput
           value={searchQuery}
           onChange={setSearchQuery}
+          showFilterButton={true}
           onFilterClick={() => setShowFilter(!showFilter)}
         />
 

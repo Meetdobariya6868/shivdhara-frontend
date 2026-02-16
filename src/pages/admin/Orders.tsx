@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Search, SlidersHorizontal, X, Calendar, User, Package } from 'lucide-react';
-import { DashboardHeader } from '@/components/admin/DashboardHeader';
-import { PageContainer } from '@/components/common/PageContainer';
+import { DashboardHeader } from '@/components/shared/dashboard/DashboardHeader';
+import { PageContainer } from '@/components/shared/layout/PageContainer';
 
 type OrderStatus = 'all' | 'pending' | 'confirmed' | 'delivered' | 'cancelled';
 

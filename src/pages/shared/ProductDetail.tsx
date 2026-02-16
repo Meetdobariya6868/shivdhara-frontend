@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
-import { PageContainer } from '@/components/common/PageContainer';
+import { PageContainer } from '@/components/shared/layout/PageContainer';
 
 interface ProductDetailData {
   id: string;

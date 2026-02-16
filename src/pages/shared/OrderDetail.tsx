@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Edit, Download, BarChart3, Type, MessageCircle } from 'lucide-react';
-import { PageContainer } from '@/components/common/PageContainer';
-import { ProductItem, Product } from '@/components/common/ProductItem';
+import { PageContainer } from '@/components/shared/layout/PageContainer';
+import { ProductItem, Product } from '@/components/features/products/ProductItem';
 
 interface CustomerInfo {
   name: string;

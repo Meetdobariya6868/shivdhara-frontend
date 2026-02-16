@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { User, Mail, Phone, Save, X, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { PageContainer } from '@/components/common/PageContainer';
+import { PageContainer } from '@/components/shared/layout/PageContainer';
 import { useAuth } from '@/hooks/useAuth';
-import { Button } from '@/components/common/Button';
-import { ProfileAvatar } from '@/components/admin/ProfileAvatar';
+import { Button } from '@/components/shared/ui/Button';
+import { ProfileAvatar } from '@/components/shared/profile/ProfileAvatar';
 
 export const ProfileEdit: React.FC = () => {
   const { user } = useAuth();
