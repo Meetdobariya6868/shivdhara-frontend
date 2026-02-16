@@ -1,5 +1,6 @@
 import React from 'react';
 import { User, TrendingUp } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface UserCardProps {
   id: number;
@@ -10,9 +11,18 @@ interface UserCardProps {
   performance?: number;
 }
 
-export const UserCard: React.FC<UserCardProps> = ({ name, userId, avatar, sales, performance }) => {
+export const UserCard: React.FC<UserCardProps> = ({ id, name, userId, avatar, sales, performance }) => {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`/admin/salesman/${id}`);
+  };
+
   return (
-    <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-2xl p-4 hover:shadow-lg transition-all cursor-pointer group">
+    <div
+      onClick={handleClick}
+      className="bg-gradient-to-br from-green-50 to-green-100 rounded-2xl p-4 hover:shadow-lg transition-all cursor-pointer group transform hover:scale-105 active:scale-95"
+    >
       <div className="flex flex-col items-center text-center">
         {/* Avatar */}
         <div className="relative mb-3">

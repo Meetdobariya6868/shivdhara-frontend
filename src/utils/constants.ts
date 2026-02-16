@@ -10,7 +10,14 @@ export const ROUTES = {
   ADMIN_ADD_SALESMAN: '/admin/add-salesman',
   ADMIN_DETAILS: '/admin/details',
   ADMIN_PROFILE: '/admin/profile',
+  ADMIN_PROFILE_EDIT: '/admin/profile/edit',
+  ADMIN_PRIVACY_POLICY: '/admin/privacy-policy',
+  ADMIN_PRODUCTS: '/admin/products',
+  ADMIN_MY_PRODUCTS: '/admin/my-products',
+  ADMIN_SALESMAN_DETAIL: '/admin/salesman/:id',
+  ADMIN_ORDER_DETAIL: '/admin/order/:id',
   SALESMAN_DASHBOARD: '/salesman/dashboard',
+  SALESMAN_ORDER_DETAIL: '/salesman/order/:id',
   UNAUTHORIZED: '/unauthorized',
 } as const;
 

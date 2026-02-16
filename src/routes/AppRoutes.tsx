@@ -6,8 +6,15 @@ import { AdminDashboard } from '@/pages/admin/Dashboard';
 import { Orders } from '@/pages/admin/Orders';
 import { AddSalesman } from '@/pages/admin/AddSalesman';
 import { AddDetail } from '@/pages/admin/AddDetail';
-import { Profile } from '@/pages/admin/Profile';
+import { ProfileMenu } from '@/pages/admin/ProfileMenu';
+import { ProfileEdit } from '@/pages/admin/ProfileEdit';
+import { PrivacyPolicy } from '@/pages/admin/PrivacyPolicy';
+import { Products } from '@/pages/admin/Products';
+import { MyProducts } from '@/pages/admin/MyProducts';
+import { SalesmanDetail } from '@/pages/admin/SalesmanDetail';
+import { OrderDetail as AdminOrderDetail } from '@/pages/admin/OrderDetail';
 import { SalesmanDashboard } from '@/pages/salesman/Dashboard';
+import { OrderDetail as SalesmanOrderDetail } from '@/pages/salesman/OrderDetail';
 import { ProtectedRoute } from './ProtectedRoute';
 import { useAuth } from '@/hooks/useAuth';
 import { ROUTES } from '@/utils/constants';
@@ -36,12 +43,19 @@ export const AppRoutes: React.FC = () => {
         <Route path={ROUTES.ADMIN_ORDERS} element={<Orders />} />
         <Route path={ROUTES.ADMIN_ADD_SALESMAN} element={<AddSalesman />} />
         <Route path={ROUTES.ADMIN_DETAILS} element={<AddDetail />} />
-        <Route path={ROUTES.ADMIN_PROFILE} element={<Profile />} />
+        <Route path={ROUTES.ADMIN_PROFILE} element={<ProfileMenu />} />
+        <Route path={ROUTES.ADMIN_PROFILE_EDIT} element={<ProfileEdit />} />
+        <Route path={ROUTES.ADMIN_PRIVACY_POLICY} element={<PrivacyPolicy />} />
+        <Route path={ROUTES.ADMIN_PRODUCTS} element={<Products />} />
+        <Route path={ROUTES.ADMIN_MY_PRODUCTS} element={<MyProducts />} />
+        <Route path={ROUTES.ADMIN_SALESMAN_DETAIL} element={<SalesmanDetail />} />
+        <Route path={ROUTES.ADMIN_ORDER_DETAIL} element={<AdminOrderDetail />} />
       </Route>
 
       {/* Salesman routes */}
       <Route element={<ProtectedRoute allowedRoles={['salesman']} />}>
         <Route path={ROUTES.SALESMAN_DASHBOARD} element={<SalesmanDashboard />} />
+        <Route path={ROUTES.SALESMAN_ORDER_DETAIL} element={<SalesmanOrderDetail />} />
       </Route>
 
       {/* Root redirect */}

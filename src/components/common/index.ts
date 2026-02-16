@@ -4,3 +4,5 @@ export { Loader } from './Loader';
 export { Logo } from './Logo';
 export { BottomNav } from './BottomNav';
 export { PageContainer } from './PageContainer';
+export { SearchInput } from './SearchInput';
+export { ProductItem, type Product } from './ProductItem';
