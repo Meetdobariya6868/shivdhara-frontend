@@ -2,3 +2,4 @@
 
 export * from './ProductCard';
 export * from './ProductItem';
+export * from './AddProductForm';

@@ -20,7 +20,7 @@ export const AddDetail: React.FC = () => {
       alert('Order posted successfully!');
 
       // You can also navigate to another page here
-      // navigate('/admin/orders');
+      // navigate('/salesman/dashboard');
     } catch (error) {
       console.error('Error submitting form:', error);
       alert('Failed to post order. Please try again.');
@@ -53,8 +53,7 @@ export const AddDetail: React.FC = () => {
           <div className="flex-1">
             <p className="text-sm text-blue-900 font-medium">Quick Tip</p>
             <p className="text-sm text-blue-700 mt-1">
-              Fill in all required fields and add room details to create a complete order.
-              The total price will be calculated automatically.
+              Fill in all required fields to create a complete order.
             </p>
           </div>
         </div>
