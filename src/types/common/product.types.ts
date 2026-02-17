@@ -46,7 +46,34 @@ export interface ProductFormData {
   selectedDate: string;
 }
 
+// Room product interface for room management
+export interface RoomProduct {
+  id: string;
+  name: string;
+  quantity: number;
+  rate: number;
+  totalPrice: number;
+  imageUrl?: string;
+}
+
+// Room interface for room management
+export interface Room {
+  id: string;
+  name: string;
+  products: RoomProduct[];
+}
+
 // Helper to calculate total pieces
 export const calculateTotalPieces = (product: ProductWithBoxes): number => {
   return product.quantity.boxes * product.quantity.piecesPerBox;
+};
+
+// Helper to calculate room total
+export const calculateRoomTotal = (room: Room): number => {
+  return room.products.reduce((sum, product) => sum + product.totalPrice, 0);
+};
+
+// Helper to calculate grand total from all rooms
+export const calculateGrandTotal = (rooms: Room[]): number => {
+  return rooms.reduce((total, room) => total + calculateRoomTotal(room), 0);
 };

@@ -3,6 +3,7 @@ import { User, Phone, CreditCard, Truck, Package, MapPin } from 'lucide-react';
 import { FormInput } from '@/components/shared/form/FormInput';
 import { FormSelect, SelectOption } from '@/components/shared/form/FormSelect';
 import { Button } from '@/components/shared/ui/Button';
+import { RoomManagement, Room } from './RoomManagement';
 
 // Form data interface
 export interface AddProductFormData {
@@ -12,6 +13,7 @@ export interface AddProductFormData {
   transportationCharge: string;
   marbleType: string;
   orderType: string;
+  rooms: Room[];
 }
 
 // Form errors interface
@@ -56,6 +58,7 @@ export const AddProductForm: React.FC<AddProductFormProps> = ({
     transportationCharge: initialData?.transportationCharge || '',
     marbleType: initialData?.marbleType || '',
     orderType: initialData?.orderType || '',
+    rooms: initialData?.rooms || [],
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
@@ -130,6 +133,12 @@ export const AddProductForm: React.FC<AddProductFormProps> = ({
           error={errors.customerNumber}
         />
       </div>
+
+      {/* Room Management */}
+      <RoomManagement
+        rooms={formData.rooms}
+        onRoomsChange={(rooms) => setFormData({ ...formData, rooms })}
+      />
 
       {/* Payment & Order Details */}
       <div className="bg-white rounded-2xl shadow-sm p-6 space-y-4">
