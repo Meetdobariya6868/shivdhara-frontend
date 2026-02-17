@@ -7,7 +7,7 @@ import { Orders } from '@/pages/admin/Orders';
 import { AddSalesman } from '@/pages/admin/AddSalesman';
 import { AddDetail } from '@/pages/admin/AddDetail';
 import { ProfileMenu } from '@/pages/admin/ProfileMenu';
-import { ProfileEdit } from '@/pages/admin/ProfileEdit';
+import { ProfileEdit } from '@/pages/shared/ProfileEdit';
 import { PrivacyPolicy } from '@/pages/admin/PrivacyPolicy';
 import { Products } from '@/pages/admin/Products';
 import { MyProducts } from '@/pages/admin/MyProducts';
@@ -49,6 +49,7 @@ export const AppRoutes: React.FC = () => {
         <Route path={ROUTES.ADMIN_DETAILS} element={<AddDetail />} />
         <Route path={ROUTES.ADMIN_PROFILE} element={<ProfileMenu />} />
         <Route path={ROUTES.ADMIN_PROFILE_EDIT} element={<ProfileEdit />} />
+        <Route path={ROUTES.ADMIN_SALESMAN_EDIT} element={<ProfileEdit />} />
         <Route path={ROUTES.ADMIN_PRIVACY_POLICY} element={<PrivacyPolicy />} />
         <Route path={ROUTES.ADMIN_PRODUCTS} element={<Products />} />
         <Route path={ROUTES.ADMIN_MY_PRODUCTS} element={<MyProducts />} />
@@ -61,6 +62,7 @@ export const AppRoutes: React.FC = () => {
       {/* Salesman routes */}
       <Route element={<ProtectedRoute allowedRoles={['salesman']} />}>
         <Route path={ROUTES.SALESMAN_DASHBOARD} element={<SalesmanDashboard />} />
+        <Route path={ROUTES.SALESMAN_PROFILE_EDIT} element={<ProfileEdit />} />
         <Route path={ROUTES.SALESMAN_ORDER_DETAIL} element={<SalesmanOrderDetail />} />
         <Route path={ROUTES.SALESMAN_PRODUCT_DETAIL} element={<SalesmanProductDetail />} />
         <Route path={ROUTES.SALESMAN_EDIT_PRODUCT} element={<SalesmanEditProduct />} />

@@ -33,10 +33,10 @@ export const AdminDashboard: React.FC = () => {
       <main className="container mx-auto px-4 py-6">
         {/* Greeting Section */}
         <div className="mb-6">
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 flex items-center gap-2">
+          <h1 className="text-xl md:text-2xl font-bold text-gray-900 flex items-center gap-2">
             {getGreeting()} ☀️
           </h1>
-          <p className="text-xl md:text-2xl font-bold text-gray-800 mt-1">
+          <p className="text-xl md:text-l font-bold text-gray-800 mt-1">
             {user?.name?.toUpperCase() || 'ADMIN'}
           </p>
         </div>

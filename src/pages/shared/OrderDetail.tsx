@@ -146,7 +146,7 @@ export const OrderDetail: React.FC = () => {
 
   return (
     <PageContainer>
-      <div className="min-h-screen bg-white pb-24">
+      <div className="relative min-h-screen bg-white pb-20">
         {/* Header */}
         <header className="sticky top-0 z-10 bg-white border-b border-gray-200 px-4 py-4">
           <div className="flex items-center justify-between max-w-4xl mx-auto">
@@ -173,7 +173,7 @@ export const OrderDetail: React.FC = () => {
         </header>
 
         {/* Main Content */}
-        <main className="max-w-4xl mx-auto px-4 py-6 space-y-6">
+        <main className="max-w-4xl mx-auto px-4 py-6 space-y-6 pb-6">
           {/* Customer Detail Section */}
           <section>
             <h2 className="text-2xl md:text-3xl font-bold text-center text-gray-900 mb-4">
@@ -321,31 +321,31 @@ export const OrderDetail: React.FC = () => {
               </div>
             )}
           </section>
-        </main>
 
-        {/* Bottom Action Buttons */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-4 shadow-lg z-10">
-          <div className="max-w-4xl mx-auto grid grid-cols-2 gap-3">
-            <button
-              onClick={handleConfirmOrder}
-              disabled={orderData.status !== 'pending'}
-              className="bg-gradient-to-br from-green-700 to-green-800 hover:from-green-800 hover:to-green-900 text-white py-3 md:py-3.5 rounded-xl font-semibold transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
-            >
-              Confirm Order
-            </button>
-            <button
-              onClick={handleDeleteOrder}
-              className="bg-gradient-to-br from-green-700 to-green-800 hover:from-green-800 hover:to-green-900 text-white py-3 md:py-3.5 rounded-xl font-semibold transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg"
-            >
-              Delete Order
-            </button>
-          </div>
-        </div>
+          {/* Action Buttons - Part of scrollable content */}
+          <section className="pt-6 pb-4">
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                onClick={handleConfirmOrder}
+                disabled={orderData.status !== 'pending'}
+                className="bg-gradient-to-br from-green-700 to-green-800 hover:from-green-800 hover:to-green-900 text-white py-3 md:py-3.5 rounded-xl font-semibold transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              >
+                Confirm Order
+              </button>
+              <button
+                onClick={handleDeleteOrder}
+                className="bg-gradient-to-br from-green-700 to-green-800 hover:from-green-800 hover:to-green-900 text-white py-3 md:py-3.5 rounded-xl font-semibold transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg"
+              >
+                Delete Order
+              </button>
+            </div>
+          </section>
+        </main>
 
         {/* WhatsApp Floating Button */}
         <button
           onClick={handleWhatsApp}
-          className="fixed bottom-24 right-4 md:right-8 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-2xl transition-all duration-200 transform hover:scale-110 active:scale-95 z-20"
+          className="fixed bottom-24 right-4 md:right-8 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-2xl transition-all duration-200 transform hover:scale-110 active:scale-95 z-50"
           aria-label="Share on WhatsApp"
         >
           <MessageCircle size={28} fill="white" />

@@ -90,7 +90,7 @@ export const ProductDetail: React.FC = () => {
 
   return (
     <PageContainer>
-      <div className="min-h-screen bg-[#F5F5F5] pb-24">
+      <div className="min-h-screen bg-[#F5F5F5] pb-20">
         {/* Header */}
         <header className="sticky top-0 z-10 bg-[#F5F5F5] px-4 py-4">
           <div className="flex items-center max-w-4xl mx-auto">
@@ -112,9 +112,9 @@ export const ProductDetail: React.FC = () => {
         </header>
 
         {/* Main Content */}
-        <main className="max-w-4xl mx-auto px-4 py-6">
+        <main className="max-w-4xl mx-auto px-4 py-6 space-y-6">
           {/* Product Image */}
-          <div className="bg-white rounded-2xl overflow-hidden shadow-sm mb-6">
+          <div className="bg-white rounded-2xl overflow-hidden shadow-sm">
             {productData.imageUrl ? (
               <img
                 src={productData.imageUrl}
@@ -144,7 +144,7 @@ export const ProductDetail: React.FC = () => {
           </div>
 
           {/* Product Info */}
-          <div className="mb-6">
+          <div>
             <div className="flex items-end justify-between mb-4">
               <h2 className="text-xl md:text-2xl font-bold text-gray-900">
                 {productData.name}
@@ -197,25 +197,25 @@ export const ProductDetail: React.FC = () => {
               </span>
             </div>
           </div>
-        </main>
 
-        {/* Bottom Action Buttons */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white px-4 py-4 shadow-lg z-10">
-          <div className="max-w-4xl mx-auto grid grid-cols-2 gap-3">
-            <button
-              onClick={handleEdit}
-              className="bg-gradient-to-br from-green-700 to-green-800 hover:from-green-800 hover:to-green-900 text-white py-3 md:py-3.5 rounded-xl font-semibold text-base md:text-lg transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg"
-            >
-              Edit
-            </button>
-            <button
-              onClick={handleDelete}
-              className="bg-gradient-to-br from-green-700 to-green-800 hover:from-green-800 hover:to-green-900 text-white py-3 md:py-3.5 rounded-xl font-semibold text-base md:text-lg transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg"
-            >
-              Delete
-            </button>
+          {/* Action Buttons - Part of scrollable content */}
+          <div className="pt-6 pb-4">
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                onClick={handleEdit}
+                className="bg-gradient-to-br from-green-700 to-green-800 hover:from-green-800 hover:to-green-900 text-white py-3 md:py-3.5 rounded-xl font-semibold text-base md:text-lg transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg"
+              >
+                Edit
+              </button>
+              <button
+                onClick={handleDelete}
+                className="bg-gradient-to-br from-green-700 to-green-800 hover:from-green-800 hover:to-green-900 text-white py-3 md:py-3.5 rounded-xl font-semibold text-base md:text-lg transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg"
+              >
+                Delete
+              </button>
+            </div>
           </div>
-        </div>
+        </main>
       </div>
     </PageContainer>
   );

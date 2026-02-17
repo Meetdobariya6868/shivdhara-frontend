@@ -4,6 +4,7 @@ import { ArrowLeft, MoreVertical, Edit, Phone, User as UserIcon } from 'lucide-r
 import { PageContainer } from '@/components/shared/layout/PageContainer';
 import { SearchInput } from '@/components/shared/ui/SearchInput';
 import { OrderCard, UserOrder } from '@/components/features/orders/OrderCard';
+import { navigateToProfileEdit } from '@/utils/profileHelpers';
 
 interface SalesmanData {
   id: string;
@@ -154,9 +155,23 @@ export const SalesmanDetail: React.FC = () => {
       order.userId.includes(searchQuery)
   );
 
+  const handleEditProfile = () => {
+    navigateToProfileEdit(
+      navigate,
+      {
+        id: salesmanData.id,
+        name: salesmanData.name,
+        email: '', // Add email if available in your data
+        phone: salesmanData.contactNumber,
+        salesmanId: salesmanData.salesmanId,
+        avatar: salesmanData.avatar,
+      },
+      `/admin/salesman/${salesmanData.id}`
+    );
+  };
+
   const handleEditClick = () => {
-    // Navigate to edit page or open edit modal
-    console.log('Edit salesman:', salesmanData.id);
+    handleEditProfile();
   };
 
   const handleOrderClick = (order: UserOrder) => {
@@ -273,7 +288,7 @@ export const SalesmanDetail: React.FC = () => {
 
                   {/* Edit Button */}
                   <button
-                    onClick={handleEditClick}
+                    onClick={handleEditProfile}
                     className="flex-shrink-0 bg-gradient-to-br from-green-700 to-green-800 hover:from-green-800 hover:to-green-900 text-white px-6 py-2.5 md:px-8 md:py-3 rounded-xl font-semibold transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg text-sm md:text-base"
                   >
                     Edit
