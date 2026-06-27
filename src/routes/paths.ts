@@ -1,11 +1,15 @@
 /**
- * Single source of truth for application route paths.
- *
- * Referencing `paths.home` instead of the literal string `'/'` keeps routes
- * refactor-safe and discoverable. Feature paths are added here as they appear.
+ * Single source of truth for all application route paths.
+ * Always reference these constants — never use raw string literals in code.
  */
 export const paths = {
-  home: '/',
-} as const
+  /** Splash screen shown on initial app load. */
+  splash: '/',
 
-export type AppPath = (typeof paths)[keyof typeof paths]
+  auth: {
+    login: '/login',
+  },
+
+  /** Main dashboard — shown after successful login. */
+  dashboard: '/dashboard',
+} as const

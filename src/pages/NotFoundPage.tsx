@@ -9,7 +9,7 @@ export default function NotFoundPage() {
       <p className="text-6xl font-bold text-slate-300">404</p>
       <h1 className="text-2xl font-semibold text-slate-900">Page not found</h1>
       <Link
-        to={paths.home}
+        to={paths.splash}
         className="text-sm font-medium text-indigo-600 hover:underline"
       >
         Back to home
