@@ -23,3 +23,21 @@ export interface ApiError {
   message: string
   errors?: Record<string, string[]>
 }
+
+/** Pagination metadata returned by list endpoints (Controller::paginated). */
+export interface PaginationMeta {
+  current_page: number
+  last_page: number
+  per_page: number
+  total: number
+  from: number | null
+  to: number | null
+}
+
+/** Standard paginated list envelope: data array + meta. */
+export interface PaginatedResponse<TItem> {
+  success: boolean
+  message: string
+  data: TItem[]
+  meta: PaginationMeta
+}

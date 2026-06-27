@@ -5,17 +5,26 @@
 | Design Tokens — Shivdhara ERP
 |--------------------------------------------------------------------------
 |
-| Tailwind v4 is CSS-first: tokens declared here with @theme are
-| automatically exposed as utility classes (bg-brand-900, text-surface, …).
-| Never hardcode colors, spacing, or typography in component files.
+| Two token layers:
+|   1. STATIC palette (@theme)  — brand/logo/semantic colors that never change
+|      between light & dark. Exposed as utilities: bg-brand-900, text-logo-blue…
+|   2. SEMANTIC tokens          — runtime CSS variables that FLIP between light
+|      (:root) and dark (.dark). Mapped into Tailwind via @theme inline so
+|      utilities like bg-background / text-foreground resolve at runtime.
+|
+| Never hardcode a hex value in a component. Always use a token utility.
 |
 */
+
+/* Enable class-based dark mode (.dark on <html>) instead of prefers-color-scheme. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ── STATIC palette ──────────────────────────────────────────────────────── */
 @theme {
-  /* Typography */
   --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI',
     sans-serif;
 
-  /* ── Brand palette (forest green) ────────────────────────────────────── */
+  /* Brand (forest green) */
   --color-brand-50: #f0f7f3;
   --color-brand-100: #dceee5;
   --color-brand-200: #b9ddcc;
@@ -28,26 +37,89 @@
   --color-brand-900: #1b3a2d;
   --color-brand-950: #0e1f18;
 
-  /* ── Surface (input / card backgrounds) ──────────────────────────────── */
-  --color-surface: #e8f0ea;
-  --color-surface-hover: #dce8de;
-
-  /* ── Logo palette ─────────────────────────────────────────────────────── */
+  /* Logo */
   --color-logo-blue: #7ba4b8;
   --color-logo-khaki: #b5ae9c;
   --color-logo-rose: #c4a0a0;
   --color-logo-sage: #4b6e5a;
   --color-logo-slate: #4b5e6e;
 
-  /* ── Semantic ─────────────────────────────────────────────────────────── */
-  --color-error: #dc2626;
-  --color-error-bg: #fef2f2;
-  --color-warning: #d97706;
+  /* Semantic status (same in both themes) */
   --color-success: #16a34a;
+  --color-warning: #d97706;
 
-  /* ── Animations ────────────────────────────────────────────────────────── */
+  /* Animations */
   --animate-fade-in: fadeIn 0.6s ease-out both;
   --animate-slide-up: slideUp 0.5s ease-out both;
+}
+
+/* ── SEMANTIC tokens — LIGHT (default) ───────────────────────────────────── */
+:root {
+  --background: #fafaf5; /* page background (cream) */
+  --foreground: #1b2420; /* primary text */
+  --muted: #6b7c74; /* secondary text */
+
+  --card: #e8f0ea; /* card / tile background (pale sage) */
+  --card-foreground: #1b2420;
+
+  --surface: #e8f0ea; /* input background */
+  --surface-foreground: #1b2420;
+
+  --border: #d4e2d8;
+  --ring: #3d8562;
+
+  --primary: #1b3a2d; /* primary action (forest green) */
+  --primary-foreground: #ffffff;
+
+  --error: #dc2626;
+  --error-bg: #fef2f2;
+
+  --avatar-bg: #111827; /* dark circle behind avatar icon */
+  --avatar-fg: #ffffff;
+}
+
+/* ── SEMANTIC tokens — DARK ──────────────────────────────────────────────── */
+.dark {
+  --background: #0e1f18;
+  --foreground: #e8f0ea;
+  --muted: #8da89a;
+
+  --card: #1b3a2d;
+  --card-foreground: #e8f0ea;
+
+  --surface: #214534;
+  --surface-foreground: #e8f0ea;
+
+  --border: #27563f;
+  --ring: #5fa483;
+
+  --primary: #3d8562;
+  --primary-foreground: #ffffff;
+
+  --error: #f87171;
+  --error-bg: #2a1414;
+
+  --avatar-bg: #000000;
+  --avatar-fg: #e8f0ea;
+}
+
+/* ── Map semantic vars into Tailwind utilities (runtime-resolved) ────────── */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-surface: var(--surface);
+  --color-surface-foreground: var(--surface-foreground);
+  --color-border: var(--border);
+  --color-ring: var(--ring);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-error: var(--error);
+  --color-error-bg: var(--error-bg);
+  --color-avatar-bg: var(--avatar-bg);
+  --color-avatar-fg: var(--avatar-fg);
 }
 
 @keyframes fadeIn {
@@ -74,4 +146,9 @@ html,
 body,
 #root {
   height: 100%;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
 }

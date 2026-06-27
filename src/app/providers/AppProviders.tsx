@@ -6,6 +6,7 @@ import { router } from '@/app/router'
 import { useAuthStore } from '@/features/auth/store/auth.store'
 import { registerAuthHandlers } from '@/lib/axios'
 import { queryClient } from '@/lib/queryClient'
+import { useThemeSync } from '@/theme/useThemeSync'
 
 /**
  * Composition root for all global providers.
@@ -16,6 +17,9 @@ import { queryClient } from '@/lib/queryClient'
  */
 export function AppProviders() {
   const clearAuth = useAuthStore((s) => s.clearAuth)
+
+  // Keep the DOM theme (.dark class) in sync with the persisted theme store.
+  useThemeSync()
 
   useEffect(() => {
     registerAuthHandlers(

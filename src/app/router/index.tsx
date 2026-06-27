@@ -10,14 +10,24 @@ import { createBrowserRouter } from 'react-router-dom'
 
 import { AuthGuard } from '@/app/router/guards/AuthGuard'
 import { GuestGuard } from '@/app/router/guards/GuestGuard'
+import { RoleGuard } from '@/app/router/guards/RoleGuard'
 import { PageLoader } from '@/components/PageLoader'
+import { AppLayout } from '@/layouts/AppLayout'
 import NotFoundPage from '@/pages/NotFoundPage'
 import { paths } from '@/routes/paths'
 
 // ── Lazy-loaded pages (one JS chunk per route) ────────────────────────────────
 const SplashPage = lazy(() => import('@/pages/SplashPage'))
 const LoginPage = lazy(() => import('@/features/auth/pages/LoginPage'))
-const DashboardPage = lazy(() => import('@/pages/DashboardPage'))
+const HomePage = lazy(() => import('@/pages/HomePage'))
+const OrdersPage = lazy(() => import('@/features/orders/pages/OrdersPage'))
+const CreateOrderPage = lazy(
+  () => import('@/features/orders/pages/CreateOrderPage'),
+)
+const CustomersPage = lazy(
+  () => import('@/features/customers/pages/CustomersPage'),
+)
+const ProfilePage = lazy(() => import('@/features/profile/pages/ProfilePage'))
 
 /** Wrap any route element with Suspense so lazy chunks never throw. */
 function withSuspense(node: ReactNode): ReactNode {
@@ -46,13 +56,27 @@ export const router = createBrowserRouter([
     ],
   },
 
-  // ── Protected (unauthenticated users → /login) ────────────────────────────
+  // ── Protected app shell (unauthenticated users → /login) ──────────────────
   {
     element: <AuthGuard />,
     children: [
       {
-        path: paths.dashboard,
-        element: withSuspense(<DashboardPage />),
+        element: <AppLayout />,
+        children: [
+          // Shared (both roles)
+          { path: paths.dashboard, element: withSuspense(<HomePage />) },
+          { path: paths.ordersCreate, element: withSuspense(<CreateOrderPage />) },
+          { path: paths.profile, element: withSuspense(<ProfilePage />) },
+
+          // Admin-only
+          {
+            element: <RoleGuard allow={['admin']} />,
+            children: [
+              { path: paths.orders, element: withSuspense(<OrdersPage />) },
+              { path: paths.customers, element: withSuspense(<CustomersPage />) },
+            ],
+          },
+        ],
       },
     ],
   },

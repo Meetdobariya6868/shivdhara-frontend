@@ -164,7 +164,7 @@ export function LoginForm() {
       {generalError && (
         <div
           role="alert"
-          className="rounded-xl border border-red-200 bg-error-bg px-4 py-3 text-sm text-error"
+          className="rounded-xl border border-error/30 bg-error-bg px-4 py-3 text-sm text-error"
         >
           {generalError}
         </div>
@@ -195,7 +195,7 @@ export function LoginForm() {
           <button
             type="button"
             onClick={() => setShowPassword((v) => !v)}
-            className="text-gray-400 hover:text-gray-600 focus-visible:outline-none"
+            className="text-muted hover:text-foreground focus-visible:outline-none"
             aria-label={showPassword ? 'Hide password' : 'Show password'}
           >
             {showPassword ? <EyeIcon /> : <EyeOffIcon />}

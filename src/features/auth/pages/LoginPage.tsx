@@ -8,7 +8,7 @@ import { LoginForm } from '../components/LoginForm'
  */
 export default function LoginPage() {
   return (
-    <main className="flex min-h-full flex-col items-center justify-center bg-white px-6 py-12">
+    <main className="flex min-h-full flex-col items-center justify-center bg-background px-6 py-12">
       <div className="w-full max-w-sm animate-slide-up">
 
         {/* Logo */}
@@ -17,7 +17,7 @@ export default function LoginPage() {
         </div>
 
         {/* Heading */}
-        <h1 className="mb-8 text-center text-2xl font-bold tracking-tight text-gray-900">
+        <h1 className="mb-8 text-center text-2xl font-bold tracking-tight text-foreground">
           Login Your Account
         </h1>
 

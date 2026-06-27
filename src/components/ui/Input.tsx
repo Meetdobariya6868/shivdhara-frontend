@@ -25,7 +25,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label
             htmlFor={inputId}
-            className="text-sm font-medium text-gray-700"
+            className="text-sm font-medium text-foreground"
           >
             {label}
           </label>
@@ -35,7 +35,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           {leftIcon && (
             <span
               aria-hidden="true"
-              className="pointer-events-none absolute left-4 text-gray-400"
+              className="pointer-events-none absolute left-4 text-muted"
             >
               {leftIcon}
             </span>
@@ -47,11 +47,11 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             aria-invalid={error ? 'true' : 'false'}
             aria-describedby={error ? errorId : undefined}
             className={[
-              'w-full rounded-2xl bg-surface py-4 text-sm text-gray-900',
-              'placeholder:text-gray-400',
+              'w-full rounded-2xl bg-surface py-4 text-sm text-surface-foreground',
+              'placeholder:text-muted',
               'border border-transparent',
               'transition-colors duration-150',
-              'focus:border-brand-400 focus:bg-white focus:outline-none',
+              'focus:border-ring focus:outline-none',
               'disabled:cursor-not-allowed disabled:opacity-60',
               error ? 'border-error' : '',
               leftIcon ? 'pl-11' : 'pl-4',

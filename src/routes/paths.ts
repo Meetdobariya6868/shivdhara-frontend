@@ -10,6 +10,16 @@ export const paths = {
     login: '/login',
   },
 
-  /** Main dashboard — shown after successful login. */
+  /** Home — admin: salesman list; salesman: their landing. */
   dashboard: '/dashboard',
+
+  /** Order management (Phase 5). */
+  orders: '/orders',
+  ordersCreate: '/orders/create',
+
+  /** Customer management (Phase 4). */
+  customers: '/customers',
+
+  /** Current user's profile + settings (theme, logout). */
+  profile: '/profile',
 } as const

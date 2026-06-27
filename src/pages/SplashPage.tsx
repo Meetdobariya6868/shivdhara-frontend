@@ -31,11 +31,11 @@ export default function SplashPage() {
   }, [isAuthenticated, navigate])
 
   return (
-    <main className="flex h-full flex-col bg-white">
+    <main className="flex h-full flex-col bg-background">
 
       {/* ── Brand name (top) ─────────────────────────────────────────── */}
       <header className="animate-fade-in pt-14 text-center">
-        <span className="text-sm font-semibold tracking-[0.25em] text-brand-900 uppercase">
+        <span className="text-sm font-semibold tracking-[0.25em] text-primary uppercase">
           Shivdhara
         </span>
       </header>
@@ -54,8 +54,8 @@ export default function SplashPage() {
         className="animate-fade-in pb-14 text-center"
         style={{ animationDelay: '0.4s' }}
       >
-        <p className="text-lg font-semibold text-gray-800">Marbo &amp; Granite</p>
-        <p className="mt-1 text-sm text-gray-500">Welcome, to our community</p>
+        <p className="text-lg font-semibold text-foreground">Marbo &amp; Granite</p>
+        <p className="mt-1 text-sm text-muted">Welcome, to our community</p>
       </footer>
 
     </main>
