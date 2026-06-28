@@ -95,3 +95,47 @@ export function SortIcon(props: IconProps) {
     </svg>
   )
 }
+
+export function FilterIcon(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+    </svg>
+  )
+}
+
+export function XIcon(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <path d="M18 6 6 18M6 6l12 12" />
+    </svg>
+  )
+}
+
+export function ChevronDownIcon(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <path d="m6 9 6 6 6-6" />
+    </svg>
+  )
+}
+
+export function CalendarIcon(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+      <line x1="16" y1="2" x2="16" y2="6" />
+      <line x1="8" y1="2" x2="8" y2="6" />
+      <line x1="3" y1="10" x2="21" y2="10" />
+    </svg>
+  )
+}
+
+export function IndianRupeeIcon(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <path d="M6 3h12M6 8h12M15 21 6 8" />
+      <path d="M6 13h3a4 4 0 0 0 0-8" />
+    </svg>
+  )
+}
