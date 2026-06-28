@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { ReactElement, ReactNode } from 'react'
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -82,7 +82,7 @@ type VariantConfig = {
   role: 'alert' | 'status'
   container: string
   text: string
-  IconComponent: () => JSX.Element
+  IconComponent: () => ReactElement
 }
 
 const VARIANT_CONFIG: Record<AlertVariant, VariantConfig> = {
