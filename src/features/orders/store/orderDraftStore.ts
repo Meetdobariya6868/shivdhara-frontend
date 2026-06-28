@@ -26,6 +26,8 @@ export interface DraftItem {
   width: number
   purchaseRate: number
   sellRate: number
+  /** Editable line total persisted to the order_items.product_total column. */
+  productTotal: number
 }
 
 /** Everything needed to build an item except its identity/room assignment. */

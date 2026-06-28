@@ -42,15 +42,11 @@ export function OrderCard({ order }: OrderCardProps) {
       {/* Divider */}
       <div className="mt-3 border-t border-border" />
 
-      {/* Financials */}
-      <div className="mt-3 flex items-end justify-between gap-2">
-        <div>
-          <p className="text-[10px] uppercase tracking-wide text-muted">Grand Total</p>
-          <p className="text-sm font-bold text-card-foreground">
-            ₹{formatINR(order.grand_total)}
-          </p>
-        </div>
-
+      <div className="mt-3">
+        <p className="text-[10px] uppercase tracking-wide text-muted">Total product price</p>
+        <p className="text-sm font-bold text-card-foreground">
+          ₹{formatINR(order.grand_total)}
+        </p>
       </div>
     </article>
   )

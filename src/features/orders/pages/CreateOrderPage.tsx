@@ -16,7 +16,6 @@ import { useCreateOrder } from '../hooks/useCreateOrder'
 import type { DraftItem, DraftItemInput } from '../store/orderDraftStore'
 import { useOrderDraftStore } from '../store/orderDraftStore'
 import type { CreateOrderPayload } from '../types'
-import { calculateItem } from '../utils/calculateItem'
 
 function num(value: string): number {
   const n = parseFloat(value)
@@ -63,35 +62,9 @@ export default function CreateOrderPage() {
 
   // ── Derived totals ────────────────────────────────────────────────────────
   const totals: OrderTotals = useMemo(() => {
-    let totalSell = 0
-    let totalProfit = 0
-    for (const item of items) {
-      const calc = calculateItem({
-        itemType: item.itemType,
-        piecesPerBox: item.piecesPerBox,
-        numberOfBoxes: item.numberOfBoxes,
-        numberOfPieces: item.numberOfPieces,
-        measurementUnit: item.measurementUnit,
-        height: item.height,
-        width: item.width,
-        purchaseRate: item.purchaseRate,
-        sellRate: item.sellRate,
-      })
-      totalSell += calc.sellAmount
-      totalProfit += calc.profit
-    }
-    const transportation = num(draft.transportationCharge)
-    const advance = num(draft.advancePayment)
-    const grandTotal = round2(totalSell + transportation)
-    return {
-      totalSell: round2(totalSell),
-      totalProfit: round2(totalProfit),
-      transportation,
-      advance,
-      grandTotal,
-      balanceDue: round2(grandTotal - advance),
-    }
-  }, [items, draft.transportationCharge, draft.advancePayment])
+    const totalSell = items.reduce((sum, item) => sum + item.productTotal, 0)
+    return { totalSell: round2(totalSell) }
+  }, [items])
 
   // ── Modal control ─────────────────────────────────────────────────────────
   const openAddItem = (roomTempId: string) =>
@@ -171,6 +144,7 @@ export default function CreateOrderPage() {
             width: it.width,
             purchase_rate: it.purchaseRate,
             sell_rate: it.sellRate,
+            product_total: it.productTotal,
           })),
       })),
     }

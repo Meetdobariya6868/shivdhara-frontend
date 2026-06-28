@@ -11,7 +11,6 @@ import { useUploadOrderItemImage } from '../hooks/useUploadOrderItemImage'
 import type { DraftItem, DraftItemInput, DraftRoom } from '../store/orderDraftStore'
 import type { ItemType, MeasurementUnit } from '../types'
 import { calculateItem } from '../utils/calculateItem'
-import { formatINR } from '../utils/formatters'
 import { ITEM_TYPE_OPTIONS, MEASUREMENT_UNIT_OPTIONS } from '../utils/orderOptions'
 
 interface AddItemModalProps {
@@ -42,6 +41,8 @@ interface ItemFormState {
   width: string
   purchaseRate: string
   sellRate: string
+  /** Line total (product_total) — auto-filled from the formula, but editable. */
+  calculation: string
   productImagePath: string | null
   productImageUrl: string | null
 }
@@ -76,6 +77,7 @@ function buildInitialState(
       width: editingItem.width.toString(),
       purchaseRate: editingItem.purchaseRate.toString(),
       sellRate: editingItem.sellRate.toString(),
+      calculation: editingItem.productTotal.toString(),
       productImagePath: editingItem.productImagePath,
       productImageUrl: editingItem.productImageUrl,
     }
@@ -97,6 +99,7 @@ function buildInitialState(
     width: '',
     purchaseRate: '',
     sellRate: '',
+    calculation: '',
     productImagePath: null,
     productImageUrl: null,
   }
@@ -143,6 +146,12 @@ export function AddItemModal({
       }),
     [form],
   )
+
+  // The editable "Calculation" field IS the line total (product_total). It shows
+  // the formula result by default and live-updates as inputs change; once the
+  // user types a value, that override sticks until they clear it.
+  const autoCalculation = calc.sellAmount ? calc.sellAmount.toString() : ''
+  const calculationValue = form.calculation !== '' ? form.calculation : autoCalculation
 
   const handlePhotoSelect = (file: File) => {
     upload.mutate(file, {
@@ -204,6 +213,7 @@ export function AddItemModal({
       width: num(form.width),
       purchaseRate: num(form.purchaseRate),
       sellRate: num(form.sellRate),
+      productTotal: num(calculationValue),
     }
 
     onSubmit(form.roomTempId, input, editingItem?.tempId ?? null)
@@ -397,32 +407,15 @@ export function AddItemModal({
           />
         </div>
 
-        {/* Live calculation */}
-        <dl className="grid grid-cols-2 gap-x-4 gap-y-2 rounded-2xl bg-card p-4 text-sm sm:grid-cols-3">
-          <CalcRow label="Total pieces" value={calc.totalPieces.toString()} />
-          <CalcRow label="Area / piece" value={`${calc.areaSqft} ft²`} />
-          <CalcRow label="Total sq ft" value={`${calc.totalSqft} ft²`} />
-          <CalcRow label="Purchase" value={`₹${formatINR(calc.purchaseAmount)}`} />
-          <CalcRow label="Sell" value={`₹${formatINR(calc.sellAmount)}`} />
-          <CalcRow label="Profit" value={`₹${formatINR(calc.profit)}`} accent />
-        </dl>
+        {/* Line total — auto-calculated from the formula, editable */}
+        <Input
+          label="Calculation"
+          inputMode="decimal"
+          placeholder="0"
+          value={calculationValue}
+          onChange={(e) => set('calculation', e.target.value)}
+        />
       </form>
     </Modal>
-  )
-}
-
-function CalcRow({ label, value, accent = false }: { label: string; value: string; accent?: boolean }) {
-  return (
-    <div className="flex flex-col">
-      <dt className="text-xs text-muted">{label}</dt>
-      <dd
-        className={[
-          'font-semibold tabular-nums',
-          accent ? 'text-success' : 'text-card-foreground',
-        ].join(' ')}
-      >
-        {value}
-      </dd>
-    </div>
   )
 }

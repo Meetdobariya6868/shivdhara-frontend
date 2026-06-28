@@ -74,6 +74,7 @@ export interface CreateOrderItemPayload {
   width: number
   purchase_rate: number
   sell_rate: number
+  product_total: number
 }
 
 /** A room with its items in the create-order payload. */
