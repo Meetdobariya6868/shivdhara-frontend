@@ -6,19 +6,15 @@ interface OrderCardProps {
 }
 
 export function OrderCard({ order }: OrderCardProps) {
-  const balanceDue = parseFloat(order.balance_due)
-  const profit = parseFloat(order.total_profit)
-  const hasBalance = balanceDue > 0
-
   return (
     <article
       className="rounded-2xl bg-card px-4 py-4 shadow-sm transition-transform duration-150 hover:-translate-y-0.5 active:scale-[0.99]"
-      aria-label={`Order ${order.order_number}`}
+      aria-label={`Order #${order.id}`}
     >
-      {/* Top row — order number + date */}
+      {/* Top row — order id + date */}
       <div className="flex items-start justify-between gap-3">
         <span className="text-sm font-bold tracking-wide text-primary">
-          {order.order_number}
+          #{order.id}
         </span>
         <span className="shrink-0 text-xs text-muted">
           {formatOrderDate(order.order_date)}
@@ -55,25 +51,6 @@ export function OrderCard({ order }: OrderCardProps) {
           </p>
         </div>
 
-        <div className="flex gap-4 text-right">
-          {profit > 0 && (
-            <div>
-              <p className="text-[10px] uppercase tracking-wide text-muted">Profit</p>
-              <p className="text-sm font-semibold text-success">
-                ₹{formatINR(order.total_profit)}
-              </p>
-            </div>
-          )}
-
-          {hasBalance && (
-            <div>
-              <p className="text-[10px] uppercase tracking-wide text-muted">Due</p>
-              <p className="text-sm font-semibold text-error">
-                ₹{formatINR(order.balance_due)}
-              </p>
-            </div>
-          )}
-        </div>
       </div>
     </article>
   )

@@ -21,7 +21,6 @@ export interface OrderType {
 
 export interface Order {
   id: number
-  order_number: string
   order_date: string
   customer: OrderCustomer
   creator: OrderCreator
@@ -29,11 +28,7 @@ export interface Order {
   type: OrderType
   advance_payment: string
   transportation_charge: string
-  total_purchase_amount: string
-  total_sell_amount: string
-  total_profit: string
   grand_total: string
-  balance_due: string
   notes: string | null
   created_at: string
 }

@@ -25,33 +25,23 @@ export function ChargesSection({ errors }: ChargesSectionProps) {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Select
           label="Category"
-          value={orderCategoryId ?? ''}
+          placeholder="Select category"
+          value={orderCategoryId}
           error={errors.orderCategoryId}
           disabled={isLoading}
-          onChange={(e) => setField('orderCategoryId', e.target.value ? Number(e.target.value) : null)}
-        >
-          <option value="">Select category</option>
-          {categories.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name}
-            </option>
-          ))}
-        </Select>
+          options={categories.map((c) => ({ value: c.id, label: c.name }))}
+          onChange={(v) => setField('orderCategoryId', v)}
+        />
 
         <Select
           label="Order Type"
-          value={orderTypeId ?? ''}
+          placeholder="Select type"
+          value={orderTypeId}
           error={errors.orderTypeId}
           disabled={isLoading}
-          onChange={(e) => setField('orderTypeId', e.target.value ? Number(e.target.value) : null)}
-        >
-          <option value="">Select type</option>
-          {types.map((t) => (
-            <option key={t.id} value={t.id}>
-              {t.name}
-            </option>
-          ))}
-        </Select>
+          options={types.map((t) => ({ value: t.id, label: t.name }))}
+          onChange={(v) => setField('orderTypeId', v)}
+        />
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

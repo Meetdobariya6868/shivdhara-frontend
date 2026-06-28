@@ -234,16 +234,15 @@ export function AddItemModal({
         {/* Room assignment (also the "move to room" control) */}
         <Select
           label="Room"
-          value={form.roomTempId}
+          placeholder="Select room"
+          value={form.roomTempId || null}
           error={errors.roomTempId}
-          onChange={(e) => set('roomTempId', e.target.value)}
-        >
-          {rooms.map((room) => (
-            <option key={room.tempId} value={room.tempId}>
-              {room.roomName}
-            </option>
-          ))}
-        </Select>
+          options={rooms.map((room) => ({
+            value: room.tempId,
+            label: room.roomName.trim() || 'Untitled room',
+          }))}
+          onChange={(v) => set('roomTempId', v)}
+        />
 
         {/* Photo */}
         <div className="flex justify-center py-1">
@@ -298,14 +297,14 @@ export function AddItemModal({
         {/* Quantity mode */}
         <RadioGroup<ItemType>
           name="item-type"
-          label="Sold by"
+          // label="Sold by"
           value={form.itemType}
           onChange={(v) => set('itemType', v)}
           options={ITEM_TYPE_OPTIONS}
         />
 
         {isBox ? (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <Input
               label="Pieces per box"
               inputMode="numeric"
@@ -313,6 +312,14 @@ export function AddItemModal({
               value={form.piecesPerBox}
               error={errors.piecesPerBox}
               onChange={(e) => set('piecesPerBox', e.target.value)}
+            />
+            <Input
+              label="Product Sq Ft Rate"
+              inputMode="decimal"
+              placeholder="0"
+              value={form.sellRate}
+              error={errors.sellRate}
+              onChange={(e) => set('sellRate', e.target.value)}
             />
             <Input
               label="Number of boxes"
@@ -324,18 +331,28 @@ export function AddItemModal({
             />
           </div>
         ) : (
-          <Input
-            label="Number of pieces"
-            inputMode="numeric"
-            placeholder="0"
-            value={form.numberOfPieces}
-            error={errors.numberOfPieces}
-            onChange={(e) => set('numberOfPieces', e.target.value)}
-          />
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <Input
+              label="Number of pieces"
+              inputMode="numeric"
+              placeholder="0"
+              value={form.numberOfPieces}
+              error={errors.numberOfPieces}
+              onChange={(e) => set('numberOfPieces', e.target.value)}
+            />
+            <Input
+              label="Product Sq Ft Rate (₹)"
+              inputMode="decimal"
+              placeholder="0"
+              value={form.sellRate}
+              error={errors.sellRate}
+              onChange={(e) => set('sellRate', e.target.value)}
+            />
+          </div>
         )}
 
-        {/* Dimensions */}
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+        {/* Dimensions — Height, Width and Unit always on one line */}
+        <div className="grid grid-cols-3 gap-3">
           <Input
             label="Height"
             inputMode="decimal"
@@ -355,20 +372,15 @@ export function AddItemModal({
           <Select
             label="Unit"
             value={form.measurementUnit}
-            onChange={(e) => set('measurementUnit', e.target.value as MeasurementUnit)}
-          >
-            {MEASUREMENT_UNIT_OPTIONS.map((u) => (
-              <option key={u.value} value={u.value}>
-                {u.label}
-              </option>
-            ))}
-          </Select>
+            options={MEASUREMENT_UNIT_OPTIONS}
+            onChange={(v) => set('measurementUnit', v)}
+          />
         </div>
 
-        {/* Rates */}
+        {/* Purchase rate (drives profit) */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Input
-            label="Purchase rate (₹/sq ft)"
+            label="Purchase rate"
             inputMode="decimal"
             placeholder="0"
             value={form.purchaseRate}
@@ -376,7 +388,7 @@ export function AddItemModal({
             onChange={(e) => set('purchaseRate', e.target.value)}
           />
           <Input
-            label="Sell rate (₹/sq ft)"
+            label="Sell rate"
             inputMode="decimal"
             placeholder="0"
             value={form.sellRate}

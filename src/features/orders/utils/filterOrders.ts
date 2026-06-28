@@ -13,11 +13,11 @@ export function filterOrders(
   const dateTo = filters.date_to ?? ''
 
   return orders.filter((order) => {
-    // Search: order number or customer name
+    // Search: customer name or mobile number
     if (
       search &&
-      !order.order_number.toLowerCase().includes(search) &&
-      !order.customer.name.toLowerCase().includes(search)
+      !order.customer.name.toLowerCase().includes(search) &&
+      !order.customer.contact.includes(search)
     ) {
       return false
     }
