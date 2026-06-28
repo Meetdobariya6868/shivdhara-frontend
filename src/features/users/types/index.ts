@@ -10,3 +10,10 @@ export type Salesman = AuthUser
 export interface SalesmenQuery {
   status?: 'active' | 'blocked'
 }
+
+/** Payload for POST /users — create a new salesman account. */
+export interface CreateSalesmanPayload {
+  name: string
+  mobile_number: string
+  password: string
+}

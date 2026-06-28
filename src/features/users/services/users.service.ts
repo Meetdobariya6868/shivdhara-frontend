@@ -1,7 +1,7 @@
 import { httpClient } from '@/lib/axios'
 import type { ApiResponse } from '@/types'
 
-import type { Salesman, SalesmenQuery } from '../types'
+import type { CreateSalesmanPayload, Salesman, SalesmenQuery } from '../types'
 
 export const usersService = {
   /**
@@ -13,6 +13,12 @@ export const usersService = {
       '/v1/users',
       { params: query },
     )
+    return data
+  },
+
+  /** Create a new salesman account. Admin-only. */
+  create: async (payload: CreateSalesmanPayload): Promise<ApiResponse<Salesman>> => {
+    const { data } = await httpClient.post<ApiResponse<Salesman>>('/v1/users', payload)
     return data
   },
 }

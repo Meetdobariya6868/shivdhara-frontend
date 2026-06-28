@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 
+import { Alert } from '@/components/ui/Alert'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { paths } from '@/routes/paths'
@@ -160,14 +161,8 @@ export function LoginForm() {
       noValidate
       className="flex w-full flex-col gap-4"
     >
-      {/* General error banner */}
       {generalError && (
-        <div
-          role="alert"
-          className="rounded-xl border border-error/30 bg-error-bg px-4 py-3 text-sm text-error"
-        >
-          {generalError}
-        </div>
+        <Alert variant="error" message={generalError} />
       )}
 
       {/* Mobile number */}

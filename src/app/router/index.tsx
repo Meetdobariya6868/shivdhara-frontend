@@ -24,6 +24,9 @@ const OrdersPage = lazy(() => import('@/features/orders/pages/OrdersPage'))
 const CreateOrderPage = lazy(
   () => import('@/features/orders/pages/CreateOrderPage'),
 )
+const AddSalesmanPage = lazy(
+  () => import('@/features/users/pages/AddSalesmanPage'),
+)
 const CustomersPage = lazy(
   () => import('@/features/customers/pages/CustomersPage'),
 )
@@ -72,8 +75,9 @@ export const router = createBrowserRouter([
           {
             element: <RoleGuard allow={['admin']} />,
             children: [
-              { path: paths.orders, element: withSuspense(<OrdersPage />) },
-              { path: paths.customers, element: withSuspense(<CustomersPage />) },
+              { path: paths.orders,       element: withSuspense(<OrdersPage />) },
+              { path: paths.addSalesman,  element: withSuspense(<AddSalesmanPage />) },
+              { path: paths.customers,    element: withSuspense(<CustomersPage />) },
             ],
           },
         ],
