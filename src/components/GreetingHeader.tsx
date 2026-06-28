@@ -1,4 +1,5 @@
 import { BellIcon } from '@/components/icons'
+import { Avatar } from '@/components/ui/Avatar'
 import { useAuthStore } from '@/features/auth/store/auth.store'
 import { getGreeting } from '@/utils/greeting'
 
@@ -10,17 +11,10 @@ import { getGreeting } from '@/utils/greeting'
 export function GreetingHeader() {
   const user = useAuthStore((s) => s.user)
   const greeting = getGreeting()
-  const initial = user?.name?.charAt(0).toUpperCase() ?? '?'
 
   return (
     <header className="flex items-center gap-3 px-5 pt-6 pb-4">
-      {/* Avatar */}
-      <div
-        className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-avatar-bg text-lg font-semibold text-avatar-fg"
-        aria-hidden="true"
-      >
-        {initial}
-      </div>
+      <Avatar name={user?.name} size="sm" />
 
       {/* Greeting + name */}
       <div className="min-w-0 flex-1">

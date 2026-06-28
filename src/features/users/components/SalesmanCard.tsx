@@ -1,4 +1,5 @@
 import { UserIcon } from '@/components/icons'
+import { Avatar } from '@/components/ui/Avatar'
 
 import type { Salesman } from '../types'
 
@@ -27,10 +28,7 @@ export function SalesmanCard({ salesman, onClick }: SalesmanCardProps) {
       ].join(' ')}
       aria-label={`${salesman.name}, ${salesman.mobile_number}${isBlocked ? ', blocked' : ''}`}
     >
-      {/* Avatar */}
-      <span className="flex h-16 w-16 items-center justify-center rounded-full bg-avatar-bg text-avatar-fg ring-2 ring-background">
-        <UserIcon size={32} />
-      </span>
+      <Avatar icon={<UserIcon size={32} />} size="md" ring />
 
       {/* Name */}
       <span className="line-clamp-1 text-base font-semibold text-card-foreground">
