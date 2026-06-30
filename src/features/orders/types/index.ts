@@ -30,6 +30,7 @@ export interface Order {
   transportation_charge: string
   grand_total: string
   notes: string | null
+  architect_name: string | null
   created_at: string
 }
 
@@ -120,5 +121,7 @@ export interface CreateOrderPayload {
   advance_payment: number
   transportation_charge: number
   notes?: string | null
+  /** Sent only for "Architect" order types; null otherwise. */
+  architect_name?: string | null
   rooms: CreateOrderRoomPayload[]
 }

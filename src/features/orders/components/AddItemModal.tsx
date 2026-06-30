@@ -432,9 +432,9 @@ export function AddItemModal({
               onChange={(e) => set('numberOfPieces', e.target.value)}
             />
             <Input
-              label="Product Sq Ft Rate (₹)"
+              label="Product Sq Ft Rate"
               inputMode="decimal"
-              placeholder={form.sellRate || '0'}
+              placeholder="0"
               value={form.sqftRate}
               error={errors.sqftRate}
               onChange={(e) => set('sqftRate', e.target.value)}

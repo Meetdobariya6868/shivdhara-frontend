@@ -13,6 +13,7 @@ import { OrderTotalsBar } from '../components/OrderTotalsBar'
 import type { OrderTotals } from '../components/OrderTotalsBar'
 import { RoomCard } from '../components/RoomCard'
 import { useCreateOrder } from '../hooks/useCreateOrder'
+import { useOrderMeta } from '../hooks/useOrderMeta'
 import type { DraftItem, DraftItemInput } from '../store/orderDraftStore'
 import { useOrderDraftStore } from '../store/orderDraftStore'
 import type { CreateOrderPayload } from '../types'
@@ -31,6 +32,7 @@ interface FieldErrors {
   customerContact?: string
   orderCategoryId?: string
   orderTypeId?: string
+  architectName?: string
 }
 
 interface ModalState {
@@ -47,6 +49,10 @@ export default function CreateOrderPage() {
 
   const draft = useOrderDraftStore()
   const { rooms, items } = draft
+
+  const { types } = useOrderMeta()
+  const isArchitectOrder =
+    types.find((t) => t.id === draft.orderTypeId)?.name.trim().toLowerCase() === 'architect'
 
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [formError, setFormError] = useState<string | null>(null)
@@ -95,6 +101,8 @@ export default function CreateOrderPage() {
     if (!draft.customerContact.trim()) e.customerContact = 'Customer number is required'
     if (!draft.orderCategoryId) e.orderCategoryId = 'Select a category'
     if (!draft.orderTypeId) e.orderTypeId = 'Select a type'
+    if (isArchitectOrder && !draft.architectName.trim())
+      e.architectName = 'Architect name is required'
     return e
   }
 
@@ -123,6 +131,7 @@ export default function CreateOrderPage() {
       advance_payment: num(draft.advancePayment),
       transportation_charge: num(draft.transportationCharge),
       notes: draft.notes.trim() || null,
+      architect_name: isArchitectOrder ? draft.architectName.trim() || null : null,
       rooms: rooms.map((room, index) => ({
         room_name: room.roomName.trim() || `Room ${index + 1}`,
         sort_order: index,

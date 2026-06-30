@@ -52,6 +52,8 @@ interface OrderDraftState {
   advancePayment: string
   transportationCharge: string
   notes: string
+  /** Only used when the chosen order type is "Architect"; blank otherwise. */
+  architectName: string
   rooms: DraftRoom[]
   items: DraftItem[]
 
@@ -82,6 +84,7 @@ type OrderDraftFields = Pick<
   | 'advancePayment'
   | 'transportationCharge'
   | 'notes'
+  | 'architectName'
 >
 
 const INITIAL: OrderDraftFields & { rooms: DraftRoom[]; items: DraftItem[] } = {
@@ -92,6 +95,7 @@ const INITIAL: OrderDraftFields & { rooms: DraftRoom[]; items: DraftItem[] } = {
   advancePayment: '',
   transportationCharge: '',
   notes: '',
+  architectName: '',
   rooms: [],
   items: [],
 }
