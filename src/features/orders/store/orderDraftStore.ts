@@ -10,6 +10,8 @@ const nextId = (prefix: string): string => `${prefix}-${++idSeq}`
 export interface DraftItem {
   tempId: string
   roomTempId: string
+  /** Set when picked from the catalogue autocomplete (exact-reuse link); null if typed. */
+  designVariantId: number | null
   companyName: string
   designName: string
   size: string
@@ -24,8 +26,12 @@ export interface DraftItem {
   measurementUnit: MeasurementUnit
   height: number
   width: number
+  /** Catalogue purchase rate (auto-filled reference); drives purchase_amount. */
   purchaseRate: number
+  /** Catalogue sell rate (auto-filled reference; not persisted on the order). */
   sellRate: number
+  /** "Product Sq Ft Rate" — the rate actually charged; maps to order_items.sqft_rate and drives sell_amount. */
+  sqftRate: number
   /** Editable line total persisted to the order_items.product_total column. */
   productTotal: number
 }

@@ -22,7 +22,7 @@ export function OrderItemRow({ item, onEdit, onDelete }: OrderItemRowProps) {
     height: item.height,
     width: item.width,
     purchaseRate: item.purchaseRate,
-    sellRate: item.sellRate,
+    sellRate: item.sqftRate,
   })
 
   const quantityLabel =

@@ -43,6 +43,31 @@ export interface OrderFilters {
   creator_id?: number
 }
 
+// ── Catalogue autocomplete ───────────────────────────────────────────────────
+
+/**
+ * One selectable variant returned by GET /design-variants/search.
+ * Selecting a row auto-fills the Add-Item product fields and links the order
+ * item to this exact variant (so no duplicate catalogue rows are created).
+ */
+export interface DesignVariantOption {
+  id: number
+  size: string
+  finish: string
+  thickness: string
+  purchase_rate: string
+  sell_rate: string
+  design: {
+    id: number | null
+    design_name: string | null
+    design_code: string | null
+    company: {
+      id: number | null
+      company_name: string | null
+    }
+  }
+}
+
 // ── Create Order ────────────────────────────────────────────────────────────
 
 /** Mirrors the backend ItemType enum. */
@@ -59,6 +84,8 @@ export interface UploadedImage {
 
 /** A single item in the create-order payload (snake_case = API contract). */
 export interface CreateOrderItemPayload {
+  /** Set when picked from the autocomplete → backend links to this exact variant. */
+  design_variant_id?: number | null
   company_name: string
   design_name: string
   size: string

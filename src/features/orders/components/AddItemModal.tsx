@@ -1,15 +1,17 @@
 import { useMemo, useState } from 'react'
 
 import { Button } from '@/components/ui/Button'
+import { Combobox } from '@/components/ui/Combobox'
 import { Input } from '@/components/ui/Input'
 import { Modal } from '@/components/ui/Modal'
 import { PhotoPicker } from '@/components/ui/PhotoPicker'
 import { RadioGroup } from '@/components/ui/RadioGroup'
 import { Select } from '@/components/ui/Select'
 
+import { useDesignVariantSearch } from '../hooks/useDesignVariantSearch'
 import { useUploadOrderItemImage } from '../hooks/useUploadOrderItemImage'
 import type { DraftItem, DraftItemInput, DraftRoom } from '../store/orderDraftStore'
-import type { ItemType, MeasurementUnit } from '../types'
+import type { DesignVariantOption, ItemType, MeasurementUnit } from '../types'
 import { calculateItem } from '../utils/calculateItem'
 import { ITEM_TYPE_OPTIONS, MEASUREMENT_UNIT_OPTIONS } from '../utils/orderOptions'
 
@@ -27,6 +29,8 @@ interface AddItemModalProps {
 /** All fields held as strings while editing; parsed on submit. */
 interface ItemFormState {
   roomTempId: string
+  /** Exact-reuse link set when a row is chosen from the autocomplete; null if typed. */
+  designVariantId: number | null
   companyName: string
   designName: string
   size: string
@@ -40,7 +44,10 @@ interface ItemFormState {
   height: string
   width: string
   purchaseRate: string
+  /** Catalogue sell rate (auto-filled reference; not persisted on the order). */
   sellRate: string
+  /** "Product Sq Ft Rate" — the rate actually charged; maps to sqft_rate. Blank on selection. */
+  sqftRate: string
   /** Line total (product_total) — auto-filled from the formula, but editable. */
   calculation: string
   productImagePath: string | null
@@ -63,6 +70,7 @@ function buildInitialState(
   if (editingItem) {
     return {
       roomTempId: editingItem.roomTempId,
+      designVariantId: editingItem.designVariantId,
       companyName: editingItem.companyName,
       designName: editingItem.designName,
       size: editingItem.size,
@@ -77,6 +85,7 @@ function buildInitialState(
       width: editingItem.width.toString(),
       purchaseRate: editingItem.purchaseRate.toString(),
       sellRate: editingItem.sellRate.toString(),
+      sqftRate: editingItem.sqftRate ? editingItem.sqftRate.toString() : '',
       calculation: editingItem.productTotal.toString(),
       productImagePath: editingItem.productImagePath,
       productImageUrl: editingItem.productImageUrl,
@@ -85,6 +94,7 @@ function buildInitialState(
 
   return {
     roomTempId: defaultRoomTempId,
+    designVariantId: null,
     companyName: '',
     designName: '',
     size: '',
@@ -99,6 +109,7 @@ function buildInitialState(
     width: '',
     purchaseRate: '',
     sellRate: '',
+    sqftRate: '',
     calculation: '',
     productImagePath: null,
     productImageUrl: null,
@@ -128,6 +139,43 @@ export function AddItemModal({
   const set = <K extends keyof ItemFormState>(key: K, value: ItemFormState[K]) =>
     setForm((prev) => ({ ...prev, [key]: value }))
 
+  // Editing any product-identity field detaches a previously selected catalogue
+  // variant, so the backend re-resolves (find-or-create) from the typed text and
+  // never silently reuses the wrong variant.
+  const setIdentity = <K extends keyof ItemFormState>(key: K, value: ItemFormState[K]) =>
+    setForm((prev) => ({ ...prev, [key]: value, designVariantId: null }))
+
+  // Server-side search; idle while a variant is already linked (e.g. editing an
+  // existing item) — typing in the field clears the link and re-enables it.
+  const variantSearch = useDesignVariantSearch(form.designName, isOpen && form.designVariantId === null)
+
+  // Picking a row fills every product field and links the item to that exact
+  // variant (no duplicate company/design/variant rows created on save).
+  const handleVariantSelect = (option: DesignVariantOption) => {
+    setForm((prev) => ({
+      ...prev,
+      designVariantId: option.id,
+      companyName: option.design.company.company_name ?? '',
+      designName: option.design.design_name ?? '',
+      size: option.size,
+      finish: option.finish,
+      thickness: option.thickness,
+      purchaseRate: option.purchase_rate,
+      sellRate: option.sell_rate,
+      // Catalogue rates are reference only; the actual Product Sq Ft Rate
+      // (sqft_rate) stays the salesman's to enter per order.
+      sqftRate: '',
+    }))
+    setErrors((prev) => ({
+      ...prev,
+      companyName: undefined,
+      designName: undefined,
+      size: undefined,
+      finish: undefined,
+      thickness: undefined,
+    }))
+  }
+
   const isBox = form.itemType === 'box'
 
   // Live preview — mirrors the server calculation exactly.
@@ -142,7 +190,9 @@ export function AddItemModal({
         height: num(form.height),
         width: num(form.width),
         purchaseRate: num(form.purchaseRate),
-        sellRate: num(form.sellRate),
+        // sell_amount is driven by the actual charged rate (Product Sq Ft Rate),
+        // not the catalogue sell rate.
+        sellRate: num(form.sqftRate),
       }),
     [form],
   )
@@ -187,6 +237,7 @@ export function AddItemModal({
     if (num(form.width) <= 0) e.width = 'Required'
     if (num(form.purchaseRate) < 0) e.purchaseRate = 'Invalid'
     if (num(form.sellRate) < 0) e.sellRate = 'Invalid'
+    if (num(form.sqftRate) <= 0) e.sqftRate = 'Enter the product sq ft rate'
     return e
   }
 
@@ -197,6 +248,7 @@ export function AddItemModal({
     if (Object.keys(found).length > 0) return
 
     const input: DraftItemInput = {
+      designVariantId: form.designVariantId,
       companyName: form.companyName.trim(),
       designName: form.designName.trim(),
       size: form.size.trim(),
@@ -213,6 +265,7 @@ export function AddItemModal({
       width: num(form.width),
       purchaseRate: num(form.purchaseRate),
       sellRate: num(form.sellRate),
+      sqftRate: num(form.sqftRate),
       productTotal: num(calculationValue),
     }
 
@@ -265,20 +318,48 @@ export function AddItemModal({
           />
         </div>
 
-        {/* Product identity */}
+        {/* Product identity — search the catalogue by design, code or company.
+            Selecting a result auto-fills the fields below and links the exact
+            variant; typing a new product leaves it unlinked (created on save). */}
+        <Combobox<DesignVariantOption>
+          label="Design Name"
+          placeholder="Search design, code or company…"
+          value={form.designName}
+          error={errors.designName}
+          onInputChange={(text) => setIdentity('designName', text)}
+          options={variantSearch.options}
+          isLoading={variantSearch.isLoading}
+          isError={variantSearch.isError}
+          isTooShort={variantSearch.isTooShort}
+          isSearchable={variantSearch.isSearchable}
+          getOptionKey={(o) => o.id}
+          onSelect={handleVariantSelect}
+          tooShortHint="Type at least 2 characters to search…"
+          emptyHint="No match — keep typing to add a new design"
+          errorHint="Couldn’t search the catalogue. Try again."
+          renderOption={(o) => (
+            <span className="flex w-full flex-col gap-0.5">
+              <span className="flex items-center justify-between gap-2">
+                <span className="truncate font-medium">{o.design.design_name}</span>
+                <span className="shrink-0 text-xs opacity-80">{o.design.company.company_name}</span>
+              </span>
+              <span className="flex items-center justify-between gap-2 text-xs opacity-80">
+                <span className="truncate">
+                  {o.size} · {o.finish} · {o.thickness}
+                </span>
+                <span className="shrink-0">
+                  Buy ₹{o.purchase_rate} · Sell ₹{o.sell_rate}
+                </span>
+              </span>
+            </span>
+          )}
+        />
         <Input
           label="Company Name"
           placeholder="e.g. Kajaria"
           value={form.companyName}
           error={errors.companyName}
-          onChange={(e) => set('companyName', e.target.value)}
-        />
-        <Input
-          label="Design Name"
-          placeholder="e.g. Cambiar Bianco Carving"
-          value={form.designName}
-          error={errors.designName}
-          onChange={(e) => set('designName', e.target.value)}
+          onChange={(e) => setIdentity('companyName', e.target.value)}
         />
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <Input
@@ -286,21 +367,21 @@ export function AddItemModal({
             placeholder="e.g. 2x4"
             value={form.size}
             error={errors.size}
-            onChange={(e) => set('size', e.target.value)}
+            onChange={(e) => setIdentity('size', e.target.value)}
           />
           <Input
             label="Finish"
             placeholder="e.g. Glossy"
             value={form.finish}
             error={errors.finish}
-            onChange={(e) => set('finish', e.target.value)}
+            onChange={(e) => setIdentity('finish', e.target.value)}
           />
           <Input
             label="Thickness"
             placeholder="e.g. 9mm"
             value={form.thickness}
             error={errors.thickness}
-            onChange={(e) => set('thickness', e.target.value)}
+            onChange={(e) => setIdentity('thickness', e.target.value)}
           />
         </div>
 
@@ -327,9 +408,9 @@ export function AddItemModal({
               label="Product Sq Ft Rate"
               inputMode="decimal"
               placeholder="0"
-              value={form.sellRate}
-              error={errors.sellRate}
-              onChange={(e) => set('sellRate', e.target.value)}
+              value={form.sqftRate}
+              error={errors.sqftRate}
+              onChange={(e) => set('sqftRate', e.target.value)}
             />
             <Input
               label="Number of boxes"
@@ -353,10 +434,10 @@ export function AddItemModal({
             <Input
               label="Product Sq Ft Rate (₹)"
               inputMode="decimal"
-              placeholder="0"
-              value={form.sellRate}
-              error={errors.sellRate}
-              onChange={(e) => set('sellRate', e.target.value)}
+              placeholder={form.sellRate || '0'}
+              value={form.sqftRate}
+              error={errors.sqftRate}
+              onChange={(e) => set('sqftRate', e.target.value)}
             />
           </div>
         )}

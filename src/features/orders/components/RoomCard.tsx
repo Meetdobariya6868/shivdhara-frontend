@@ -41,7 +41,7 @@ export function RoomCard({
       height: item.height,
       width: item.width,
       purchaseRate: item.purchaseRate,
-      sellRate: item.sellRate,
+      sellRate: item.sqftRate,
     })
     return sum + calc.sellAmount
   }, 0)

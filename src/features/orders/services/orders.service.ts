@@ -3,6 +3,7 @@ import type { ApiResponse } from '@/types'
 
 import type {
   CreateOrderPayload,
+  DesignVariantOption,
   Order,
   OrderCategory,
   OrderType,
@@ -49,6 +50,19 @@ export const ordersService = {
   /** Active order types for filter dropdowns. */
   getTypes: async (): Promise<ApiResponse<OrderType[]>> => {
     const { data } = await httpClient.get<ApiResponse<OrderType[]>>('/v1/order-types')
+    return data
+  },
+
+  /**
+   * Server-side catalogue search for the Add-Item autocomplete. Returns up to
+   * 30 active variants matching the query against design name / code / company
+   * (FULLTEXT-backed, so it scales to large catalogues).
+   */
+  searchDesignVariants: async (q: string): Promise<ApiResponse<DesignVariantOption[]>> => {
+    const { data } = await httpClient.get<ApiResponse<DesignVariantOption[]>>(
+      '/v1/design-variants/search',
+      { params: { q } },
+    )
     return data
   },
 }

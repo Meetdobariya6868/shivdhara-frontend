@@ -129,6 +129,7 @@ export default function CreateOrderPage() {
         items: items
           .filter((it) => it.roomTempId === room.tempId)
           .map((it) => ({
+            design_variant_id: it.designVariantId,
             company_name: it.companyName,
             design_name: it.designName,
             size: it.size,
@@ -143,7 +144,9 @@ export default function CreateOrderPage() {
             height: it.height,
             width: it.width,
             purchase_rate: it.purchaseRate,
-            sell_rate: it.sellRate,
+            // Backend maps sell_rate → order_items.sqft_rate; the actual charged
+            // Product Sq Ft Rate is the source of truth (not the catalogue rate).
+            sell_rate: it.sqftRate,
             product_total: it.productTotal,
           })),
       })),
