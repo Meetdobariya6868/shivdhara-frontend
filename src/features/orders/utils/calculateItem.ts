@@ -52,7 +52,10 @@ export function calculateItem(input: ItemCalcInput): ItemCalcResult {
       ? (input.numberOfBoxes ?? 0) * (input.piecesPerBox ?? 0)
       : (input.numberOfPieces ?? 0)
 
-  const totalSqft = round(areaSqft * totalPieces, 4)
+  // Billing is by the product's height × width area (in sqft) × rate. Quantity
+  // (boxes / pieces) is tracked on the order for ordering purposes but does NOT
+  // scale the charged area, so it is intentionally excluded from totalSqft.
+  const totalSqft = areaSqft
   const purchaseAmount = round(totalSqft * input.purchaseRate, 2)
   const sellAmount = round(totalSqft * input.sellRate, 2)
   const profit = round(sellAmount - purchaseAmount, 2)
