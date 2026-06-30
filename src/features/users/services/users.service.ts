@@ -16,6 +16,12 @@ export const usersService = {
     return data
   },
 
+  /** A single salesman, including their orders_count (for the detail header). */
+  getById: async (id: number): Promise<ApiResponse<Salesman>> => {
+    const { data } = await httpClient.get<ApiResponse<Salesman>>(`/v1/users/${id}`)
+    return data
+  },
+
   /** Create a new salesman account. Admin-only. */
   create: async (payload: CreateSalesmanPayload): Promise<ApiResponse<Salesman>> => {
     const { data } = await httpClient.post<ApiResponse<Salesman>>('/v1/users', payload)

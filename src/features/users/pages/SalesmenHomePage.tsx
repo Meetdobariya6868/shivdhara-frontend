@@ -1,7 +1,9 @@
 import { useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { GreetingHeader } from '@/components/GreetingHeader'
 import { SearchBar } from '@/components/ui/SearchBar'
+import { paths } from '@/routes/paths'
 
 import { SalesmenGrid } from '../components/SalesmenGrid'
 import { useSalesmen } from '../hooks/useSalesmen'
@@ -14,6 +16,7 @@ import { filterSalesmen } from '../utils/filterSalesmen'
  * so typing in the search box is instant and never hits the network.
  */
 export default function SalesmenHomePage() {
+  const navigate = useNavigate()
   const [search, setSearch] = useState('')
   const { data, isLoading, isError, refetch } = useSalesmen()
 
@@ -40,6 +43,9 @@ export default function SalesmenHomePage() {
             isError={isError}
             searchActive={search.trim().length > 0}
             onRetry={() => void refetch()}
+            onCardClick={(salesman) => {
+              void navigate(paths.salesmanDetail(salesman.id))
+            }}
           />
         </div>
       </div>

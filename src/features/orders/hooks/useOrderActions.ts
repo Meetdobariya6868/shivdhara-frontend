@@ -1,0 +1,61 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import type { QueryClient } from '@tanstack/react-query'
+
+import type { ApiResponse } from '@/types'
+
+import { ordersService } from '../services/orders.service'
+import type { OrderDetail, OrderStatus } from '../types'
+import { ordersKeys } from './useOrders'
+
+/**
+ * Prime the detail cache with the freshly returned graph and invalidate the
+ * affected lists so every view of this order stays consistent after a mutation.
+ */
+function syncOrderDetail(qc: QueryClient, res: ApiResponse<OrderDetail>): void {
+  const order = res.data
+  qc.setQueryData(ordersKeys.detail(order.id), res)
+  void qc.invalidateQueries({ queryKey: ordersKeys.list() })
+  void qc.invalidateQueries({ queryKey: ordersKeys.byUser(order.creator.id) })
+}
+
+/** Change an order's workflow status (Confirm Order). */
+export function useUpdateOrderStatus() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, status }: { id: number; status: OrderStatus }) =>
+      ordersService.updateStatus(id, status),
+    onSuccess: (res) => syncOrderDetail(qc, res),
+  })
+}
+
+/** Soft-delete an order. Caller handles navigation on success. */
+export function useDeleteOrder() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (id: number) => ordersService.remove(id),
+    onSuccess: (_res, id) => {
+      qc.removeQueries({ queryKey: ordersKeys.detail(id) })
+      void qc.invalidateQueries({ queryKey: ordersKeys.all })
+    },
+  })
+}
+
+/** Rename a room within an order. */
+export function useRenameRoom() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ roomId, roomName }: { roomId: number; roomName: string }) =>
+      ordersService.renameRoom(roomId, roomName),
+    onSuccess: (res) => syncOrderDetail(qc, res),
+  })
+}
+
+/** Move an item to another room of the same order. */
+export function useMoveOrderItem() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ itemId, roomId }: { itemId: number; roomId: number }) =>
+      ordersService.moveItem(itemId, roomId),
+    onSuccess: (res) => syncOrderDetail(qc, res),
+  })
+}

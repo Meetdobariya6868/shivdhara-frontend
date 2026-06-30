@@ -6,6 +6,7 @@ import { usersService } from '../services/users.service'
 export const usersKeys = {
   all: ['users'] as const,
   list: () => [...usersKeys.all, 'list'] as const,
+  detail: (id: number) => [...usersKeys.all, 'detail', id] as const,
 }
 
 /**

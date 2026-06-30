@@ -2,9 +2,12 @@ import type { AuthUser } from '@/features/auth/types'
 
 /**
  * A salesman record as returned by GET /users (UserResource).
- * Structurally identical to AuthUser — aliased for domain clarity.
+ * Structurally AuthUser plus an optional orders_count, which the backend
+ * includes only on the single-salesman detail endpoint (GET /users/{id}).
  */
-export type Salesman = AuthUser
+export type Salesman = AuthUser & {
+  orders_count?: number
+}
 
 /** Query parameters accepted by the salesman list endpoint. */
 export interface SalesmenQuery {

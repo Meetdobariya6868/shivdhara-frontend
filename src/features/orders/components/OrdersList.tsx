@@ -11,6 +11,7 @@ interface OrdersListProps {
   isError: boolean
   hasFilters: boolean
   onRetry: () => void
+  onOrderClick: (order: Order) => void
 }
 
 const SKELETON_COUNT = 6
@@ -22,6 +23,7 @@ export function OrdersList({
   isError,
   hasFilters,
   onRetry,
+  onOrderClick,
 }: OrdersListProps) {
   if (isLoading) {
     return (
@@ -84,7 +86,7 @@ export function OrdersList({
 
       <div className="flex flex-col gap-3">
         {orders.map((order) => (
-          <OrderCard key={order.id} order={order} />
+          <OrderCard key={order.id} order={order} onClick={onOrderClick} />
         ))}
       </div>
     </div>

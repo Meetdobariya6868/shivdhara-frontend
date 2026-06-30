@@ -19,6 +19,9 @@ export interface OrderType {
   name: string
 }
 
+/** Workflow state — mirrors the backend OrderStatus enum. */
+export type OrderStatus = 'pending' | 'confirmed'
+
 export interface Order {
   id: number
   order_date: string
@@ -26,6 +29,8 @@ export interface Order {
   creator: OrderCreator
   category: OrderCategory
   type: OrderType
+  status: OrderStatus
+  status_label: string
   advance_payment: string
   transportation_charge: string
   grand_total: string
@@ -124,4 +129,44 @@ export interface CreateOrderPayload {
   /** Sent only for "Architect" order types; null otherwise. */
   architect_name?: string | null
   rooms: CreateOrderRoomPayload[]
+}
+
+// ── Order detail (GET /orders/{id}) ──────────────────────────────────────────
+
+/** Catalogue identity of an item, as returned by OrderItemResource. */
+export interface OrderItemProduct {
+  company_name: string | null
+  design_name: string | null
+  size: string | null
+  finish: string | null
+  thickness: string | null
+}
+
+/** One persisted product line within a room (decimal fields arrive as strings). */
+export interface OrderDetailItem {
+  id: number
+  product: OrderItemProduct
+  product_image_url: string | null
+  item_type: ItemType
+  pieces_per_box: number | null
+  number_of_boxes: number | null
+  number_of_pieces: number | null
+  measurement_unit: MeasurementUnit
+  height: string
+  width: string
+  sqft_rate: string
+  product_total: string
+}
+
+/** A room with its items, ordered by sort_order. */
+export interface OrderDetailRoom {
+  id: number
+  room_name: string
+  sort_order: number
+  items: OrderDetailItem[]
+}
+
+/** Full order detail: the list-row Order plus its room/item graph. */
+export interface OrderDetail extends Order {
+  rooms: OrderDetailRoom[]
 }

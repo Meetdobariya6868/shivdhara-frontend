@@ -6,6 +6,8 @@ export const ordersKeys = {
   all: ['orders'] as const,
   list: () => [...ordersKeys.all, 'list'] as const,
   meta: () => [...ordersKeys.all, 'meta'] as const,
+  detail: (id: number) => [...ordersKeys.all, 'detail', id] as const,
+  byUser: (userId: number) => [...ordersKeys.all, 'by-user', userId] as const,
 }
 
 /**

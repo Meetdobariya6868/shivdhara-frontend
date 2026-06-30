@@ -16,9 +16,13 @@ export const paths = {
   /** Order management (Phase 5). */
   orders: '/orders',
   ordersCreate: '/orders/create',
+  /** Single order detail (admin, or the salesman who created it). */
+  orderDetail: (id: number | string) => `/orders/${id}`,
 
   /** Add salesman (admin only). */
   addSalesman: '/salesmen/add',
+  /** Salesman detail — profile + their orders (admin only). */
+  salesmanDetail: (id: number | string) => `/salesmen/${id}`,
 
   /** Customer management (Phase 4). */
   customers: '/customers',

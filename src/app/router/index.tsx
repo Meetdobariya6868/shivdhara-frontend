@@ -21,11 +21,17 @@ const SplashPage = lazy(() => import('@/pages/SplashPage'))
 const LoginPage = lazy(() => import('@/features/auth/pages/LoginPage'))
 const HomePage = lazy(() => import('@/pages/HomePage'))
 const OrdersPage = lazy(() => import('@/features/orders/pages/OrdersPage'))
+const OrderDetailPage = lazy(
+  () => import('@/features/orders/pages/OrderDetailPage'),
+)
 const CreateOrderPage = lazy(
   () => import('@/features/orders/pages/CreateOrderPage'),
 )
 const AddSalesmanPage = lazy(
   () => import('@/features/users/pages/AddSalesmanPage'),
+)
+const SalesmanDetailPage = lazy(
+  () => import('@/features/users/pages/SalesmanDetailPage'),
 )
 const CustomersPage = lazy(
   () => import('@/features/customers/pages/CustomersPage'),
@@ -70,6 +76,8 @@ export const router = createBrowserRouter([
           { path: paths.dashboard, element: withSuspense(<HomePage />) },
           { path: paths.ordersCreate, element: withSuspense(<CreateOrderPage />) },
           { path: paths.profile, element: withSuspense(<ProfilePage />) },
+          // Order detail — backend enforces admin-or-creator access (OrderPolicy@view)
+          { path: '/orders/:orderId', element: withSuspense(<OrderDetailPage />) },
 
           // Admin-only
           {
@@ -78,6 +86,7 @@ export const router = createBrowserRouter([
               { path: paths.orders,       element: withSuspense(<OrdersPage />) },
               { path: paths.addSalesman,  element: withSuspense(<AddSalesmanPage />) },
               { path: paths.customers,    element: withSuspense(<CustomersPage />) },
+              { path: '/salesmen/:salesmanId', element: withSuspense(<SalesmanDetailPage />) },
             ],
           },
         ],

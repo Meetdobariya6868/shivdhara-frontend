@@ -6,6 +6,8 @@ import type {
   DesignVariantOption,
   Order,
   OrderCategory,
+  OrderDetail,
+  OrderStatus,
   OrderType,
   UploadedImage,
 } from '../types'
@@ -17,9 +19,54 @@ export const ordersService = {
     return data
   },
 
+  /** Orders created by a single salesman (admin, or the salesman themselves). */
+  listByUser: async (userId: number): Promise<ApiResponse<Order[]>> => {
+    const { data } = await httpClient.get<ApiResponse<Order[]>>(`/v1/users/${userId}/orders`)
+    return data
+  },
+
+  /** Single order with its full room/item graph. */
+  getById: async (id: number): Promise<ApiResponse<OrderDetail>> => {
+    const { data } = await httpClient.get<ApiResponse<OrderDetail>>(`/v1/orders/${id}`)
+    return data
+  },
+
   /** Create a full order (customer + rooms + items). */
   create: async (payload: CreateOrderPayload): Promise<ApiResponse<Order>> => {
     const { data } = await httpClient.post<ApiResponse<Order>>('/v1/orders', payload)
+    return data
+  },
+
+  /** Change an order's workflow status (e.g. confirm). Returns the updated detail. */
+  updateStatus: async (id: number, status: OrderStatus): Promise<ApiResponse<OrderDetail>> => {
+    const { data } = await httpClient.patch<ApiResponse<OrderDetail>>(
+      `/v1/orders/${id}/status`,
+      { status },
+    )
+    return data
+  },
+
+  /** Soft-delete an order. */
+  remove: async (id: number): Promise<ApiResponse<null>> => {
+    const { data } = await httpClient.delete<ApiResponse<null>>(`/v1/orders/${id}`)
+    return data
+  },
+
+  /** Rename a room. Returns the reloaded parent order detail. */
+  renameRoom: async (roomId: number, roomName: string): Promise<ApiResponse<OrderDetail>> => {
+    const { data } = await httpClient.patch<ApiResponse<OrderDetail>>(
+      `/v1/order-rooms/${roomId}`,
+      { room_name: roomName },
+    )
+    return data
+  },
+
+  /** Move an item to another room of the same order. Returns the updated detail. */
+  moveItem: async (itemId: number, roomId: number): Promise<ApiResponse<OrderDetail>> => {
+    const { data } = await httpClient.patch<ApiResponse<OrderDetail>>(
+      `/v1/order-items/${itemId}/move`,
+      { room_id: roomId },
+    )
     return data
   },
 

@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { FilterIcon, SearchIcon, XIcon } from '@/components/icons'
+import { paths } from '@/routes/paths'
 
 import { useOrders } from '../hooks/useOrders'
 import type { OrderFilters } from '../types'
@@ -18,6 +20,7 @@ import { OrdersList } from '../components/OrdersList'
  * No API call fires on keystroke or filter change.
  */
 export default function OrdersPage() {
+  const navigate = useNavigate()
   const [isSheetOpen, setIsSheetOpen]   = useState(false)
   const [sheetKey, setSheetKey]         = useState(0)
   const [search, setSearch]             = useState('')
@@ -164,6 +167,9 @@ export default function OrdersPage() {
           isError={isError}
           hasFilters={activeFilterCount > 0}
           onRetry={() => void refetch()}
+          onOrderClick={(order) => {
+            void navigate(paths.orderDetail(order.id))
+          }}
         />
       </div>
 
