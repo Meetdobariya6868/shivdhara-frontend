@@ -86,7 +86,7 @@ function buildInitialState(
       purchaseRate: editingItem.purchaseRate.toString(),
       sellRate: editingItem.sellRate.toString(),
       sqftRate: editingItem.sqftRate ? editingItem.sqftRate.toString() : '',
-      calculation: editingItem.productTotal.toString(),
+      calculation: '',
       productImagePath: editingItem.productImagePath,
       productImageUrl: editingItem.productImageUrl,
     }

@@ -131,6 +131,25 @@ export interface CreateOrderPayload {
   rooms: CreateOrderRoomPayload[]
 }
 
+// ── Update order item (PATCH /order-items/{id}) ─────────────────────────────
+
+export interface UpdateOrderItemPayload {
+  /**
+   * Omit to keep the existing image; send null to clear it; send a storage path
+   * (from POST /order-item-images) to replace it.
+   */
+  product_image_path?: string | null
+  item_type: ItemType
+  pieces_per_box?: number | null
+  number_of_boxes?: number | null
+  number_of_pieces?: number | null
+  measurement_unit: MeasurementUnit
+  height: number
+  width: number
+  sqft_rate: number
+  product_total: number
+}
+
 // ── Order detail (GET /orders/{id}) ──────────────────────────────────────────
 
 /** Catalogue identity of an item, as returned by OrderItemResource. */

@@ -9,6 +9,7 @@ import type {
   OrderDetail,
   OrderStatus,
   OrderType,
+  UpdateOrderItemPayload,
   UploadedImage,
 } from '../types'
 
@@ -58,6 +59,21 @@ export const ordersService = {
       `/v1/order-rooms/${roomId}`,
       { room_name: roomName },
     )
+    return data
+  },
+
+  /** Update mutable item fields. Returns the updated parent order detail. */
+  updateItem: async (id: number, payload: UpdateOrderItemPayload): Promise<ApiResponse<OrderDetail>> => {
+    const { data } = await httpClient.patch<ApiResponse<OrderDetail>>(
+      `/v1/order-items/${id}`,
+      payload,
+    )
+    return data
+  },
+
+  /** Soft-delete an item. Returns the updated parent order detail for cache sync. */
+  deleteItem: async (id: number): Promise<ApiResponse<OrderDetail>> => {
+    const { data } = await httpClient.delete<ApiResponse<OrderDetail>>(`/v1/order-items/${id}`)
     return data
   },
 

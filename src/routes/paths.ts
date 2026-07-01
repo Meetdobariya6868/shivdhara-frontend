@@ -21,6 +21,9 @@ export const paths = {
   /** Order item (product) detail — nested under the parent order. */
   orderItemDetail: (orderId: number | string, itemId: number | string) =>
     `/orders/${orderId}/items/${itemId}`,
+  /** Edit form for a single order item. */
+  orderItemEdit: (orderId: number | string, itemId: number | string) =>
+    `/orders/${orderId}/items/${itemId}/edit`,
 
   /** Add salesman (admin only). */
   addSalesman: '/salesmen/add',

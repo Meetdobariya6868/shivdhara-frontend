@@ -27,6 +27,9 @@ const OrderDetailPage = lazy(
 const OrderItemDetailPage = lazy(
   () => import('@/features/orders/pages/OrderItemDetailPage'),
 )
+const EditOrderItemPage = lazy(
+  () => import('@/features/orders/pages/EditOrderItemPage'),
+)
 const CreateOrderPage = lazy(
   () => import('@/features/orders/pages/CreateOrderPage'),
 )
@@ -82,6 +85,7 @@ export const router = createBrowserRouter([
           // Order detail — backend enforces admin-or-creator access (OrderPolicy@view)
           { path: '/orders/:orderId', element: withSuspense(<OrderDetailPage />) },
           { path: '/orders/:orderId/items/:itemId', element: withSuspense(<OrderItemDetailPage />) },
+          { path: '/orders/:orderId/items/:itemId/edit', element: withSuspense(<EditOrderItemPage />) },
 
           // Admin-only
           {

@@ -1,11 +1,15 @@
+import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
 import { EditIcon, ImageIcon, TrashIcon } from '@/components/icons'
 import { PageHeader } from '@/components/PageHeader'
 import { Button } from '@/components/ui/Button'
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
 import { StateMessage } from '@/components/ui/StateMessage'
+import { paths } from '@/routes/paths'
 
 import { useOrder } from '../hooks/useOrder'
+import { useDeleteOrderItem } from '../hooks/useOrderActions'
 import { formatINR } from '../utils/formatters'
 
 export default function OrderItemDetailPage() {
@@ -15,6 +19,8 @@ export default function OrderItemDetailPage() {
   const itmId = Number(itemId)
 
   const { data, isLoading, isError, refetch } = useOrder(ordId)
+  const deleteItem = useDeleteOrderItem()
+  const [confirmDelete, setConfirmDelete] = useState(false)
 
   const goBack = () => {
     void navigate(-1)
@@ -155,28 +161,46 @@ export default function OrderItemDetailPage() {
           </div>
         </div>
 
-        {/* Actions — Edit + Delete (stubbed, not yet implemented) */}
+        {/* Actions */}
         <div className="flex gap-3">
           <button
             type="button"
-            disabled
-            aria-label="Edit item (coming soon)"
-            className="inline-flex flex-1 cursor-not-allowed items-center justify-center gap-2 rounded-xl border border-border bg-card px-4 py-3.5 text-sm font-semibold text-muted opacity-50"
+            onClick={() => { void navigate(paths.orderItemEdit(ordId, itmId)) }}
+            aria-label="Edit item"
+            className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-border bg-card px-4 py-3.5 text-sm font-semibold text-foreground transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             <EditIcon size={16} />
             Edit
           </button>
           <button
             type="button"
-            disabled
-            aria-label="Delete item (coming soon)"
-            className="inline-flex flex-1 cursor-not-allowed items-center justify-center gap-2 rounded-xl border border-error/40 bg-card px-4 py-3.5 text-sm font-semibold text-error/50 opacity-50"
+            onClick={() => setConfirmDelete(true)}
+            aria-label="Delete item"
+            className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-error/50 bg-card px-4 py-3.5 text-sm font-semibold text-error transition-colors hover:bg-error/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             <TrashIcon size={16} />
             Delete
           </button>
         </div>
       </div>
+
+      <ConfirmDialog
+        isOpen={confirmDelete}
+        title="Delete this item?"
+        message="This will permanently remove the product from the order and recalculate the order total. This action cannot be undone."
+        confirmLabel="Delete"
+        destructive
+        isLoading={deleteItem.isPending}
+        onClose={() => setConfirmDelete(false)}
+        onConfirm={() =>
+          deleteItem.mutate(itmId, {
+            onSuccess: () => {
+              setConfirmDelete(false)
+              void navigate(paths.orderDetail(ordId))
+            },
+          })
+        }
+      />
     </div>
   )
 }

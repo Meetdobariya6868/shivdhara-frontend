@@ -4,7 +4,7 @@ import type { QueryClient } from '@tanstack/react-query'
 import type { ApiResponse } from '@/types'
 
 import { ordersService } from '../services/orders.service'
-import type { OrderDetail, OrderStatus } from '../types'
+import type { OrderDetail, OrderStatus, UpdateOrderItemPayload } from '../types'
 import { ordersKeys } from './useOrders'
 
 /**
@@ -46,6 +46,25 @@ export function useRenameRoom() {
   return useMutation({
     mutationFn: ({ roomId, roomName }: { roomId: number; roomName: string }) =>
       ordersService.renameRoom(roomId, roomName),
+    onSuccess: (res) => syncOrderDetail(qc, res),
+  })
+}
+
+/** Update mutable fields of a single order item. */
+export function useUpdateOrderItem() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, payload }: { id: number; payload: UpdateOrderItemPayload }) =>
+      ordersService.updateItem(id, payload),
+    onSuccess: (res) => syncOrderDetail(qc, res),
+  })
+}
+
+/** Soft-delete a single order item. Caller handles navigation on success. */
+export function useDeleteOrderItem() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (id: number) => ordersService.deleteItem(id),
     onSuccess: (res) => syncOrderDetail(qc, res),
   })
 }
