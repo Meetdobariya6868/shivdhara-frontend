@@ -7,6 +7,7 @@ import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
 import { DetailRow } from '@/components/ui/DetailRow'
 import { StateMessage } from '@/components/ui/StateMessage'
 import { useAuthStore } from '@/features/auth/store/auth.store'
+import { paths } from '@/routes/paths'
 
 import { MoveItemModal } from '../components/MoveItemModal'
 import { OrderDetailSkeleton } from '../components/OrderDetailSkeleton'
@@ -131,6 +132,9 @@ export default function OrderDetailPage() {
                 canEdit={canEdit}
                 onRename={setRoomToRename}
                 onMoveItem={setItemToMove}
+                onItemClick={(item) => {
+                  void navigate(paths.orderItemDetail(id, item.id))
+                }}
               />
             ))
           )}

@@ -18,6 +18,9 @@ export const paths = {
   ordersCreate: '/orders/create',
   /** Single order detail (admin, or the salesman who created it). */
   orderDetail: (id: number | string) => `/orders/${id}`,
+  /** Order item (product) detail — nested under the parent order. */
+  orderItemDetail: (orderId: number | string, itemId: number | string) =>
+    `/orders/${orderId}/items/${itemId}`,
 
   /** Add salesman (admin only). */
   addSalesman: '/salesmen/add',

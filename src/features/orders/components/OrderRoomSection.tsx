@@ -9,6 +9,8 @@ interface OrderRoomSectionProps {
   canEdit: boolean
   onRename: (room: OrderDetailRoom) => void
   onMoveItem: (item: OrderDetailItem) => void
+  /** Navigate to the item detail screen. */
+  onItemClick: (item: OrderDetailItem) => void
 }
 
 /** Human-readable quantity, mirroring the box/piece distinction. */
@@ -19,7 +21,7 @@ function quantityLabel(item: OrderDetailItem): string {
 }
 
 /** One room card on the order detail screen: title, rename control and its items. */
-export function OrderRoomSection({ room, canEdit, onRename, onMoveItem }: OrderRoomSectionProps) {
+export function OrderRoomSection({ room, canEdit, onRename, onMoveItem, onItemClick }: OrderRoomSectionProps) {
   return (
     <section className="flex flex-col gap-3 rounded-3xl border border-border bg-card p-4">
       {/* Header: room name + rename */}
@@ -42,7 +44,15 @@ export function OrderRoomSection({ room, canEdit, onRename, onMoveItem }: OrderR
       {/* Items */}
       <div className="flex flex-col gap-2">
         {room.items.map((item) => (
-          <div key={item.id} className="flex items-center gap-3 rounded-2xl bg-surface px-3 py-3">
+          <div
+            key={item.id}
+            role="button"
+            tabIndex={0}
+            onClick={() => onItemClick(item)}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onItemClick(item) }}
+            aria-label={`View details for ${item.product.design_name ?? 'product'}`}
+            className="flex items-center gap-3 rounded-2xl bg-surface px-3 py-3 text-left transition-opacity hover:opacity-80 active:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
             {/* Thumbnail */}
             {item.product_image_url ? (
               <img
@@ -75,7 +85,10 @@ export function OrderRoomSection({ room, canEdit, onRename, onMoveItem }: OrderR
               {canEdit && (
                 <button
                   type="button"
-                  onClick={() => onMoveItem(item)}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onMoveItem(item)
+                  }}
                   className="text-xs font-semibold text-primary underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
                   Move
