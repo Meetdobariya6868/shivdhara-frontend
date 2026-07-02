@@ -19,22 +19,23 @@ import type {
   OrderDetailItem,
   UpdateOrderItemPayload,
 } from '../types'
-import { calculateItem } from '../utils/calculateItem'
+import { calculateItem, lineTotal } from '../utils/calculateItem'
 import { ITEM_TYPE_OPTIONS, MEASUREMENT_UNIT_OPTIONS } from '../utils/orderOptions'
 
 // ── Form state ────────────────────────────────────────────────────────────────
 
 interface EditItemFormState {
   itemType: ItemType
+  /** Boxes ordered (box items) or pieces ordered (piece items). */
+  quantity: string
+  /** Box items only. */
   piecesPerBox: string
-  numberOfBoxes: string
-  numberOfPieces: string
   measurementUnit: MeasurementUnit
   height: string
   width: string
   sqftRate: string
-  /** The displayed / overridden line total. Empty string means "use auto". */
-  calculation: string
+  /** The displayed / overridden per-item price. Empty string means "use auto". */
+  pricePerItem: string
   /**
    * undefined = keep existing (omit from payload)
    * null      = remove image
@@ -54,14 +55,13 @@ function num(s: string): number {
 function buildInitialState(item: OrderDetailItem): EditItemFormState {
   return {
     itemType: item.item_type,
+    quantity: item.quantity.toString(),
     piecesPerBox: item.pieces_per_box?.toString() ?? '',
-    numberOfBoxes: item.number_of_boxes?.toString() ?? '',
-    numberOfPieces: item.number_of_pieces?.toString() ?? '',
     measurementUnit: item.measurement_unit,
     height: item.height,
     width: item.width,
     sqftRate: item.sqft_rate,
-    calculation: '',
+    pricePerItem: '',
     productImagePath: undefined,
     productImageUrl: item.product_image_url,
   }
@@ -73,10 +73,9 @@ interface EditItemFormProps {
   item: OrderDetailItem
   ordId: number
   itmId: number
-  onBack: () => void
 }
 
-function EditItemForm({ item, ordId, itmId, onBack }: EditItemFormProps) {
+function EditItemForm({ item, ordId, itmId }: EditItemFormProps) {
   const navigate = useNavigate()
   const [form, setForm] = useState<EditItemFormState>(() => buildInitialState(item))
   const [errors, setErrors] = useState<FormErrors>({})
@@ -95,20 +94,24 @@ function EditItemForm({ item, ordId, itmId, onBack }: EditItemFormProps) {
     () =>
       calculateItem({
         itemType: form.itemType,
+        quantity: num(form.quantity),
         piecesPerBox: num(form.piecesPerBox),
-        numberOfBoxes: num(form.numberOfBoxes),
-        numberOfPieces: num(form.numberOfPieces),
         measurementUnit: form.measurementUnit,
         height: num(form.height),
         width: num(form.width),
-        purchaseRate: 0,
-        sellRate: num(form.sqftRate),
+        sqftRate: num(form.sqftRate),
       }),
     [form],
   )
 
-  const autoCalculation = calc.sellAmount ? calc.sellAmount.toString() : ''
-  const calculationValue = form.calculation !== '' ? form.calculation : autoCalculation
+  const autoPricePerItem = calc.pricePerItem ? calc.pricePerItem.toString() : ''
+  const pricePerItemValue = form.pricePerItem !== '' ? form.pricePerItem : autoPricePerItem
+  const productTotal = lineTotal(
+    form.itemType,
+    num(form.quantity),
+    num(form.piecesPerBox),
+    num(pricePerItemValue),
+  )
 
   const handlePhotoSelect = (file: File) => {
     upload.mutate(file, {
@@ -126,11 +129,16 @@ function EditItemForm({ item, ordId, itmId, onBack }: EditItemFormProps) {
 
   const validate = (): FormErrors => {
     const e: FormErrors = {}
-    if (isBox) {
-      if (num(form.piecesPerBox) <= 0) e.piecesPerBox = 'Required'
-      if (num(form.numberOfBoxes) <= 0) e.numberOfBoxes = 'Required'
-    } else {
-      if (num(form.numberOfPieces) <= 0) e.numberOfPieces = 'Required'
+    // Quantity and pieces-per-box accept 0; only a blank (or negative) is rejected.
+    if (form.quantity.trim() === '') {
+      e.quantity = isBox ? 'Enter the number of boxes' : 'Enter the number of pieces'
+    } else if (num(form.quantity) < 0) {
+      e.quantity = 'Cannot be negative'
+    }
+    if (isBox && form.piecesPerBox.trim() === '') {
+      e.piecesPerBox = 'Required'
+    } else if (isBox && num(form.piecesPerBox) < 0) {
+      e.piecesPerBox = 'Cannot be negative'
     }
     if (num(form.sqftRate) <= 0) e.sqftRate = 'Enter the product sq ft rate'
     if (num(form.height) <= 0) e.height = 'Required'
@@ -148,14 +156,13 @@ function EditItemForm({ item, ordId, itmId, onBack }: EditItemFormProps) {
 
     const payload: UpdateOrderItemPayload = {
       item_type: form.itemType,
+      quantity: num(form.quantity),
+      pieces_per_box: isBox ? num(form.piecesPerBox) : null,
       measurement_unit: form.measurementUnit,
       height: num(form.height),
       width: num(form.width),
       sqft_rate: num(form.sqftRate),
-      product_total: num(calculationValue),
-      pieces_per_box: isBox ? num(form.piecesPerBox) : null,
-      number_of_boxes: isBox ? num(form.numberOfBoxes) : null,
-      number_of_pieces: isBox ? null : num(form.numberOfPieces),
+      price_per_item: num(pricePerItemValue),
     }
 
     // Only send image path if it changed (undefined = keep existing on server).
@@ -212,8 +219,9 @@ function EditItemForm({ item, ordId, itmId, onBack }: EditItemFormProps) {
       />
 
       {/* Conditional quantity fields */}
-      {isBox ? (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      {/* Quantity + rate; pieces-per-box shown only for box items */}
+      <div className={`grid grid-cols-1 gap-4 ${isBox ? 'sm:grid-cols-3' : 'sm:grid-cols-2'}`}>
+        {isBox && (
           <Input
             label="Pieces per box"
             inputMode="numeric"
@@ -222,43 +230,24 @@ function EditItemForm({ item, ordId, itmId, onBack }: EditItemFormProps) {
             error={errors.piecesPerBox}
             onChange={(e) => set('piecesPerBox', e.target.value)}
           />
-          <Input
-            label="Product Sq Ft Rate"
-            inputMode="decimal"
-            placeholder="0"
-            value={form.sqftRate}
-            error={errors.sqftRate}
-            onChange={(e) => set('sqftRate', e.target.value)}
-          />
-          <Input
-            label="Number of boxes"
-            inputMode="numeric"
-            placeholder="0"
-            value={form.numberOfBoxes}
-            error={errors.numberOfBoxes}
-            onChange={(e) => set('numberOfBoxes', e.target.value)}
-          />
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <Input
-            label="Number of pieces"
-            inputMode="numeric"
-            placeholder="0"
-            value={form.numberOfPieces}
-            error={errors.numberOfPieces}
-            onChange={(e) => set('numberOfPieces', e.target.value)}
-          />
-          <Input
-            label="Product Sq Ft Rate"
-            inputMode="decimal"
-            placeholder="0"
-            value={form.sqftRate}
-            error={errors.sqftRate}
-            onChange={(e) => set('sqftRate', e.target.value)}
-          />
-        </div>
-      )}
+        )}
+        <Input
+          label={isBox ? 'Number of boxes' : 'Number of pieces'}
+          inputMode="numeric"
+          placeholder="0"
+          value={form.quantity}
+          error={errors.quantity}
+          onChange={(e) => set('quantity', e.target.value)}
+        />
+        <Input
+          label="Product Sq Ft Rate"
+          inputMode="decimal"
+          placeholder="0"
+          value={form.sqftRate}
+          error={errors.sqftRate}
+          onChange={(e) => set('sqftRate', e.target.value)}
+        />
+      </div>
 
       {/* Dimensions */}
       <div className="grid grid-cols-3 gap-3">
@@ -286,20 +275,20 @@ function EditItemForm({ item, ordId, itmId, onBack }: EditItemFormProps) {
         />
       </div>
 
-      {/* Calculation — auto-filled from formula; user can override */}
+      {/* Per-piece price — auto-filled from area × sqft rate; user can override */}
       <Input
-        label="Calculation"
+        label="Price per piece"
         inputMode="decimal"
         placeholder="0"
-        value={calculationValue}
-        onChange={(e) => set('calculation', e.target.value)}
+        value={pricePerItemValue}
+        onChange={(e) => set('pricePerItem', e.target.value)}
       />
 
-      {/* Product price — read-only display mirroring calculation */}
+      {/* Product total — read-only, derived from price per piece × total pieces */}
       <div className="flex items-center justify-between rounded-2xl bg-card px-4 py-3.5">
-        <span className="text-sm text-muted">Product price</span>
+        <span className="text-sm text-muted">Product total</span>
         <span className="text-base font-bold tabular-nums text-card-foreground">
-          ₹{Number(calculationValue || '0').toFixed(2)}
+          ₹{productTotal.toFixed(2)}
         </span>
       </div>
 
@@ -377,7 +366,7 @@ export default function EditOrderItemPage() {
   return (
     <div className="mx-auto max-w-2xl">
       <PageHeader title="Edit Item" onBack={goBack} />
-      <EditItemForm item={item} ordId={ordId} itmId={itmId} onBack={goBack} />
+      <EditItemForm item={item} ordId={ordId} itmId={itmId} />
     </div>
   )
 }

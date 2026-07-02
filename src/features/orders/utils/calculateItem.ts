@@ -17,48 +17,69 @@ function round(value: number, decimals: number): number {
   return Math.round((value + Number.EPSILON) * factor) / factor
 }
 
-export interface ItemCalcInput {
-  itemType: ItemType
-  piecesPerBox?: number | null
-  numberOfBoxes?: number | null
-  numberOfPieces?: number | null
-  measurementUnit: MeasurementUnit
-  height: number
-  width: number
-  purchaseRate: number
-  sellRate: number
-}
-
-export interface ItemCalcResult {
-  areaSqft: number
-  totalPieces: number
-  totalSqft: number
-  purchaseAmount: number
-  sellAmount: number
-  profit: number
+/** Pieces billed for a line: boxes × piecesPerBox (box) or the piece count (piece). */
+export function totalPieces(
+  itemType: ItemType,
+  quantity: number,
+  piecesPerBox?: number | null,
+): number {
+  return itemType === 'box' ? quantity * (piecesPerBox ?? 0) : quantity
 }
 
 /**
- * Pure, framework-free item calculation. The server recomputes these values on
- * submit, so this is preview-only — but kept byte-for-byte aligned with the
- * backend formula.
+ * Line total from a (possibly hand-overridden) per-item price. Mirrors the
+ * server-side OrderService::computeProductTotal exactly, so the preview and the
+ * persisted total agree.
+ */
+export function lineTotal(
+  itemType: ItemType,
+  quantity: number,
+  piecesPerBox: number | null | undefined,
+  pricePerItem: number,
+): number {
+  return round(pricePerItem * totalPieces(itemType, quantity, piecesPerBox), 2)
+}
+
+export interface ItemCalcInput {
+  itemType: ItemType
+  /** Boxes ordered (box items) or pieces ordered (piece items). */
+  quantity: number
+  /** Box items only. */
+  piecesPerBox?: number | null
+  measurementUnit: MeasurementUnit
+  height: number
+  width: number
+  /** "Product Sq Ft Rate" — the rate actually charged. */
+  sqftRate: number
+}
+
+export interface ItemCalcResult {
+  totalPieces: number
+  /** Total billed area across all pieces (sqft). */
+  totalSqft: number
+  /** Per-piece price = single-piece area × sqft rate (the editable default). */
+  pricePerItem: number
+  /** Line total = pricePerItem × totalPieces (auto; mirrors the server product_total). */
+  productTotal: number
+}
+
+/**
+ * Pure, framework-free item calculation for the live preview. Kept aligned with
+ * the backend: price_per_item = area × sqft_rate; product_total =
+ * price_per_item × pieces (× pieces_per_box for box items). The server recomputes
+ * product_total on submit, so this is preview-only.
  */
 export function calculateItem(input: ItemCalcInput): ItemCalcResult {
   const factor = FEET_FACTOR[input.measurementUnit]
   const areaSqft = round(input.height * factor * (input.width * factor), 4)
 
-  const totalPieces =
-    input.itemType === 'box'
-      ? (input.numberOfBoxes ?? 0) * (input.piecesPerBox ?? 0)
-      : (input.numberOfPieces ?? 0)
+  const pieces = totalPieces(input.itemType, input.quantity, input.piecesPerBox)
+  const pricePerItem = round(areaSqft * input.sqftRate, 2)
 
-  // Billing is by the product's height × width area (in sqft) × rate. Quantity
-  // (boxes / pieces) is tracked on the order for ordering purposes but does NOT
-  // scale the charged area, so it is intentionally excluded from totalSqft.
-  const totalSqft = areaSqft
-  const purchaseAmount = round(totalSqft * input.purchaseRate, 2)
-  const sellAmount = round(totalSqft * input.sellRate, 2)
-  const profit = round(sellAmount - purchaseAmount, 2)
-
-  return { areaSqft, totalPieces, totalSqft, purchaseAmount, sellAmount, profit }
+  return {
+    totalPieces: pieces,
+    totalSqft: round(areaSqft * pieces, 4),
+    pricePerItem,
+    productTotal: round(pricePerItem * pieces, 2),
+  }
 }

@@ -15,20 +15,18 @@ interface OrderItemRowProps {
 export function OrderItemRow({ item, onEdit, onDelete }: OrderItemRowProps) {
   const calc = calculateItem({
     itemType: item.itemType,
+    quantity: item.quantity,
     piecesPerBox: item.piecesPerBox,
-    numberOfBoxes: item.numberOfBoxes,
-    numberOfPieces: item.numberOfPieces,
     measurementUnit: item.measurementUnit,
     height: item.height,
     width: item.width,
-    purchaseRate: item.purchaseRate,
-    sellRate: item.sqftRate,
+    sqftRate: item.sqftRate,
   })
 
   const quantityLabel =
     item.itemType === 'box'
-      ? `${item.numberOfBoxes ?? 0} box × ${item.piecesPerBox ?? 0} pcs`
-      : `${item.numberOfPieces ?? 0} pcs`
+      ? `${item.quantity} box × ${item.piecesPerBox ?? 0} pcs`
+      : `${item.quantity} pcs`
 
   const title = [item.designName, item.companyName].filter(Boolean).join(' · ')
 
@@ -58,7 +56,7 @@ export function OrderItemRow({ item, onEdit, onDelete }: OrderItemRowProps) {
       {/* Amount */}
       <div className="shrink-0 text-right">
         <p className="text-sm font-semibold tabular-nums text-foreground">
-          ₹{formatINR(calc.sellAmount)}
+          ₹{formatINR(item.productTotal)}
         </p>
       </div>
 

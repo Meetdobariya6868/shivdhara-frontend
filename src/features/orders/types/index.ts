@@ -99,15 +99,17 @@ export interface CreateOrderItemPayload {
   thickness: string
   product_image_path?: string | null
   item_type: ItemType
+  /** Boxes ordered (box items) or pieces ordered (piece items). */
+  quantity: number
+  /** Box items only; omitted for piece items. */
   pieces_per_box?: number | null
-  number_of_boxes?: number | null
-  number_of_pieces?: number | null
   measurement_unit: MeasurementUnit
   height: number
   width: number
   purchase_rate: number
   sell_rate: number
-  product_total: number
+  /** Per-item price (editable); product_total is derived server-side. */
+  price_per_item: number
 }
 
 /** A room with its items in the create-order payload. */
@@ -140,14 +142,16 @@ export interface UpdateOrderItemPayload {
    */
   product_image_path?: string | null
   item_type: ItemType
+  /** Boxes ordered (box items) or pieces ordered (piece items). */
+  quantity: number
+  /** Box items only; omitted for piece items. */
   pieces_per_box?: number | null
-  number_of_boxes?: number | null
-  number_of_pieces?: number | null
   measurement_unit: MeasurementUnit
   height: number
   width: number
   sqft_rate: number
-  product_total: number
+  /** Per-item price (editable); product_total is derived server-side. */
+  price_per_item: number
 }
 
 // ── Order detail (GET /orders/{id}) ──────────────────────────────────────────
@@ -167,13 +171,15 @@ export interface OrderDetailItem {
   product: OrderItemProduct
   product_image_url: string | null
   item_type: ItemType
+  quantity: number
   pieces_per_box: number | null
-  number_of_boxes: number | null
-  number_of_pieces: number | null
   measurement_unit: MeasurementUnit
   height: string
   width: string
   sqft_rate: string
+  /** Per-item price. */
+  price_per_item: string
+  /** Line total = price_per_item × quantity (× pieces_per_box for box items). */
   product_total: string
 }
 

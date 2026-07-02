@@ -20,9 +20,10 @@ export interface DraftItem {
   productImagePath: string | null
   productImageUrl: string | null
   itemType: ItemType
+  /** Boxes ordered (box items) or pieces ordered (piece items). */
+  quantity: number
+  /** Box items only; null for piece items. */
   piecesPerBox: number | null
-  numberOfBoxes: number | null
-  numberOfPieces: number | null
   measurementUnit: MeasurementUnit
   height: number
   width: number
@@ -30,9 +31,11 @@ export interface DraftItem {
   purchaseRate: number
   /** Catalogue sell rate (auto-filled reference; not persisted on the order). */
   sellRate: number
-  /** "Product Sq Ft Rate" — the rate actually charged; maps to order_items.sqft_rate and drives sell_amount. */
+  /** "Product Sq Ft Rate" — the rate actually charged; maps to order_items.sqft_rate. */
   sqftRate: number
-  /** Editable line total persisted to the order_items.product_total column. */
+  /** Editable per-item price (area × sqft_rate, overridable); sent to the API as price_per_item. */
+  pricePerItem: number
+  /** Derived line total (price_per_item × quantity, ×pieces_per_box for boxes); client-side display only. */
   productTotal: number
 }
 

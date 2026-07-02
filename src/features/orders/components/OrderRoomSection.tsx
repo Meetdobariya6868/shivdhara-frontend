@@ -16,8 +16,8 @@ interface OrderRoomSectionProps {
 /** Human-readable quantity, mirroring the box/piece distinction. */
 function quantityLabel(item: OrderDetailItem): string {
   return item.item_type === 'box'
-    ? `${item.number_of_boxes ?? 0} box × ${item.pieces_per_box ?? 0} pcs`
-    : `${item.number_of_pieces ?? 0} pcs`
+    ? `${item.quantity} box × ${item.pieces_per_box ?? 0} pcs`
+    : `${item.quantity} pcs`
 }
 
 /** One room card on the order detail screen: title, rename control and its items. */

@@ -146,9 +146,8 @@ export default function CreateOrderPage() {
             thickness: it.thickness,
             product_image_path: it.productImagePath,
             item_type: it.itemType,
+            quantity: it.quantity,
             pieces_per_box: it.piecesPerBox,
-            number_of_boxes: it.numberOfBoxes,
-            number_of_pieces: it.numberOfPieces,
             measurement_unit: it.measurementUnit,
             height: it.height,
             width: it.width,
@@ -156,7 +155,8 @@ export default function CreateOrderPage() {
             // Backend maps sell_rate → order_items.sqft_rate; the actual charged
             // Product Sq Ft Rate is the source of truth (not the catalogue rate).
             sell_rate: it.sqftRate,
-            product_total: it.productTotal,
+            // Per-item price; the server derives product_total from it.
+            price_per_item: it.pricePerItem,
           })),
       })),
     }

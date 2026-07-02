@@ -75,7 +75,6 @@ export default function OrderItemDetailPage() {
   }
 
   const isBox = item.item_type === 'box'
-  const priceLabel = isBox ? 'Price per Box' : 'Price per Piece'
 
   return (
     <div className="mx-auto max-w-2xl pb-28">
@@ -123,7 +122,7 @@ export default function OrderItemDetailPage() {
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted">Box :</span>
                 <span className="rounded-full bg-primary/10 px-4 py-1 text-sm font-semibold tabular-nums text-primary">
-                  {item.number_of_boxes ?? 0}
+                  {item.quantity}
                 </span>
               </div>
               <div className="flex items-center justify-between">
@@ -137,7 +136,7 @@ export default function OrderItemDetailPage() {
             <div className="flex items-center justify-between">
               <span className="text-sm text-muted">Piece :</span>
               <span className="rounded-full bg-primary/10 px-4 py-1 text-sm font-semibold tabular-nums text-primary">
-                {item.number_of_pieces ?? 0}
+                {item.quantity}
               </span>
             </div>
           )}
@@ -153,8 +152,14 @@ export default function OrderItemDetailPage() {
               </span>
             </div>
             <div className="flex items-center justify-between py-1.5">
-              <span className="text-sm text-muted">{priceLabel} :</span>
+              <span className="text-sm text-muted">Price per piece :</span>
               <span className="text-sm font-semibold tabular-nums text-card-foreground">
+                ₹{Number(item.price_per_item).toFixed(2)}
+              </span>
+            </div>
+            <div className="flex items-center justify-between py-1.5">
+              <span className="text-sm text-muted">Total :</span>
+              <span className="text-base font-bold tabular-nums text-card-foreground">
                 ₹{Number(item.product_total).toFixed(2)}
               </span>
             </div>

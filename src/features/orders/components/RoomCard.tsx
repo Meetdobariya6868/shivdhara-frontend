@@ -2,7 +2,6 @@ import { PlusIcon, TrashIcon } from '@/components/icons'
 import { IconButton } from '@/components/ui/IconButton'
 
 import type { DraftItem, DraftRoom } from '../store/orderDraftStore'
-import { calculateItem } from '../utils/calculateItem'
 import { formatINR } from '../utils/formatters'
 import { OrderItemRow } from './OrderItemRow'
 
@@ -31,20 +30,9 @@ export function RoomCard({
   onEditItem,
   onDeleteItem,
 }: RoomCardProps) {
-  const subtotal = items.reduce((sum, item) => {
-    const calc = calculateItem({
-      itemType: item.itemType,
-      piecesPerBox: item.piecesPerBox,
-      numberOfBoxes: item.numberOfBoxes,
-      numberOfPieces: item.numberOfPieces,
-      measurementUnit: item.measurementUnit,
-      height: item.height,
-      width: item.width,
-      purchaseRate: item.purchaseRate,
-      sellRate: item.sqftRate,
-    })
-    return sum + calc.sellAmount
-  }, 0)
+  // Line totals are quantity-scaled and stored per item (mirrors the server
+  // product_total), so the room subtotal is a straight sum.
+  const subtotal = items.reduce((sum, item) => sum + item.productTotal, 0)
 
   return (
     <section className="flex flex-col gap-3 rounded-3xl border border-border bg-card p-4">

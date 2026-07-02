@@ -12,7 +12,7 @@ import { useDesignVariantSearch } from '../hooks/useDesignVariantSearch'
 import { useUploadOrderItemImage } from '../hooks/useUploadOrderItemImage'
 import type { DraftItem, DraftItemInput, DraftRoom } from '../store/orderDraftStore'
 import type { DesignVariantOption, ItemType, MeasurementUnit } from '../types'
-import { calculateItem } from '../utils/calculateItem'
+import { calculateItem, lineTotal } from '../utils/calculateItem'
 import { ITEM_TYPE_OPTIONS, MEASUREMENT_UNIT_OPTIONS } from '../utils/orderOptions'
 
 interface AddItemModalProps {
@@ -37,9 +37,10 @@ interface ItemFormState {
   finish: string
   thickness: string
   itemType: ItemType
+  /** Boxes ordered (box items) or pieces ordered (piece items). */
+  quantity: string
+  /** Box items only. */
   piecesPerBox: string
-  numberOfBoxes: string
-  numberOfPieces: string
   measurementUnit: MeasurementUnit
   height: string
   width: string
@@ -48,8 +49,8 @@ interface ItemFormState {
   sellRate: string
   /** "Product Sq Ft Rate" — the rate actually charged; maps to sqft_rate. Blank on selection. */
   sqftRate: string
-  /** Line total (product_total) — auto-filled from the formula, but editable. */
-  calculation: string
+  /** Per-item price (price_per_item) — auto-filled from area × sqft_rate, but editable. */
+  pricePerItem: string
   productImagePath: string | null
   productImageUrl: string | null
 }
@@ -77,16 +78,15 @@ function buildInitialState(
       finish: editingItem.finish,
       thickness: editingItem.thickness,
       itemType: editingItem.itemType,
+      quantity: editingItem.quantity.toString(),
       piecesPerBox: editingItem.piecesPerBox?.toString() ?? '',
-      numberOfBoxes: editingItem.numberOfBoxes?.toString() ?? '',
-      numberOfPieces: editingItem.numberOfPieces?.toString() ?? '',
       measurementUnit: editingItem.measurementUnit,
       height: editingItem.height.toString(),
       width: editingItem.width.toString(),
       purchaseRate: editingItem.purchaseRate.toString(),
       sellRate: editingItem.sellRate.toString(),
       sqftRate: editingItem.sqftRate ? editingItem.sqftRate.toString() : '',
-      calculation: '',
+      pricePerItem: '',
       productImagePath: editingItem.productImagePath,
       productImageUrl: editingItem.productImageUrl,
     }
@@ -101,16 +101,15 @@ function buildInitialState(
     finish: '',
     thickness: '',
     itemType: 'box',
+    quantity: '',
     piecesPerBox: '',
-    numberOfBoxes: '',
-    numberOfPieces: '',
     measurementUnit: 'mm',
     height: '',
     width: '',
     purchaseRate: '',
     sellRate: '',
     sqftRate: '',
-    calculation: '',
+    pricePerItem: '',
     productImagePath: null,
     productImageUrl: null,
   }
@@ -183,25 +182,30 @@ export function AddItemModal({
     () =>
       calculateItem({
         itemType: form.itemType,
+        quantity: num(form.quantity),
         piecesPerBox: num(form.piecesPerBox),
-        numberOfBoxes: num(form.numberOfBoxes),
-        numberOfPieces: num(form.numberOfPieces),
         measurementUnit: form.measurementUnit,
         height: num(form.height),
         width: num(form.width),
-        purchaseRate: num(form.purchaseRate),
-        // sell_amount is driven by the actual charged rate (Product Sq Ft Rate),
-        // not the catalogue sell rate.
-        sellRate: num(form.sqftRate),
+        // price_per_item is driven by the actual charged rate (Product Sq Ft
+        // Rate), not the catalogue sell rate.
+        sqftRate: num(form.sqftRate),
       }),
     [form],
   )
 
-  // The editable "Calculation" field IS the line total (product_total). It shows
-  // the formula result by default and live-updates as inputs change; once the
-  // user types a value, that override sticks until they clear it.
-  const autoCalculation = calc.sellAmount ? calc.sellAmount.toString() : ''
-  const calculationValue = form.calculation !== '' ? form.calculation : autoCalculation
+  // The editable "Price per piece" field defaults to the formula result
+  // (area × sqft_rate) and live-updates as inputs change; once the user types a
+  // value, that override sticks until they clear it. The line total below is
+  // always derived from the effective per-item price × quantity.
+  const autoPricePerItem = calc.pricePerItem ? calc.pricePerItem.toString() : ''
+  const pricePerItemValue = form.pricePerItem !== '' ? form.pricePerItem : autoPricePerItem
+  const productTotal = lineTotal(
+    form.itemType,
+    num(form.quantity),
+    num(form.piecesPerBox),
+    num(pricePerItemValue),
+  )
 
   const handlePhotoSelect = (file: File) => {
     upload.mutate(file, {
@@ -226,11 +230,16 @@ export function AddItemModal({
     if (!form.finish.trim()) e.finish = 'Finish is required'
     if (!form.thickness.trim()) e.thickness = 'Thickness is required'
 
-    if (isBox) {
-      if (num(form.piecesPerBox) <= 0) e.piecesPerBox = 'Required'
-      if (num(form.numberOfBoxes) <= 0) e.numberOfBoxes = 'Required'
-    } else if (num(form.numberOfPieces) <= 0) {
-      e.numberOfPieces = 'Required'
+    // Quantity and pieces-per-box accept 0; only a blank (or negative) is rejected.
+    if (form.quantity.trim() === '') {
+      e.quantity = isBox ? 'Enter the number of boxes' : 'Enter the number of pieces'
+    } else if (num(form.quantity) < 0) {
+      e.quantity = 'Cannot be negative'
+    }
+    if (isBox && form.piecesPerBox.trim() === '') {
+      e.piecesPerBox = 'Required'
+    } else if (isBox && num(form.piecesPerBox) < 0) {
+      e.piecesPerBox = 'Cannot be negative'
     }
 
     if (num(form.height) <= 0) e.height = 'Required'
@@ -257,16 +266,16 @@ export function AddItemModal({
       productImagePath: form.productImagePath,
       productImageUrl: form.productImageUrl,
       itemType: form.itemType,
+      quantity: num(form.quantity),
       piecesPerBox: isBox ? num(form.piecesPerBox) : null,
-      numberOfBoxes: isBox ? num(form.numberOfBoxes) : null,
-      numberOfPieces: isBox ? null : num(form.numberOfPieces),
       measurementUnit: form.measurementUnit,
       height: num(form.height),
       width: num(form.width),
       purchaseRate: num(form.purchaseRate),
       sellRate: num(form.sellRate),
       sqftRate: num(form.sqftRate),
-      productTotal: num(calculationValue),
+      pricePerItem: num(pricePerItemValue),
+      productTotal,
     }
 
     onSubmit(form.roomTempId, input, editingItem?.tempId ?? null)
@@ -394,8 +403,9 @@ export function AddItemModal({
           options={ITEM_TYPE_OPTIONS}
         />
 
-        {isBox ? (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        {/* Quantity + rate; pieces-per-box shown only for box items */}
+        <div className={`grid grid-cols-1 gap-4 ${isBox ? 'sm:grid-cols-3' : 'sm:grid-cols-2'}`}>
+          {isBox && (
             <Input
               label="Pieces per box"
               inputMode="numeric"
@@ -404,43 +414,24 @@ export function AddItemModal({
               error={errors.piecesPerBox}
               onChange={(e) => set('piecesPerBox', e.target.value)}
             />
-            <Input
-              label="Product Sq Ft Rate"
-              inputMode="decimal"
-              placeholder="0"
-              value={form.sqftRate}
-              error={errors.sqftRate}
-              onChange={(e) => set('sqftRate', e.target.value)}
-            />
-            <Input
-              label="Number of boxes"
-              inputMode="numeric"
-              placeholder="0"
-              value={form.numberOfBoxes}
-              error={errors.numberOfBoxes}
-              onChange={(e) => set('numberOfBoxes', e.target.value)}
-            />
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <Input
-              label="Number of pieces"
-              inputMode="numeric"
-              placeholder="0"
-              value={form.numberOfPieces}
-              error={errors.numberOfPieces}
-              onChange={(e) => set('numberOfPieces', e.target.value)}
-            />
-            <Input
-              label="Product Sq Ft Rate"
-              inputMode="decimal"
-              placeholder="0"
-              value={form.sqftRate}
-              error={errors.sqftRate}
-              onChange={(e) => set('sqftRate', e.target.value)}
-            />
-          </div>
-        )}
+          )}
+          <Input
+            label={isBox ? 'Number of boxes' : 'Number of pieces'}
+            inputMode="numeric"
+            placeholder="0"
+            value={form.quantity}
+            error={errors.quantity}
+            onChange={(e) => set('quantity', e.target.value)}
+          />
+          <Input
+            label="Product Sq Ft Rate"
+            inputMode="decimal"
+            placeholder="0"
+            value={form.sqftRate}
+            error={errors.sqftRate}
+            onChange={(e) => set('sqftRate', e.target.value)}
+          />
+        </div>
 
         {/* Dimensions — Height, Width and Unit always on one line */}
         <div className="grid grid-cols-3 gap-3">
@@ -488,14 +479,22 @@ export function AddItemModal({
           />
         </div>
 
-        {/* Line total — auto-calculated from the formula, editable */}
+        {/* Per-piece price — auto-filled from area × sqft rate, editable */}
         <Input
           label="Calculation"
           inputMode="decimal"
           placeholder="0"
-          value={calculationValue}
-          onChange={(e) => set('calculation', e.target.value)}
+          value={pricePerItemValue}
+          onChange={(e) => set('pricePerItem', e.target.value)}
         />
+
+        {/* Derived line total = price per piece × total pieces */}
+        <div className="flex items-center justify-between rounded-2xl bg-surface px-4 py-3.5">
+          <span className="text-sm text-muted">Product total</span>
+          <span className="text-base font-bold tabular-nums text-foreground">
+            ₹{productTotal.toFixed(2)}
+          </span>
+        </div>
       </form>
     </Modal>
   )
