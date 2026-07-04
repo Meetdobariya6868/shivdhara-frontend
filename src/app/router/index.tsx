@@ -20,7 +20,9 @@ import { paths } from '@/routes/paths'
 const SplashPage = lazy(() => import('@/pages/SplashPage'))
 const LoginPage = lazy(() => import('@/features/auth/pages/LoginPage'))
 const HomePage = lazy(() => import('@/pages/HomePage'))
-const OrdersPage = lazy(() => import('@/features/orders/pages/OrdersPage'))
+const SalesmenHomePage = lazy(
+  () => import('@/features/users/pages/SalesmenHomePage'),
+)
 const OrderDetailPage = lazy(
   () => import('@/features/orders/pages/OrderDetailPage'),
 )
@@ -91,7 +93,7 @@ export const router = createBrowserRouter([
           {
             element: <RoleGuard allow={['admin']} />,
             children: [
-              { path: paths.orders,       element: withSuspense(<OrdersPage />) },
+              { path: paths.salesmen,     element: withSuspense(<SalesmenHomePage />) },
               { path: paths.addSalesman,  element: withSuspense(<AddSalesmanPage />) },
               { path: paths.customers,    element: withSuspense(<CustomersPage />) },
               { path: '/salesmen/:salesmanId', element: withSuspense(<SalesmanDetailPage />) },

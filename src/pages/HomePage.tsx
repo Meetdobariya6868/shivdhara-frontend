@@ -5,14 +5,13 @@ import { GreetingHeader } from '@/components/GreetingHeader'
 import { PageLoader } from '@/components/PageLoader'
 import { useAuthStore } from '@/features/auth/store/auth.store'
 
-// Admin home (salesman list) is its own chunk — only loaded for admins.
-const SalesmenHomePage = lazy(
-  () => import('@/features/users/pages/SalesmenHomePage'),
-)
+// Admin home (order list) is its own chunk — only loaded for admins.
+const OrdersPage = lazy(() => import('@/features/orders/pages/OrdersPage'))
 
 /**
  * Role-aware home screen behind /dashboard.
- *   • Admin    → salesman management grid.
+ *   • Admin    → order list (search + filter). Salesman management moved to
+ *               the "Salesmen" tab (/salesmen).
  *   • Salesman → personal landing (orders summary arrives in a later phase).
  */
 export default function HomePage() {
@@ -21,7 +20,7 @@ export default function HomePage() {
   if (isAdmin) {
     return (
       <Suspense fallback={<PageLoader />}>
-        <SalesmenHomePage />
+        <OrdersPage />
       </Suspense>
     )
   }

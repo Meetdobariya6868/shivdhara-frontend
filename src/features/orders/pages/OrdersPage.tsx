@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+import { GreetingHeader } from '@/components/GreetingHeader'
 import { FilterIcon, SearchIcon, XIcon } from '@/components/icons'
 import { paths } from '@/routes/paths'
 
@@ -59,10 +60,8 @@ export default function OrdersPage() {
 
   return (
     <div className="mx-auto flex max-w-2xl flex-col">
-      {/* Page header */}
-      <div className="px-5 pt-6 pb-4">
-        <h1 className="text-xl font-bold text-foreground">Orders</h1>
-      </div>
+      {/* Home header — greeting + name (this is the admin's Home tab). */}
+      <GreetingHeader />
 
       {/* Search + Filter bar */}
       <div className="px-5 pb-3">

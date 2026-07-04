@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 
 import { PlusIcon } from '@/components/icons'
 import { Alert } from '@/components/ui/Alert'
-import { useAuthStore } from '@/features/auth/store/auth.store'
 import { paths } from '@/routes/paths'
 
 import { AddItemModal } from '../components/AddItemModal'
@@ -44,7 +43,6 @@ interface ModalState {
 
 export default function CreateOrderPage() {
   const navigate = useNavigate()
-  const isAdmin = useAuthStore((s) => s.user?.is_admin ?? false)
   const createOrder = useCreateOrder()
 
   const draft = useOrderDraftStore()
@@ -164,7 +162,8 @@ export default function CreateOrderPage() {
     createOrder.mutate(payload, {
       onSuccess: () => {
         draft.reset()
-        void navigate(isAdmin ? paths.orders : paths.dashboard, { replace: true })
+        // Both roles land on their home; the admin order list now lives there.
+        void navigate(paths.dashboard, { replace: true })
       },
       onError: (error) => {
         setFormError(

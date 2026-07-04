@@ -25,6 +25,8 @@ export const paths = {
   orderItemEdit: (orderId: number | string, itemId: number | string) =>
     `/orders/${orderId}/items/${itemId}/edit`,
 
+  /** Salesman management — search + grid (admin only). Second bottom-nav tab. */
+  salesmen: '/salesmen',
   /** Add salesman (admin only). */
   addSalesman: '/salesmen/add',
   /** Salesman detail — profile + their orders (admin only). */

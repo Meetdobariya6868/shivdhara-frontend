@@ -15,7 +15,6 @@ function syncOrderDetail(qc: QueryClient, res: ApiResponse<OrderDetail>): void {
   const order = res.data
   qc.setQueryData(ordersKeys.detail(order.id), res)
   void qc.invalidateQueries({ queryKey: ordersKeys.list() })
-  void qc.invalidateQueries({ queryKey: ordersKeys.byUser(order.creator.id) })
 }
 
 /** Change an order's workflow status (Confirm Order). */

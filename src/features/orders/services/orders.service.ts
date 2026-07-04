@@ -20,12 +20,6 @@ export const ordersService = {
     return data
   },
 
-  /** Orders created by a single salesman (admin, or the salesman themselves). */
-  listByUser: async (userId: number): Promise<ApiResponse<Order[]>> => {
-    const { data } = await httpClient.get<ApiResponse<Order[]>>(`/v1/users/${userId}/orders`)
-    return data
-  },
-
   /** Single order with its full room/item graph. */
   getById: async (id: number): Promise<ApiResponse<OrderDetail>> => {
     const { data } = await httpClient.get<ApiResponse<OrderDetail>>(`/v1/orders/${id}`)

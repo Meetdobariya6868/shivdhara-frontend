@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { GreetingHeader } from '@/components/GreetingHeader'
+import { PageHeader } from '@/components/PageHeader'
 import { SearchBar } from '@/components/ui/SearchBar'
 import { paths } from '@/routes/paths'
 
@@ -10,7 +10,8 @@ import { useSalesmen } from '../hooks/useSalesmen'
 import { filterSalesmen } from '../utils/filterSalesmen'
 
 /**
- * Admin home screen — greeting header, search, and a grid of salesman cards.
+ * Salesman management screen ("Manage salesman" tab) — a page header, search,
+ * and a grid of salesman cards.
  *
  * The roster is fetched once (useSalesmen) and filtered entirely in-memory,
  * so typing in the search box is instant and never hits the network.
@@ -27,9 +28,9 @@ export default function SalesmenHomePage() {
 
   return (
     <div className="mx-auto flex max-w-2xl flex-col">
-      <GreetingHeader />
+      <PageHeader title="Manage salesman" />
 
-      <div className="px-5 pb-6">
+      <div className="px-5 pt-5 pb-6">
         <SearchBar
           value={search}
           onChange={setSearch}

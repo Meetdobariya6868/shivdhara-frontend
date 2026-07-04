@@ -11,13 +11,3 @@ export function useOrder(id: number) {
     enabled: Number.isFinite(id) && id > 0,
   })
 }
-
-/** Fetch every order created by a salesman (salesman detail screen). */
-export function useSalesmanOrders(userId: number) {
-  return useQuery({
-    queryKey: ordersKeys.byUser(userId),
-    queryFn: () => ordersService.listByUser(userId),
-    enabled: Number.isFinite(userId) && userId > 0,
-    staleTime: 30_000,
-  })
-}

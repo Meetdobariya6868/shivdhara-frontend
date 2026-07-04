@@ -30,7 +30,7 @@ export function BottomNav() {
             <li key={item.path} className="flex-1">
               <NavLink
                 to={item.path}
-                end={item.path === '/dashboard'}
+                end={item.end ?? false}
                 className={({ isActive }) =>
                   [
                     'flex flex-col items-center gap-1 py-2.5 text-[11px] font-medium transition-colors',
