@@ -6,7 +6,8 @@ import { OrderCardSkeleton } from './OrderCardSkeleton'
 
 interface OrdersListProps {
   orders: Order[]
-  totalUnfiltered: number
+  /** Total matching the current filters (from the server), across all pages. */
+  total: number
   isLoading: boolean
   isError: boolean
   hasFilters: boolean
@@ -18,7 +19,7 @@ const SKELETON_COUNT = 6
 
 export function OrdersList({
   orders,
-  totalUnfiltered,
+  total,
   isLoading,
   isError,
   hasFilters,
@@ -79,9 +80,7 @@ export function OrdersList({
   return (
     <div>
       <p className="mb-3 text-xs text-muted">
-        {orders.length === totalUnfiltered
-          ? `${totalUnfiltered} order${totalUnfiltered !== 1 ? 's' : ''}`
-          : `${orders.length} of ${totalUnfiltered} orders`}
+        {total} order{total !== 1 ? 's' : ''}
       </p>
 
       <div className="flex flex-col gap-3">

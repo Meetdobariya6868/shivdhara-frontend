@@ -3,6 +3,7 @@ import type { QueryClient } from '@tanstack/react-query'
 import type { AxiosError } from 'axios'
 
 import type { UserStatus } from '@/features/auth/types'
+import { ordersKeys } from '@/features/orders/hooks/useOrders'
 import type { ApiError, ApiResponse } from '@/types'
 
 import { usersService } from '../services/users.service'
@@ -96,6 +97,9 @@ export function useDeleteSalesman() {
     onSuccess: (_res, id) => {
       qc.removeQueries({ queryKey: usersKeys.detail(id) })
       void qc.invalidateQueries({ queryKey: usersKeys.all })
+      // Deleting a salesman soft-deletes their orders too — refresh the order
+      // list and the salesman filter so the removed data disappears at once.
+      void qc.invalidateQueries({ queryKey: ordersKeys.all })
     },
   })
 }

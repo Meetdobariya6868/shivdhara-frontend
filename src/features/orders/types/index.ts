@@ -39,7 +39,7 @@ export interface Order {
   created_at: string
 }
 
-/** Client-side filter state — nothing is sent to the API. */
+/** Order list filter state — sent to the API as query params. */
 export interface OrderFilters {
   search?: string
   date_from?: string
@@ -47,6 +47,18 @@ export interface OrderFilters {
   order_category_id?: number
   order_type_id?: number
   creator_id?: number
+}
+
+/** Query params for the paginated order list (filters + pagination). */
+export interface OrderListParams extends OrderFilters {
+  page?: number
+  per_page?: number
+}
+
+/** A salesman option for the order list's salesman filter (GET /orders/salesmen). */
+export interface SalesmanOption {
+  id: number
+  name: string
 }
 
 // ── Catalogue autocomplete ───────────────────────────────────────────────────

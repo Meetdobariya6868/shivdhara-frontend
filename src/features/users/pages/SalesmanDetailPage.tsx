@@ -288,7 +288,11 @@ export default function SalesmanDetailPage() {
       <ConfirmDialog
         isOpen={dialog === 'delete'}
         title="Delete this salesman?"
-        message="This removes the salesman's account and signs them out. This action cannot be undone."
+        message={
+          totalOrders > 0
+            ? `This also deletes their ${totalOrders} order${totalOrders === 1 ? '' : 's'} and signs them out. This action cannot be undone.`
+            : "This removes the salesman's account and signs them out. This action cannot be undone."
+        }
         confirmLabel="Delete"
         destructive
         isLoading={deleteMutation.isPending}

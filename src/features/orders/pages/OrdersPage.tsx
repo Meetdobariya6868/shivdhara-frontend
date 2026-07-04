@@ -1,24 +1,24 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { GreetingHeader } from '@/components/GreetingHeader'
-import { FilterIcon, SearchIcon, XIcon } from '@/components/icons'
+import { FilterIcon, SearchIcon, SpinnerIcon, XIcon } from '@/components/icons'
+import { useDebounce } from '@/hooks/useDebounce'
 import { paths } from '@/routes/paths'
 
 import { useOrders } from '../hooks/useOrders'
 import type { OrderFilters } from '../types'
 import { countActiveFilters } from '../utils/formatters'
-import { filterOrders } from '../utils/filterOrders'
 import { OrdersFiltersSheet } from '../components/OrdersFiltersSheet'
 import { OrdersList } from '../components/OrdersList'
 
 /**
- * Admin Orders screen.
+ * Admin Orders screen (the admin Home tab).
  *
- * The full roster is fetched ONCE (useOrders) and cached.
- * All filtering — search, date range, category, type, salesman — is
- * performed in-memory via filterOrders() + useMemo.
- * No API call fires on keystroke or filter change.
+ * Search, filtering and pagination all run server-side against indexed columns;
+ * rows load a page at a time via infinite scroll. This keeps the payload small
+ * and scales to large order volumes. The search box is debounced so typing
+ * never fires a request per keystroke.
  */
 export default function OrdersPage() {
   const navigate = useNavigate()
@@ -27,22 +27,42 @@ export default function OrdersPage() {
   const [search, setSearch]             = useState('')
   const [sheetFilters, setSheetFilters] = useState<Omit<OrderFilters, 'search'>>({})
 
-  const { data, isLoading, isError, refetch } = useOrders()
+  const debouncedSearch = useDebounce(search, 350)
 
-  // Increment key each open → sheet remounts → draft seeds from activeFilters
+  const filters: OrderFilters = useMemo(
+    () => ({ ...sheetFilters, search: debouncedSearch.trim() || undefined }),
+    [sheetFilters, debouncedSearch],
+  )
+
+  const {
+    data,
+    isLoading,
+    isError,
+    refetch,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+  } = useOrders(filters)
+
+  const orders = useMemo(
+    () => data?.pages.flatMap((page) => page.data) ?? [],
+    [data],
+  )
+  const total = data?.pages[0]?.meta.total ?? 0
+
   const openSheet = () => { setSheetKey((k) => k + 1); setIsSheetOpen(true) }
-
-  const allOrders = data?.data ?? []
-
-  // Merge live search + committed sheet filters, then filter in-memory
-  const filters: OrderFilters = { ...sheetFilters, search }
-  const orders = useMemo(() => filterOrders(allOrders, filters), [allOrders, filters])
 
   const activeFilterCount = countActiveFilters(sheetFilters) + (search ? 1 : 0)
 
   const handleApplyFilters = (applied: OrderFilters) => {
-    const { search: _s, ...rest } = applied
-    setSheetFilters(rest)
+    // The sheet only manages non-search filters; keep search on its own state.
+    setSheetFilters({
+      date_from:         applied.date_from,
+      date_to:           applied.date_to,
+      order_category_id: applied.order_category_id,
+      order_type_id:     applied.order_type_id,
+      creator_id:        applied.creator_id,
+    })
     setIsSheetOpen(false)
   }
 
@@ -51,12 +71,30 @@ export default function OrdersPage() {
     setSearch('')
   }
 
+  // Close the filter sheet on Escape.
   useEffect(() => {
     if (!isSheetOpen) return
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setIsSheetOpen(false) }
     document.addEventListener('keydown', onKey)
     return () => document.removeEventListener('keydown', onKey)
   }, [isSheetOpen])
+
+  // Infinite scroll: fetch the next page when the sentinel scrolls into view.
+  const loadMoreRef = useRef<HTMLDivElement | null>(null)
+  useEffect(() => {
+    const el = loadMoreRef.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting && hasNextPage && !isFetchingNextPage) {
+          void fetchNextPage()
+        }
+      },
+      { rootMargin: '300px' },
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage])
 
   return (
     <div className="mx-auto flex max-w-2xl flex-col">
@@ -161,7 +199,7 @@ export default function OrdersPage() {
       <div className="px-5 pb-24">
         <OrdersList
           orders={orders}
-          totalUnfiltered={allOrders.length}
+          total={total}
           isLoading={isLoading}
           isError={isError}
           hasFilters={activeFilterCount > 0}
@@ -170,6 +208,14 @@ export default function OrdersPage() {
             void navigate(paths.orderDetail(order.id))
           }}
         />
+
+        {/* Infinite-scroll sentinel + loading-more indicator */}
+        <div ref={loadMoreRef} aria-hidden="true" className="h-px" />
+        {isFetchingNextPage && (
+          <div className="flex justify-center py-4 text-muted" aria-label="Loading more orders">
+            <SpinnerIcon size={20} />
+          </div>
+        )}
       </div>
 
       <OrdersFiltersSheet

@@ -1,5 +1,5 @@
 import { httpClient } from '@/lib/axios'
-import type { ApiResponse } from '@/types'
+import type { ApiResponse, PaginatedResponse } from '@/types'
 
 import type {
   CreateOrderPayload,
@@ -7,16 +7,28 @@ import type {
   Order,
   OrderCategory,
   OrderDetail,
+  OrderListParams,
   OrderStatus,
   OrderType,
+  SalesmanOption,
   UpdateOrderItemPayload,
   UploadedImage,
 } from '../types'
 
 export const ordersService = {
-  /** Full order roster — fetched once, filtered client-side. Admin only. */
-  list: async (): Promise<ApiResponse<Order[]>> => {
-    const { data } = await httpClient.get<ApiResponse<Order[]>>('/v1/orders')
+  /** A filtered, paginated page of orders. Admin only. */
+  list: async (params: OrderListParams): Promise<PaginatedResponse<Order>> => {
+    const { data } = await httpClient.get<PaginatedResponse<Order>>('/v1/orders', {
+      params,
+    })
+    return data
+  },
+
+  /** Salesmen (incl. deleted) who have orders — options for the salesman filter. */
+  salesmen: async (): Promise<ApiResponse<SalesmanOption[]>> => {
+    const { data } = await httpClient.get<ApiResponse<SalesmanOption[]>>(
+      '/v1/orders/salesmen',
+    )
     return data
   },
 

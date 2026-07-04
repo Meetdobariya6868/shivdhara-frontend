@@ -1,9 +1,9 @@
 import { useState } from 'react'
 
 import { XIcon } from '@/components/icons'
-import { useSalesmen } from '@/features/users/hooks/useSalesmen'
 
 import { useOrderMeta } from '../hooks/useOrderMeta'
+import { useOrderSalesmen } from '../hooks/useOrders'
 import type { OrderFilters } from '../types'
 
 interface OrdersFiltersSheetProps {
@@ -40,8 +40,8 @@ export function OrdersFiltersSheet({
   }))
 
   const { categories, types } = useOrderMeta()
-  const { data: salesmenData } = useSalesmen()
-  const salesmen = salesmenData?.data ?? []
+  const { data: salesmenData } = useOrderSalesmen()
+  const salesmanOptions = salesmenData?.data ?? []
 
   const set = <K extends keyof OrderFilters>(key: K, value: OrderFilters[K]) =>
     setDraft((prev) => ({ ...prev, [key]: value || undefined }))
@@ -190,7 +190,7 @@ export function OrdersFiltersSheet({
               className={FIELD}
             >
               <option value="">All salesmen</option>
-              {salesmen.map((s) => (
+              {salesmanOptions.map((s) => (
                 <option key={s.id} value={s.id}>
                   {s.name}
                 </option>
