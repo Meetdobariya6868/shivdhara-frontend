@@ -41,6 +41,9 @@ const AddSalesmanPage = lazy(
 const SalesmanDetailPage = lazy(
   () => import('@/features/users/pages/SalesmanDetailPage'),
 )
+const EditSalesmanPage = lazy(
+  () => import('@/features/users/pages/EditSalesmanPage'),
+)
 const CustomersPage = lazy(
   () => import('@/features/customers/pages/CustomersPage'),
 )
@@ -97,6 +100,7 @@ export const router = createBrowserRouter([
               { path: paths.addSalesman,  element: withSuspense(<AddSalesmanPage />) },
               { path: paths.customers,    element: withSuspense(<CustomersPage />) },
               { path: '/salesmen/:salesmanId', element: withSuspense(<SalesmanDetailPage />) },
+              { path: '/salesmen/:salesmanId/edit', element: withSuspense(<EditSalesmanPage />) },
             ],
           },
         ],

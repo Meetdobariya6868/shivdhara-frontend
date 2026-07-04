@@ -1,6 +1,7 @@
 import { BellIcon } from '@/components/icons'
 import { Avatar } from '@/components/ui/Avatar'
 import { useAuthStore } from '@/features/auth/store/auth.store'
+import { ThemeToggleButton } from '@/theme/ThemeToggleButton'
 import { getGreeting } from '@/utils/greeting'
 
 /**
@@ -26,14 +27,17 @@ export function GreetingHeader() {
         </p>
       </div>
 
-      {/* Notifications */}
-      <button
-        type="button"
-        aria-label="Notifications"
-        className="rounded-full p-2 text-foreground transition-colors hover:bg-card focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
-      >
-        <BellIcon size={22} />
-      </button>
+      {/* Theme toggle + notifications */}
+      <div className="flex items-center gap-1">
+        <ThemeToggleButton />
+        <button
+          type="button"
+          aria-label="Notifications"
+          className="rounded-full p-2 text-foreground transition-colors hover:bg-card focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+        >
+          <BellIcon size={22} />
+        </button>
+      </div>
     </header>
   )
 }

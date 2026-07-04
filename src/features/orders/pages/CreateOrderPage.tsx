@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 
 import { PlusIcon } from '@/components/icons'
 import { Alert } from '@/components/ui/Alert'
+import { useAuthStore } from '@/features/auth/store/auth.store'
 import { paths } from '@/routes/paths'
 
 import { AddItemModal } from '../components/AddItemModal'
@@ -44,6 +45,12 @@ interface ModalState {
 export default function CreateOrderPage() {
   const navigate = useNavigate()
   const createOrder = useCreateOrder()
+
+  // Admins always may; salesmen need the create-orders permission. The backend
+  // (OrderPolicy@create) is the hard gate — this only surfaces it in the UI.
+  const canCreateOrders = useAuthStore(
+    (s) => (s.user?.is_admin ?? false) || (s.user?.can_create_orders ?? false),
+  )
 
   const draft = useOrderDraftStore()
   const { rooms, items } = draft
@@ -106,6 +113,12 @@ export default function CreateOrderPage() {
 
   const handleSave = () => {
     setFormError(null)
+
+    if (!canCreateOrders) {
+      setFormError("You don't have permission to create orders.")
+      return
+    }
+
     const errs = validate()
     setFieldErrors(errs)
     if (Object.keys(errs).length > 0) {
@@ -177,6 +190,13 @@ export default function CreateOrderPage() {
     <div className="mx-auto flex max-w-2xl flex-col gap-6 px-4 pb-28 pt-4">
       <h1 className="text-center text-xl font-bold text-foreground">Add Detail</h1>
 
+      {!canCreateOrders && (
+        <Alert
+          variant="warning"
+          message="You don't have permission to create orders. Contact an administrator to enable it."
+        />
+      )}
+
       {formError && (
         <Alert variant="error" message={formError} onDismiss={() => setFormError(null)} />
       )}
@@ -224,7 +244,7 @@ export default function CreateOrderPage() {
         totals={totals}
         onSave={handleSave}
         isSaving={createOrder.isPending}
-        disabled={createOrder.isPending}
+        disabled={createOrder.isPending || !canCreateOrders}
       />
 
       {modal.open && (

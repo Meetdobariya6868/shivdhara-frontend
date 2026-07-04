@@ -20,3 +20,9 @@ export interface CreateSalesmanPayload {
   mobile_number: string
   password: string
 }
+
+/** Payload for PUT /users/{id} — edit a salesman's profile. */
+export interface UpdateSalesmanPayload {
+  name: string
+  mobile_number: string
+}

@@ -29,8 +29,10 @@ export const paths = {
   salesmen: '/salesmen',
   /** Add salesman (admin only). */
   addSalesman: '/salesmen/add',
-  /** Salesman detail — profile + their orders (admin only). */
+  /** Salesman detail — profile + management actions (admin only). */
   salesmanDetail: (id: number | string) => `/salesmen/${id}`,
+  /** Edit salesman profile (admin only). */
+  salesmanEdit: (id: number | string) => `/salesmen/${id}/edit`,
 
   /** Customer management (Phase 4). */
   customers: '/customers',
