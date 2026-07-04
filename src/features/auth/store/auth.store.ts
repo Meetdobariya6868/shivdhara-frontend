@@ -10,6 +10,9 @@ interface AuthState {
   /** Store token + user after successful login. */
   setAuth: (token: string, user: AuthUser) => void
 
+  /** Replace the current user (e.g. after a profile update), keeping the token. */
+  setUser: (user: AuthUser) => void
+
   /** Clear all auth state on logout or token expiry. */
   clearAuth: () => void
 
@@ -24,6 +27,8 @@ export const useAuthStore = create<AuthState>()(
       user: null,
 
       setAuth: (token, user) => set({ token, user }),
+
+      setUser: (user) => set({ user }),
 
       clearAuth: () => set({ token: null, user: null }),
 

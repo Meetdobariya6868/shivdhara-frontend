@@ -39,4 +39,6 @@ export const paths = {
 
   /** Current user's profile + settings (theme, logout). */
   profile: '/profile',
+  /** Edit the current user's own profile (name + mobile). */
+  profileEdit: '/profile/edit',
 } as const

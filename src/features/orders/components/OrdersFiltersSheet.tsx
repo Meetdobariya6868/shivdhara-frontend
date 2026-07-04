@@ -1,6 +1,7 @@
 import { useState } from 'react'
 
 import { XIcon } from '@/components/icons'
+import { Select } from '@/components/ui/Select'
 
 import { useOrderMeta } from '../hooks/useOrderMeta'
 import { useOrderSalesmen } from '../hooks/useOrders'
@@ -42,6 +43,21 @@ export function OrdersFiltersSheet({
   const { categories, types } = useOrderMeta()
   const { data: salesmenData } = useOrderSalesmen()
   const salesmanOptions = salesmenData?.data ?? []
+
+  // Dropdown options. Sentinel value 0 = "All" (real ids start at 1); the `set`
+  // helper below coerces 0 → undefined, which clears the filter.
+  const categoryOptions = [
+    { value: 0, label: 'All categories' },
+    ...categories.map((c) => ({ value: c.id, label: c.name })),
+  ]
+  const typeOptions = [
+    { value: 0, label: 'All types' },
+    ...types.map((t) => ({ value: t.id, label: t.name })),
+  ]
+  const salesmanSelectOptions = [
+    { value: 0, label: 'All salesmen' },
+    ...salesmanOptions.map((s) => ({ value: s.id, label: s.name })),
+  ]
 
   const set = <K extends keyof OrderFilters>(key: K, value: OrderFilters[K]) =>
     setDraft((prev) => ({ ...prev, [key]: value || undefined }))
@@ -137,21 +153,13 @@ export function OrdersFiltersSheet({
             <label htmlFor="filter-category" className={LABEL}>
               Category
             </label>
-            <select
+            <Select
               id="filter-category"
-              value={draft.order_category_id ?? ''}
-              onChange={(e) =>
-                set('order_category_id', e.target.value ? Number(e.target.value) : undefined)
-              }
-              className={FIELD}
-            >
-              <option value="">All categories</option>
-              {categories.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
+              placeholder="All categories"
+              value={draft.order_category_id ?? 0}
+              onChange={(value) => set('order_category_id', value)}
+              options={categoryOptions}
+            />
           </div>
 
           {/* Order type */}
@@ -159,21 +167,13 @@ export function OrdersFiltersSheet({
             <label htmlFor="filter-type" className={LABEL}>
               Order Type
             </label>
-            <select
+            <Select
               id="filter-type"
-              value={draft.order_type_id ?? ''}
-              onChange={(e) =>
-                set('order_type_id', e.target.value ? Number(e.target.value) : undefined)
-              }
-              className={FIELD}
-            >
-              <option value="">All types</option>
-              {types.map((t) => (
-                <option key={t.id} value={t.id}>
-                  {t.name}
-                </option>
-              ))}
-            </select>
+              placeholder="All types"
+              value={draft.order_type_id ?? 0}
+              onChange={(value) => set('order_type_id', value)}
+              options={typeOptions}
+            />
           </div>
 
           {/* Salesman / Creator */}
@@ -181,21 +181,13 @@ export function OrdersFiltersSheet({
             <label htmlFor="filter-salesman" className={LABEL}>
               Salesman
             </label>
-            <select
+            <Select
               id="filter-salesman"
-              value={draft.creator_id ?? ''}
-              onChange={(e) =>
-                set('creator_id', e.target.value ? Number(e.target.value) : undefined)
-              }
-              className={FIELD}
-            >
-              <option value="">All salesmen</option>
-              {salesmanOptions.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.name}
-                </option>
-              ))}
-            </select>
+              placeholder="All salesmen"
+              value={draft.creator_id ?? 0}
+              onChange={(value) => set('creator_id', value)}
+              options={salesmanSelectOptions}
+            />
           </div>
         </div>
 

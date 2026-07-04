@@ -48,6 +48,9 @@ const CustomersPage = lazy(
   () => import('@/features/customers/pages/CustomersPage'),
 )
 const ProfilePage = lazy(() => import('@/features/profile/pages/ProfilePage'))
+const EditProfilePage = lazy(
+  () => import('@/features/profile/pages/EditProfilePage'),
+)
 
 /** Wrap any route element with Suspense so lazy chunks never throw. */
 function withSuspense(node: ReactNode): ReactNode {
@@ -87,6 +90,7 @@ export const router = createBrowserRouter([
           { path: paths.dashboard, element: withSuspense(<HomePage />) },
           { path: paths.ordersCreate, element: withSuspense(<CreateOrderPage />) },
           { path: paths.profile, element: withSuspense(<ProfilePage />) },
+          { path: paths.profileEdit, element: withSuspense(<EditProfilePage />) },
           // Order detail — backend enforces admin-or-creator access (OrderPolicy@view)
           { path: '/orders/:orderId', element: withSuspense(<OrderDetailPage />) },
           { path: '/orders/:orderId/items/:itemId', element: withSuspense(<OrderItemDetailPage />) },

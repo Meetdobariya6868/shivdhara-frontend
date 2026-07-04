@@ -1,17 +1,17 @@
 import type { ReactNode } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import {
-  DownloadCloudIcon,
   LayoutIcon,
   LogOutIcon,
   ShieldIcon,
-  ShoppingCartIcon,
   UserIcon,
 } from '@/components/icons'
 import { Avatar } from '@/components/ui/Avatar'
 import { MenuListItem } from '@/components/ui/MenuListItem'
 import { useLogout } from '@/features/auth/hooks/useLogout'
 import { useAuthStore } from '@/features/auth/store/auth.store'
+import { paths } from '@/routes/paths'
 
 interface ProfileMenuItem {
   icon: ReactNode
@@ -22,10 +22,11 @@ interface ProfileMenuItem {
 
 /**
  * Profile screen, shared by both roles. The menu is composed from a common
- * base; admins additionally see the two catalogue items ("Show products",
- * "My products"). Defining each row once keeps the variants DRY.
+ * base; admins additionally see the catalogue item ("Show products").
+ * Defining each row once keeps the variants DRY.
  */
 export default function ProfilePage() {
+  const navigate = useNavigate()
   const user = useAuthStore((s) => s.user)
   const logout = useLogout()
 
@@ -34,7 +35,7 @@ export default function ProfilePage() {
   const editProfile: ProfileMenuItem = {
     icon: <UserIcon />,
     label: 'Edit Profile',
-    onClick: () => {},
+    onClick: () => void navigate(paths.profileEdit),
   }
 
   // Admin-only: design / catalogue screen.
@@ -44,22 +45,9 @@ export default function ProfilePage() {
     onClick: () => {},
   }
 
-  // Admin-only: the products this admin has added.
-  const myProducts: ProfileMenuItem = {
-    icon: <ShoppingCartIcon />,
-    label: 'My products',
-    onClick: () => {},
-  }
-
   const privacyPolicy: ProfileMenuItem = {
     icon: <ShieldIcon />,
     label: 'Privacy & Policy',
-    onClick: () => {},
-  }
-
-  const softwareUpdate: ProfileMenuItem = {
-    icon: <DownloadCloudIcon />,
-    label: 'Check for software update',
     onClick: () => {},
   }
 
@@ -71,8 +59,8 @@ export default function ProfilePage() {
   }
 
   const menuItems: ProfileMenuItem[] = isAdmin
-    ? [editProfile, showProducts, myProducts, privacyPolicy, softwareUpdate, logoutItem]
-    : [editProfile, privacyPolicy, softwareUpdate, logoutItem]
+    ? [editProfile, showProducts, privacyPolicy, logoutItem]
+    : [editProfile, privacyPolicy, logoutItem]
 
   return (
     <div className="flex flex-col pb-24">
