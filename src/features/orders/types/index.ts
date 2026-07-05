@@ -24,7 +24,6 @@ export type OrderStatus = 'pending' | 'confirmed'
 
 export interface Order {
   id: number
-  order_date: string
   customer: OrderCustomer
   creator: OrderCreator
   category: OrderCategory

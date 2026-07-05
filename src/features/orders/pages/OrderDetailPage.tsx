@@ -106,7 +106,7 @@ export default function OrderDetailPage() {
           {order.architect_name && (
             <DetailRow label="Architect" value={order.architect_name} />
           )}
-          <DetailRow label="Order Date" value={formatOrderDate(order.order_date)} />
+          <DetailRow label="Order Date" value={formatOrderDate(order.created_at)} />
         </Section>
 
         {/* Payment */}

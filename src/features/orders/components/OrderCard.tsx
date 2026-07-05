@@ -22,7 +22,7 @@ export function OrderCard({ order, onClick }: OrderCardProps) {
           {order.customer.name}
         </p>
         <span className="mt-0.5 shrink-0 text-xs text-muted">
-          {formatOrderDate(order.order_date)}
+          {formatOrderDate(order.created_at)}
         </span>
       </div>
       <p className="mt-0.5 text-xs text-muted">
