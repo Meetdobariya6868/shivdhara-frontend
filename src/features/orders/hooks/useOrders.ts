@@ -52,12 +52,15 @@ export function useOrders(filters: OrderFilters) {
 
 /**
  * Salesmen (including deleted ones) who have created orders — the option set
- * for the order list's salesman filter. Fetched once and cached.
+ * for the order list's salesman filter. Admin-only on the backend, so callers
+ * must pass `enabled: false` for a salesman viewing their own orders (the
+ * filter is meaningless there and the request would 403).
  */
-export function useOrderSalesmen() {
+export function useOrderSalesmen(enabled = true) {
   return useQuery({
     queryKey: ordersKeys.salesmen(),
     queryFn: () => ordersService.salesmen(),
+    enabled,
     staleTime: 60_000,
   })
 }

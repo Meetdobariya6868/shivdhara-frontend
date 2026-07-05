@@ -2,6 +2,7 @@ import { useState } from 'react'
 
 import { XIcon } from '@/components/icons'
 import { Select } from '@/components/ui/Select'
+import { useAuthStore } from '@/features/auth/store/auth.store'
 
 import { useOrderMeta } from '../hooks/useOrderMeta'
 import { useOrderSalesmen } from '../hooks/useOrders'
@@ -40,8 +41,13 @@ export function OrdersFiltersSheet({
     creator_id:        activeFilters.creator_id,
   }))
 
+  const isAdmin = useAuthStore((s) => s.user?.is_admin ?? false)
+
   const { categories, types } = useOrderMeta()
-  const { data: salesmenData } = useOrderSalesmen()
+  // Salesman-filter dropdown is admin-only — a salesman only ever sees their
+  // own orders, so filtering "by salesman" is meaningless (and the backend
+  // endpoint is admin-only, so skip the request entirely for a salesman).
+  const { data: salesmenData } = useOrderSalesmen(isAdmin)
   const salesmanOptions = salesmenData?.data ?? []
 
   // Dropdown options. Sentinel value 0 = "All" (real ids start at 1); the `set`
@@ -148,19 +154,21 @@ export function OrdersFiltersSheet({
             </div>
           </div>
 
-          {/* Salesman / Creator */}
-          <div className="mb-5">
-            <label htmlFor="filter-salesman" className={LABEL}>
-              Salesman
-            </label>
-            <Select
-              id="filter-salesman"
-              placeholder="All salesmen"
-              value={draft.creator_id ?? 0}
-              onChange={(value) => set('creator_id', value)}
-              options={salesmanSelectOptions}
-            />
-          </div>
+          {/* Salesman / Creator — admin only; a salesman's list is always their own */}
+          {isAdmin && (
+            <div className="mb-5">
+              <label htmlFor="filter-salesman" className={LABEL}>
+                Salesman
+              </label>
+              <Select
+                id="filter-salesman"
+                placeholder="All salesmen"
+                value={draft.creator_id ?? 0}
+                onChange={(value) => set('creator_id', value)}
+                options={salesmanSelectOptions}
+              />
+            </div>
+          )}
 
           {/* Category */}
           <div className="mb-5">
