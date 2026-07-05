@@ -20,9 +20,14 @@ interface SelectProps<T extends string | number> {
 }
 
 interface PanelCoords {
-  top: number
   left: number
   width: number
+  /** Max panel height, bounded to the available space so it never overflows the viewport. */
+  maxHeight: number
+  /** Set when the panel opens below the trigger. */
+  top?: number
+  /** Set when the panel flips open above the trigger (little room below). */
+  bottom?: number
 }
 
 /**
@@ -63,7 +68,25 @@ export function Select<T extends string | number>({
     const el = triggerRef.current
     if (!el) return
     const rect = el.getBoundingClientRect()
-    setCoords({ top: rect.bottom + 4, left: rect.left, width: rect.width })
+
+    const GAP = 4
+    const MARGIN = 8 // keep the panel clear of the viewport edge
+    const MAX_HEIGHT = 240 // preferred cap; the list scrolls beyond this
+    const spaceBelow = window.innerHeight - rect.bottom - MARGIN
+    const spaceAbove = rect.top - MARGIN
+
+    // Prefer opening below; flip above only when the space below is too small
+    // and there's more room above (e.g. a long list near a bottom-sheet's edge).
+    const openUp = spaceBelow < 160 && spaceAbove > spaceBelow
+
+    setCoords({
+      left: rect.left,
+      width: rect.width,
+      maxHeight: Math.min(MAX_HEIGHT, openUp ? spaceAbove : spaceBelow),
+      ...(openUp
+        ? { bottom: window.innerHeight - rect.top + GAP }
+        : { top: rect.bottom + GAP }),
+    })
   }, [])
 
   const openPanel = () => {
@@ -188,8 +211,14 @@ export function Select<T extends string | number>({
             ref={panelRef}
             id={listId}
             role="listbox"
-            style={{ top: coords.top, left: coords.left, width: coords.width }}
-            className="fixed z-[60] max-h-60 overflow-y-auto rounded-2xl border border-border bg-card p-1 shadow-2xl"
+            style={{
+              top: coords.top,
+              bottom: coords.bottom,
+              left: coords.left,
+              width: coords.width,
+              maxHeight: coords.maxHeight,
+            }}
+            className="fixed z-[60] overflow-y-auto rounded-2xl border border-border bg-card p-1 shadow-2xl"
           >
             {options.length === 0 ? (
               <p className="px-3 py-2 text-sm text-muted">No options</p>

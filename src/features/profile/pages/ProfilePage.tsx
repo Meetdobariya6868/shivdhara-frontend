@@ -42,7 +42,7 @@ export default function ProfilePage() {
   const showProducts: ProfileMenuItem = {
     icon: <LayoutIcon />,
     label: 'Show products',
-    onClick: () => {},
+    onClick: () => void navigate(paths.designs),
   }
 
   const privacyPolicy: ProfileMenuItem = {

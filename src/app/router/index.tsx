@@ -47,6 +47,10 @@ const EditSalesmanPage = lazy(
 const CustomersPage = lazy(
   () => import('@/features/customers/pages/CustomersPage'),
 )
+const DesignsPage = lazy(() => import('@/features/catalog/pages/DesignsPage'))
+const DesignDetailPage = lazy(
+  () => import('@/features/catalog/pages/DesignDetailPage'),
+)
 const ProfilePage = lazy(() => import('@/features/profile/pages/ProfilePage'))
 const EditProfilePage = lazy(
   () => import('@/features/profile/pages/EditProfilePage'),
@@ -105,6 +109,8 @@ export const router = createBrowserRouter([
               { path: paths.customers,    element: withSuspense(<CustomersPage />) },
               { path: '/salesmen/:salesmanId', element: withSuspense(<SalesmanDetailPage />) },
               { path: '/salesmen/:salesmanId/edit', element: withSuspense(<EditSalesmanPage />) },
+              { path: paths.designs, element: withSuspense(<DesignsPage />) },
+              { path: '/designs/:designId', element: withSuspense(<DesignDetailPage />) },
             ],
           },
         ],

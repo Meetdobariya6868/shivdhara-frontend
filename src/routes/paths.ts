@@ -37,6 +37,11 @@ export const paths = {
   /** Customer management (Phase 4). */
   customers: '/customers',
 
+  /** Catalogue management — designs list (admin only, "Show products"). */
+  designs: '/designs',
+  /** Single design + its variants, with editable rates (admin only). */
+  designDetail: (id: number | string) => `/designs/${id}`,
+
   /** Current user's profile + settings (theme, logout). */
   profile: '/profile',
   /** Edit the current user's own profile (name + mobile). */

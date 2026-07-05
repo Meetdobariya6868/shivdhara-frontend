@@ -106,7 +106,7 @@ export default function OrdersPage() {
         <div className="flex items-center gap-2 rounded-2xl border border-border bg-card px-4 py-3">
           <SearchIcon size={18} className="shrink-0 text-muted" />
           <input
-            type="search"
+            type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search order by customer name or number"

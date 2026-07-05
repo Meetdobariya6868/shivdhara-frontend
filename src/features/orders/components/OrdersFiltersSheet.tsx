@@ -148,6 +148,20 @@ export function OrdersFiltersSheet({
             </div>
           </div>
 
+          {/* Salesman / Creator */}
+          <div className="mb-5">
+            <label htmlFor="filter-salesman" className={LABEL}>
+              Salesman
+            </label>
+            <Select
+              id="filter-salesman"
+              placeholder="All salesmen"
+              value={draft.creator_id ?? 0}
+              onChange={(value) => set('creator_id', value)}
+              options={salesmanSelectOptions}
+            />
+          </div>
+
           {/* Category */}
           <div className="mb-5">
             <label htmlFor="filter-category" className={LABEL}>
@@ -176,19 +190,6 @@ export function OrdersFiltersSheet({
             />
           </div>
 
-          {/* Salesman / Creator */}
-          <div className="mb-5">
-            <label htmlFor="filter-salesman" className={LABEL}>
-              Salesman
-            </label>
-            <Select
-              id="filter-salesman"
-              placeholder="All salesmen"
-              value={draft.creator_id ?? 0}
-              onChange={(value) => set('creator_id', value)}
-              options={salesmanSelectOptions}
-            />
-          </div>
         </div>
 
         {/* Footer — Apply */}
