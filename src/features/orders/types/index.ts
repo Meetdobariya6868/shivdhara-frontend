@@ -60,6 +60,9 @@ export interface SalesmanOption {
   name: string
 }
 
+/** Which product identifier the quotation PDF prints: design name or design code. */
+export type QuotationFormat = 'name' | 'code'
+
 // ── Catalogue autocomplete ───────────────────────────────────────────────────
 
 /**

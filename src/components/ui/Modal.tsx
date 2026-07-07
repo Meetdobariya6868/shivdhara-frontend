@@ -12,12 +12,13 @@ export interface ModalProps {
   /** Sticky footer area (e.g. action buttons). */
   footer?: ReactNode
   /** Max width tier. */
-  size?: 'md' | 'lg'
+  size?: 'md' | 'lg' | 'xl'
 }
 
 const SIZE: Record<NonNullable<ModalProps['size']>, string> = {
   md: 'max-w-md',
   lg: 'max-w-xl',
+  xl: 'max-w-4xl',
 }
 
 /**

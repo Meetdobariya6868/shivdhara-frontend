@@ -12,6 +12,7 @@ import { paths } from '@/routes/paths'
 import { MoveItemModal } from '../components/MoveItemModal'
 import { OrderDetailSkeleton } from '../components/OrderDetailSkeleton'
 import { OrderRoomSection } from '../components/OrderRoomSection'
+import { QuotationActions } from '../components/QuotationActions'
 import { OrderStatusBadge } from '../components/OrderStatusBadge'
 import { RoomRenameModal } from '../components/RoomRenameModal'
 import { useOrder } from '../hooks/useOrder'
@@ -125,6 +126,9 @@ export default function OrderDetailPage() {
               This order has no rooms.
             </p>
           ) : (
+            <QuotationActions orderId={order.id} customerName={order.customer.name} />
+          )}
+          {order.rooms.length > 0 &&
             order.rooms.map((room) => (
               <OrderRoomSection
                 key={room.id}
@@ -136,8 +140,7 @@ export default function OrderDetailPage() {
                   void navigate(paths.orderItemDetail(id, item.id))
                 }}
               />
-            ))
-          )}
+            ))}
         </div>
 
         {/* Actions */}

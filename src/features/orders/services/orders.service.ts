@@ -10,6 +10,7 @@ import type {
   OrderListParams,
   OrderStatus,
   OrderType,
+  QuotationFormat,
   SalesmanOption,
   UpdateOrderItemPayload,
   UploadedImage,
@@ -35,6 +36,15 @@ export const ordersService = {
   /** Single order with its full room/item graph. */
   getById: async (id: number): Promise<ApiResponse<OrderDetail>> => {
     const { data } = await httpClient.get<ApiResponse<OrderDetail>>(`/v1/orders/${id}`)
+    return data
+  },
+
+  /** The order's quotation PDF (design name or code), as a Blob to view or save. */
+  downloadQuotation: async (id: number, format: QuotationFormat): Promise<Blob> => {
+    const { data } = await httpClient.get<Blob>(`/v1/orders/${id}/quotation`, {
+      params: { format },
+      responseType: 'blob',
+    })
     return data
   },
 
