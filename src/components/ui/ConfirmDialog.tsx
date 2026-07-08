@@ -10,6 +10,8 @@ interface ConfirmDialogProps {
   isLoading?: boolean
   /** Style the confirm action as destructive (used for deletes). */
   destructive?: boolean
+  /** Shown below the message when the last confirm attempt failed. */
+  error?: string | null
   onConfirm: () => void
   onClose: () => void
 }
@@ -27,6 +29,7 @@ export function ConfirmDialog({
   cancelLabel = 'Cancel',
   isLoading = false,
   destructive = false,
+  error,
   onConfirm,
   onClose,
 }: ConfirmDialogProps) {
@@ -65,6 +68,11 @@ export function ConfirmDialog({
       }
     >
       <p className="text-sm text-muted">{message}</p>
+      {error && (
+        <p role="alert" className="mt-2 text-sm text-error">
+          {error}
+        </p>
+      )}
     </Modal>
   )
 }

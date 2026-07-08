@@ -4,25 +4,30 @@ import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Modal } from '@/components/ui/Modal'
 
-interface RoomRenameModalProps {
+interface RoomNameModalProps {
   isOpen: boolean
-  currentName: string
+  title: string
+  submitLabel: string
+  /** Pre-fills the field (e.g. the current name when renaming). */
+  initialName?: string
   isSaving: boolean
   onClose: () => void
   onSave: (name: string) => void
 }
 
-const FORM_ID = 'rename-room-form'
+const FORM_ID = 'room-name-form'
 
-/** Modal to rename a room within an order. */
-export function RoomRenameModal({
+/** Modal to add or rename a room within an order (shared name form). */
+export function RoomNameModal({
   isOpen,
-  currentName,
+  title,
+  submitLabel,
+  initialName = '',
   isSaving,
   onClose,
   onSave,
-}: RoomRenameModalProps) {
-  const [name, setName] = useState(currentName)
+}: RoomNameModalProps) {
+  const [name, setName] = useState(initialName)
   const [error, setError] = useState<string | undefined>(undefined)
 
   const handleSubmit = (event: React.FormEvent) => {
@@ -39,7 +44,7 @@ export function RoomRenameModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Rename room"
+      title={title}
       footer={
         <div className="flex items-center justify-end gap-3">
           <button
@@ -51,7 +56,7 @@ export function RoomRenameModal({
             Cancel
           </button>
           <Button type="submit" form={FORM_ID} isLoading={isSaving}>
-            Save
+            {submitLabel}
           </Button>
         </div>
       }

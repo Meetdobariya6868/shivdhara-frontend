@@ -9,6 +9,7 @@ import { RadioGroup } from '@/components/ui/RadioGroup'
 import { Select } from '@/components/ui/Select'
 import { StateMessage } from '@/components/ui/StateMessage'
 import { paths } from '@/routes/paths'
+import { sanitizeDecimalInput, sanitizeIntegerInput } from '@/utils/numericInput'
 
 import { useOrder } from '../hooks/useOrder'
 import { useUpdateOrderItem } from '../hooks/useOrderActions'
@@ -228,7 +229,7 @@ function EditItemForm({ item, ordId, itmId }: EditItemFormProps) {
             placeholder="0"
             value={form.piecesPerBox}
             error={errors.piecesPerBox}
-            onChange={(e) => set('piecesPerBox', e.target.value)}
+            onChange={(e) => set('piecesPerBox', sanitizeIntegerInput(e.target.value))}
           />
         )}
         <Input
@@ -237,7 +238,7 @@ function EditItemForm({ item, ordId, itmId }: EditItemFormProps) {
           placeholder="0"
           value={form.quantity}
           error={errors.quantity}
-          onChange={(e) => set('quantity', e.target.value)}
+          onChange={(e) => set('quantity', sanitizeIntegerInput(e.target.value))}
         />
         <Input
           label="Product Sq Ft Rate"
@@ -245,7 +246,7 @@ function EditItemForm({ item, ordId, itmId }: EditItemFormProps) {
           placeholder="0"
           value={form.sqftRate}
           error={errors.sqftRate}
-          onChange={(e) => set('sqftRate', e.target.value)}
+          onChange={(e) => set('sqftRate', sanitizeDecimalInput(e.target.value))}
         />
       </div>
 
@@ -257,7 +258,7 @@ function EditItemForm({ item, ordId, itmId }: EditItemFormProps) {
           placeholder="0"
           value={form.height}
           error={errors.height}
-          onChange={(e) => set('height', e.target.value)}
+          onChange={(e) => set('height', sanitizeDecimalInput(e.target.value))}
         />
         <Input
           label="Width"
@@ -265,7 +266,7 @@ function EditItemForm({ item, ordId, itmId }: EditItemFormProps) {
           placeholder="0"
           value={form.width}
           error={errors.width}
-          onChange={(e) => set('width', e.target.value)}
+          onChange={(e) => set('width', sanitizeDecimalInput(e.target.value))}
         />
         <Select
           label="Unit"
@@ -281,7 +282,7 @@ function EditItemForm({ item, ordId, itmId }: EditItemFormProps) {
         inputMode="decimal"
         placeholder="0"
         value={pricePerItemValue}
-        onChange={(e) => set('pricePerItem', e.target.value)}
+        onChange={(e) => set('pricePerItem', sanitizeDecimalInput(e.target.value))}
       />
 
       {/* Product total — read-only, derived from price per piece × total pieces */}

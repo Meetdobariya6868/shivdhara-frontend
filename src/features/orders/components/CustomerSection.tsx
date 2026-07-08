@@ -1,4 +1,5 @@
 import { Input } from '@/components/ui/Input'
+import { sanitizeIntegerInput } from '@/utils/numericInput'
 
 import { useOrderDraftStore } from '../store/orderDraftStore'
 
@@ -6,7 +7,7 @@ interface CustomerSectionProps {
   errors: { customerName?: string; customerContact?: string }
 }
 
-/** Customer name + contact. Both are free text — find-or-created on the server. */
+/** Customer name + contact. Both are free text — a new customer record is always created, never reused. */
 export function CustomerSection({ errors }: CustomerSectionProps) {
   const customerName = useOrderDraftStore((s) => s.customerName)
   const customerContact = useOrderDraftStore((s) => s.customerContact)
@@ -29,7 +30,7 @@ export function CustomerSection({ errors }: CustomerSectionProps) {
         placeholder="Customer number"
         value={customerContact}
         error={errors.customerContact}
-        onChange={(e) => setField('customerContact', e.target.value)}
+        onChange={(e) => setField('customerContact', sanitizeIntegerInput(e.target.value))}
       />
     </section>
   )

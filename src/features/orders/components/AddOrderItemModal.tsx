@@ -11,25 +11,21 @@ import { sanitizeDecimalInput, sanitizeIntegerInput } from '@/utils/numericInput
 
 import { useDesignVariantSearch } from '../hooks/useDesignVariantSearch'
 import { useUploadOrderItemImage } from '../hooks/useUploadOrderItemImage'
-import type { DraftItem, DraftItemInput, DraftRoom } from '../store/orderDraftStore'
-import type { DesignVariantOption, ItemType, MeasurementUnit } from '../types'
+import type { CreateOrderItemPayload, DesignVariantOption, ItemType, MeasurementUnit } from '../types'
 import { calculateItem, lineTotal } from '../utils/calculateItem'
 import { ITEM_TYPE_OPTIONS, MEASUREMENT_UNIT_OPTIONS } from '../utils/orderOptions'
 
-interface AddItemModalProps {
+interface AddOrderItemModalProps {
   isOpen: boolean
+  roomName: string
+  isSaving: boolean
+  error?: string | null
   onClose: () => void
-  rooms: readonly DraftRoom[]
-  /** Room pre-selected when adding a new item. */
-  defaultRoomTempId: string
-  /** Present when editing an existing item (enables room reassignment). */
-  editingItem?: DraftItem | null
-  onSubmit: (roomTempId: string, input: DraftItemInput, editingTempId: string | null) => void
+  onSave: (payload: CreateOrderItemPayload) => void
 }
 
 /** All fields held as strings while editing; parsed on submit. */
 interface ItemFormState {
-  roomTempId: string
   /** Exact-reuse link set when a row is chosen from the autocomplete; null if typed. */
   designVariantId: number | null
   companyName: string
@@ -48,7 +44,7 @@ interface ItemFormState {
   purchaseRate: string
   /** Catalogue sell rate (auto-filled reference; not persisted on the order). */
   sellRate: string
-  /** "Product Sq Ft Rate" — the rate actually charged; maps to sqft_rate. Blank on selection. */
+  /** "Product Sq Ft Rate" — the rate actually charged; maps to sqft_rate. */
   sqftRate: string
   /** Per-item price (price_per_item) — auto-filled from area × sqft_rate, but editable. */
   pricePerItem: string
@@ -58,81 +54,50 @@ interface ItemFormState {
 
 type FormErrors = Partial<Record<keyof ItemFormState, string>>
 
-const FORM_ID = 'add-item-form'
+const FORM_ID = 'add-order-item-form'
 
 function num(value: string): number {
   const n = parseFloat(value)
   return Number.isFinite(n) ? n : 0
 }
 
-function buildInitialState(
-  defaultRoomTempId: string,
-  editingItem: DraftItem | null | undefined,
-): ItemFormState {
-  if (editingItem) {
-    return {
-      roomTempId: editingItem.roomTempId,
-      designVariantId: editingItem.designVariantId,
-      companyName: editingItem.companyName,
-      designName: editingItem.designName,
-      size: editingItem.size,
-      finish: editingItem.finish,
-      thickness: editingItem.thickness,
-      itemType: editingItem.itemType,
-      quantity: editingItem.quantity.toString(),
-      piecesPerBox: editingItem.piecesPerBox?.toString() ?? '',
-      measurementUnit: editingItem.measurementUnit,
-      height: editingItem.height.toString(),
-      width: editingItem.width.toString(),
-      purchaseRate: editingItem.purchaseRate.toString(),
-      sellRate: editingItem.sellRate.toString(),
-      sqftRate: editingItem.sqftRate ? editingItem.sqftRate.toString() : '',
-      pricePerItem: '',
-      productImagePath: editingItem.productImagePath,
-      productImageUrl: editingItem.productImageUrl,
-    }
-  }
-
-  return {
-    roomTempId: defaultRoomTempId,
-    designVariantId: null,
-    companyName: '',
-    designName: '',
-    size: '',
-    finish: '',
-    thickness: '',
-    itemType: 'box',
-    quantity: '',
-    piecesPerBox: '',
-    measurementUnit: 'mm',
-    height: '',
-    width: '',
-    purchaseRate: '',
-    sellRate: '',
-    sqftRate: '',
-    pricePerItem: '',
-    productImagePath: null,
-    productImageUrl: null,
-  }
+const INITIAL_STATE: ItemFormState = {
+  designVariantId: null,
+  companyName: '',
+  designName: '',
+  size: '',
+  finish: '',
+  thickness: '',
+  itemType: 'box',
+  quantity: '',
+  piecesPerBox: '',
+  measurementUnit: 'mm',
+  height: '',
+  width: '',
+  purchaseRate: '',
+  sellRate: '',
+  sqftRate: '',
+  pricePerItem: '',
+  productImagePath: null,
+  productImageUrl: null,
 }
 
 /**
- * "Add Detail" popup — captures a single order item (product text + box/piece
- * quantities + dimensions + rates) with a live, server-aligned calculation
- * preview. The room selector doubles as the "move item to another room" control
- * when editing.
+ * Adds a new product line to an existing room on an existing order. Mirrors the
+ * create-order "Add Detail" popup (same fields, same live calculation, same
+ * catalogue autocomplete) — the only difference is that saving hits the order
+ * detail API directly instead of staging into the draft store, since the order
+ * already exists server-side.
  */
-export function AddItemModal({
+export function AddOrderItemModal({
   isOpen,
+  roomName,
+  isSaving,
+  error,
   onClose,
-  rooms,
-  defaultRoomTempId,
-  editingItem,
-  onSubmit,
-}: AddItemModalProps) {
-  const [form, setForm] = useState<ItemFormState>(() =>
-    buildInitialState(defaultRoomTempId, editingItem),
-  )
+  onSave,
+}: AddOrderItemModalProps) {
+  const [form, setForm] = useState<ItemFormState>(INITIAL_STATE)
   const [errors, setErrors] = useState<FormErrors>({})
   const upload = useUploadOrderItemImage()
 
@@ -145,8 +110,8 @@ export function AddItemModal({
   const setIdentity = <K extends keyof ItemFormState>(key: K, value: ItemFormState[K]) =>
     setForm((prev) => ({ ...prev, [key]: value, designVariantId: null }))
 
-  // Server-side search; idle while a variant is already linked (e.g. editing an
-  // existing item) — typing in the field clears the link and re-enables it.
+  // Server-side search; idle once a catalogue variant is linked — typing in the
+  // field clears the link and re-enables it.
   const variantSearch = useDesignVariantSearch(form.designName, isOpen && form.designVariantId === null)
 
   // Picking a row fills every product field and links the item to that exact
@@ -188,17 +153,15 @@ export function AddItemModal({
         measurementUnit: form.measurementUnit,
         height: num(form.height),
         width: num(form.width),
-        // price_per_item is driven by the actual charged rate (Product Sq Ft
-        // Rate), not the catalogue sell rate.
         sqftRate: num(form.sqftRate),
       }),
     [form],
   )
 
-  // The editable "Price per piece" field defaults to the formula result
-  // (area × sqft_rate) and live-updates as inputs change; once the user types a
-  // value, that override sticks until they clear it. The line total below is
-  // always derived from the effective per-item price × quantity.
+  // The editable "Calculation" field defaults to the formula result (area ×
+  // sqft_rate) and live-updates as inputs change; once the user types a value,
+  // that override sticks. The line total below always derives from the
+  // effective per-item price × quantity.
   const autoPricePerItem = calc.pricePerItem ? calc.pricePerItem.toString() : ''
   const pricePerItemValue = form.pricePerItem !== '' ? form.pricePerItem : autoPricePerItem
   const productTotal = lineTotal(
@@ -224,7 +187,6 @@ export function AddItemModal({
 
   const validate = (): FormErrors => {
     const e: FormErrors = {}
-    if (!form.roomTempId) e.roomTempId = 'Select a room'
     if (!form.companyName.trim()) e.companyName = 'Company is required'
     if (!form.designName.trim()) e.designName = 'Design name is required'
     if (!form.size.trim()) e.size = 'Size is required'
@@ -257,66 +219,51 @@ export function AddItemModal({
     setErrors(found)
     if (Object.keys(found).length > 0) return
 
-    const input: DraftItemInput = {
-      designVariantId: form.designVariantId,
-      companyName: form.companyName.trim(),
-      designName: form.designName.trim(),
+    const payload: CreateOrderItemPayload = {
+      design_variant_id: form.designVariantId,
+      company_name: form.companyName.trim(),
+      design_name: form.designName.trim(),
       size: form.size.trim(),
       finish: form.finish.trim(),
       thickness: form.thickness.trim(),
-      productImagePath: form.productImagePath,
-      productImageUrl: form.productImageUrl,
-      itemType: form.itemType,
+      product_image_path: form.productImagePath,
+      item_type: form.itemType,
       quantity: num(form.quantity),
-      piecesPerBox: isBox ? num(form.piecesPerBox) : null,
-      measurementUnit: form.measurementUnit,
+      pieces_per_box: isBox ? num(form.piecesPerBox) : null,
+      measurement_unit: form.measurementUnit,
       height: num(form.height),
       width: num(form.width),
-      purchaseRate: num(form.purchaseRate),
-      sellRate: num(form.sellRate),
-      sqftRate: num(form.sqftRate),
-      pricePerItem: num(pricePerItemValue),
-      productTotal,
+      purchase_rate: num(form.purchaseRate),
+      sell_rate: num(form.sellRate),
+      price_per_item: num(pricePerItemValue),
     }
 
-    onSubmit(form.roomTempId, input, editingItem?.tempId ?? null)
+    onSave(payload)
   }
 
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={editingItem ? 'Edit Detail' : 'Add Detail'}
+      title={`Add item to ${roomName}`}
       size="lg"
       footer={
         <div className="flex items-center justify-end gap-3">
           <button
             type="button"
             onClick={onClose}
-            className="rounded-xl px-5 py-3 text-sm font-semibold text-muted transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            disabled={isSaving}
+            className="rounded-xl px-5 py-3 text-sm font-semibold text-muted transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-60"
           >
             Cancel
           </button>
-          <Button type="submit" form={FORM_ID}>
-            {editingItem ? 'Save Item' : 'Add Item'}
+          <Button type="submit" form={FORM_ID} isLoading={isSaving}>
+            Add Item
           </Button>
         </div>
       }
     >
       <form id={FORM_ID} onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
-        {/* Room assignment (also the "move to room" control) */}
-        <Select
-          label="Room"
-          placeholder="Select room"
-          value={form.roomTempId || null}
-          error={errors.roomTempId}
-          options={rooms.map((room) => ({
-            value: room.tempId,
-            label: room.roomName.trim() || 'Untitled room',
-          }))}
-          onChange={(v) => set('roomTempId', v)}
-        />
-
         {/* Photo */}
         <div className="flex justify-center py-1">
           <PhotoPicker
@@ -398,7 +345,6 @@ export function AddItemModal({
         {/* Quantity mode */}
         <RadioGroup<ItemType>
           name="item-type"
-          // label="Sold by"
           value={form.itemType}
           onChange={(v) => set('itemType', v)}
           options={ITEM_TYPE_OPTIONS}
@@ -496,6 +442,12 @@ export function AddItemModal({
             ₹{productTotal.toFixed(2)}
           </span>
         </div>
+
+        {error && (
+          <p role="alert" className="text-xs text-error">
+            {error}
+          </p>
+        )}
       </form>
     </Modal>
   )

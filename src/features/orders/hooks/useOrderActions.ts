@@ -4,7 +4,13 @@ import type { QueryClient } from '@tanstack/react-query'
 import type { ApiResponse } from '@/types'
 
 import { ordersService } from '../services/orders.service'
-import type { OrderDetail, OrderStatus, UpdateOrderItemPayload } from '../types'
+import type {
+  CreateOrderItemPayload,
+  OrderDetail,
+  OrderStatus,
+  UpdateOrderDetailsPayload,
+  UpdateOrderItemPayload,
+} from '../types'
 import { ordersKeys } from './useOrders'
 
 /**
@@ -27,6 +33,16 @@ export function useUpdateOrderStatus() {
   })
 }
 
+/** Edit customer name/contact, category, type and order date. */
+export function useUpdateOrderDetails() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, payload }: { id: number; payload: UpdateOrderDetailsPayload }) =>
+      ordersService.updateDetails(id, payload),
+    onSuccess: (res) => syncOrderDetail(qc, res),
+  })
+}
+
 /** Soft-delete an order. Caller handles navigation on success. */
 export function useDeleteOrder() {
   const qc = useQueryClient()
@@ -39,12 +55,41 @@ export function useDeleteOrder() {
   })
 }
 
+/** Add a new, empty room to an order. */
+export function useAddRoom() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ orderId, roomName }: { orderId: number; roomName: string }) =>
+      ordersService.addRoom(orderId, roomName),
+    onSuccess: (res) => syncOrderDetail(qc, res),
+  })
+}
+
 /** Rename a room within an order. */
 export function useRenameRoom() {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: ({ roomId, roomName }: { roomId: number; roomName: string }) =>
       ordersService.renameRoom(roomId, roomName),
+    onSuccess: (res) => syncOrderDetail(qc, res),
+  })
+}
+
+/** Delete an empty room. The API refuses (409) if the room still has items. */
+export function useDeleteRoom() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (roomId: number) => ordersService.deleteRoom(roomId),
+    onSuccess: (res) => syncOrderDetail(qc, res),
+  })
+}
+
+/** Add a new item to an existing room. */
+export function useAddOrderItem() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ roomId, payload }: { roomId: number; payload: CreateOrderItemPayload }) =>
+      ordersService.addItem(roomId, payload),
     onSuccess: (res) => syncOrderDetail(qc, res),
   })
 }

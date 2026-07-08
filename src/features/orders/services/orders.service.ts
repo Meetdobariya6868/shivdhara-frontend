@@ -2,6 +2,7 @@ import { httpClient } from '@/lib/axios'
 import type { ApiResponse, PaginatedResponse } from '@/types'
 
 import type {
+  CreateOrderItemPayload,
   CreateOrderPayload,
   DesignVariantOption,
   Order,
@@ -12,6 +13,7 @@ import type {
   OrderType,
   QuotationFormat,
   SalesmanOption,
+  UpdateOrderDetailsPayload,
   UpdateOrderItemPayload,
   UploadedImage,
 } from '../types'
@@ -63,9 +65,34 @@ export const ordersService = {
     return data
   },
 
+  /**
+   * Edit customer name/contact, category, type and order date. Returns the
+   * updated order detail. The customer edit updates the shared Customer
+   * record — every other order from the same customer reflects it too.
+   */
+  updateDetails: async (
+    id: number,
+    payload: UpdateOrderDetailsPayload,
+  ): Promise<ApiResponse<OrderDetail>> => {
+    const { data } = await httpClient.patch<ApiResponse<OrderDetail>>(
+      `/v1/orders/${id}/details`,
+      payload,
+    )
+    return data
+  },
+
   /** Soft-delete an order. */
   remove: async (id: number): Promise<ApiResponse<null>> => {
     const { data } = await httpClient.delete<ApiResponse<null>>(`/v1/orders/${id}`)
+    return data
+  },
+
+  /** Add a new, empty room to an order. Returns the reloaded parent order detail. */
+  addRoom: async (orderId: number, roomName: string): Promise<ApiResponse<OrderDetail>> => {
+    const { data } = await httpClient.post<ApiResponse<OrderDetail>>(
+      `/v1/orders/${orderId}/rooms`,
+      { room_name: roomName },
+    )
     return data
   },
 
@@ -74,6 +101,29 @@ export const ordersService = {
     const { data } = await httpClient.patch<ApiResponse<OrderDetail>>(
       `/v1/order-rooms/${roomId}`,
       { room_name: roomName },
+    )
+    return data
+  },
+
+  /**
+   * Delete an empty room. Returns the reloaded parent order detail. The API
+   * refuses (409) if the room still has items.
+   */
+  deleteRoom: async (roomId: number): Promise<ApiResponse<OrderDetail>> => {
+    const { data } = await httpClient.delete<ApiResponse<OrderDetail>>(
+      `/v1/order-rooms/${roomId}`,
+    )
+    return data
+  },
+
+  /** Add a new item to an existing room. Returns the reloaded parent order detail. */
+  addItem: async (
+    roomId: number,
+    payload: CreateOrderItemPayload,
+  ): Promise<ApiResponse<OrderDetail>> => {
+    const { data } = await httpClient.post<ApiResponse<OrderDetail>>(
+      `/v1/order-rooms/${roomId}/items`,
+      payload,
     )
     return data
   },

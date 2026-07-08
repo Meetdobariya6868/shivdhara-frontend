@@ -147,6 +147,22 @@ export interface CreateOrderPayload {
   rooms: CreateOrderRoomPayload[]
 }
 
+// ── Update order details (PATCH /orders/{id}/details) ───────────────────────
+
+/**
+ * Edits an existing order's header fields from the order detail screen.
+ * Editing the customer updates the shared Customer record directly — every
+ * other order from the same customer reflects the correction too.
+ */
+export interface UpdateOrderDetailsPayload {
+  customer_name: string
+  customer_contact: string
+  order_category_id: number
+  order_type_id: number
+  /** "YYYY-MM-DD"; replaces only the calendar date, time-of-day is preserved server-side. */
+  order_date: string
+}
+
 // ── Update order item (PATCH /order-items/{id}) ─────────────────────────────
 
 export interface UpdateOrderItemPayload {

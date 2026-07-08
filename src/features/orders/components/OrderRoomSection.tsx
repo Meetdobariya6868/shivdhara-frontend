@@ -1,14 +1,17 @@
-import { EditIcon, ImageIcon } from '@/components/icons'
+import { EditIcon, ImageIcon, PlusIcon, TrashIcon } from '@/components/icons'
 
 import { formatINR } from '../utils/formatters'
 import type { OrderDetailItem, OrderDetailRoom } from '../types'
 
 interface OrderRoomSectionProps {
   room: OrderDetailRoom
-  /** Show rename / move controls (admin or the order's creator). */
+  /** Show rename / move / add-item controls (admin or the order's creator). */
   canEdit: boolean
   onRename: (room: OrderDetailRoom) => void
   onMoveItem: (item: OrderDetailItem) => void
+  onAddItem: (room: OrderDetailRoom) => void
+  /** Only offered when the room has no items — a room with items cannot be deleted. */
+  onDeleteRoom: (room: OrderDetailRoom) => void
   /** Navigate to the item detail screen. */
   onItemClick: (item: OrderDetailItem) => void
 }
@@ -21,10 +24,20 @@ function quantityLabel(item: OrderDetailItem): string {
 }
 
 /** One room card on the order detail screen: title, rename control and its items. */
-export function OrderRoomSection({ room, canEdit, onRename, onMoveItem, onItemClick }: OrderRoomSectionProps) {
+export function OrderRoomSection({
+  room,
+  canEdit,
+  onRename,
+  onMoveItem,
+  onAddItem,
+  onDeleteRoom,
+  onItemClick,
+}: OrderRoomSectionProps) {
+  const canDelete = canEdit && room.items.length === 0
+
   return (
     <section className="flex flex-col gap-3 rounded-3xl border border-border bg-card p-4">
-      {/* Header: room name + rename */}
+      {/* Header: room name + rename + delete (delete only offered when empty) */}
       <div className="flex items-center gap-2">
         <h3 className="min-w-0 flex-1 truncate text-base font-bold text-card-foreground">
           {room.room_name}
@@ -37,6 +50,16 @@ export function OrderRoomSection({ room, canEdit, onRename, onMoveItem, onItemCl
             className="shrink-0 rounded-full p-1.5 text-muted transition-colors hover:bg-surface hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             <EditIcon size={16} />
+          </button>
+        )}
+        {canDelete && (
+          <button
+            type="button"
+            onClick={() => onDeleteRoom(room)}
+            aria-label={`Delete ${room.room_name}`}
+            className="shrink-0 rounded-full p-1.5 text-muted transition-colors hover:bg-error-bg hover:text-error focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <TrashIcon size={16} />
           </button>
         )}
       </div>
@@ -98,6 +121,17 @@ export function OrderRoomSection({ room, canEdit, onRename, onMoveItem, onItemCl
           </div>
         ))}
       </div>
+
+      {canEdit && (
+        <button
+          type="button"
+          onClick={() => onAddItem(room)}
+          className="flex items-center justify-center gap-1.5 rounded-2xl border border-dashed border-border px-3 py-2.5 text-sm font-semibold text-muted transition-colors hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          <PlusIcon size={14} />
+          Add Item
+        </button>
+      )}
     </section>
   )
 }

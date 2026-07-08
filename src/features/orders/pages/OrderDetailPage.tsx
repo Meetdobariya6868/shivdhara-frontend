@@ -9,27 +9,46 @@ import { StateMessage } from '@/components/ui/StateMessage'
 import { useAuthStore } from '@/features/auth/store/auth.store'
 import { paths } from '@/routes/paths'
 
+import { EditIcon, PlusIcon } from '@/components/icons'
+
+import { AddOrderItemModal } from '../components/AddOrderItemModal'
+import { EditOrderDetailsModal } from '../components/EditOrderDetailsModal'
 import { MoveItemModal } from '../components/MoveItemModal'
 import { OrderDetailSkeleton } from '../components/OrderDetailSkeleton'
 import { OrderRoomSection } from '../components/OrderRoomSection'
 import { QuotationActions } from '../components/QuotationActions'
 import { OrderStatusBadge } from '../components/OrderStatusBadge'
-import { RoomRenameModal } from '../components/RoomRenameModal'
+import { RoomNameModal } from '../components/RoomNameModal'
 import { useOrder } from '../hooks/useOrder'
 import {
+  useAddOrderItem,
+  useAddRoom,
   useDeleteOrder,
+  useDeleteRoom,
   useMoveOrderItem,
   useRenameRoom,
+  useUpdateOrderDetails,
   useUpdateOrderStatus,
 } from '../hooks/useOrderActions'
 import type { OrderDetailItem, OrderDetailRoom } from '../types'
 import { formatINR, formatOrderDate } from '../utils/formatters'
 
-/** Card wrapper with a section title, used for the detail blocks. */
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+/** Card wrapper with a section title (and an optional header action), used for the detail blocks. */
+function Section({
+  title,
+  action,
+  children,
+}: {
+  title: string
+  action?: React.ReactNode
+  children: React.ReactNode
+}) {
   return (
     <section className="rounded-2xl bg-card p-4">
-      <h2 className="mb-2 text-sm font-bold uppercase tracking-wide text-muted">{title}</h2>
+      <div className="mb-2 flex items-center justify-between">
+        <h2 className="text-sm font-bold uppercase tracking-wide text-muted">{title}</h2>
+        {action}
+      </div>
       {children}
     </section>
   )
@@ -46,12 +65,23 @@ export default function OrderDetailPage() {
   const { data, isLoading, isError, refetch } = useOrder(id)
   const updateStatus = useUpdateOrderStatus()
   const deleteOrder = useDeleteOrder()
+  const addRoom = useAddRoom()
   const renameRoom = useRenameRoom()
+  const deleteRoom = useDeleteRoom()
   const moveItem = useMoveOrderItem()
+  const addItem = useAddOrderItem()
+  const updateDetails = useUpdateOrderDetails()
 
   const [roomToRename, setRoomToRename] = useState<OrderDetailRoom | null>(null)
+  const [roomToDelete, setRoomToDelete] = useState<OrderDetailRoom | null>(null)
+  const [deleteRoomError, setDeleteRoomError] = useState<string | null>(null)
   const [itemToMove, setItemToMove] = useState<OrderDetailItem | null>(null)
   const [confirmDelete, setConfirmDelete] = useState(false)
+  const [addingRoom, setAddingRoom] = useState(false)
+  const [roomForNewItem, setRoomForNewItem] = useState<OrderDetailRoom | null>(null)
+  const [addItemError, setAddItemError] = useState<string | null>(null)
+  const [editingDetails, setEditingDetails] = useState(false)
+  const [editDetailsError, setEditDetailsError] = useState<string | null>(null)
 
   if (isLoading) {
     return (
@@ -99,7 +129,24 @@ export default function OrderDetailPage() {
 
       <div className="flex flex-col gap-4 px-4 py-4">
         {/* Customer */}
-        <Section title="Customer detail">
+        <Section
+          title="Customer detail"
+          action={
+            canEdit && (
+              <button
+                type="button"
+                onClick={() => {
+                  setEditDetailsError(null)
+                  setEditingDetails(true)
+                }}
+                aria-label="Edit order details"
+                className="shrink-0 rounded-full p-1.5 text-muted transition-colors hover:bg-surface hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                <EditIcon size={16} />
+              </button>
+            )
+          }
+        >
           <DetailRow label="Name" value={order.customer.name} />
           <DetailRow label="Mobile No." value={order.customer.contact} />
           <DetailRow label="Category" value={order.category.name} />
@@ -120,7 +167,19 @@ export default function OrderDetailPage() {
 
         {/* Products grouped by room */}
         <div className="flex flex-col gap-3">
-          <h2 className="text-sm font-bold uppercase tracking-wide text-muted">Products</h2>
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-bold uppercase tracking-wide text-muted">Products</h2>
+            {canEdit && (
+              <button
+                type="button"
+                onClick={() => setAddingRoom(true)}
+                className="inline-flex items-center gap-1.5 rounded-xl border border-border px-3 py-2 text-xs font-semibold text-foreground transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                <PlusIcon size={14} />
+                Add room
+              </button>
+            )}
+          </div>
           {order.rooms.length === 0 ? (
             <p className="rounded-2xl bg-card px-4 py-6 text-center text-sm text-muted">
               This order has no rooms.
@@ -136,6 +195,14 @@ export default function OrderDetailPage() {
                 canEdit={canEdit}
                 onRename={setRoomToRename}
                 onMoveItem={setItemToMove}
+                onAddItem={(r) => {
+                  setAddItemError(null)
+                  setRoomForNewItem(r)
+                }}
+                onDeleteRoom={(r) => {
+                  setDeleteRoomError(null)
+                  setRoomToDelete(r)
+                }}
                 onItemClick={(item) => {
                   void navigate(paths.orderItemDetail(id, item.id))
                 }}
@@ -167,11 +234,52 @@ export default function OrderDetailPage() {
         )}
       </div>
 
+      {/* Edit order details */}
+      {editingDetails && (
+        <EditOrderDetailsModal
+          isOpen
+          order={order}
+          isSaving={updateDetails.isPending}
+          error={editDetailsError}
+          onClose={() => setEditingDetails(false)}
+          onSave={(payload) => {
+            setEditDetailsError(null)
+            updateDetails.mutate(
+              { id: order.id, payload },
+              {
+                onSuccess: () => setEditingDetails(false),
+                onError: () =>
+                  setEditDetailsError("Couldn't save these changes. Please try again."),
+              },
+            )
+          }}
+        />
+      )}
+
+      {/* Add room */}
+      {addingRoom && (
+        <RoomNameModal
+          isOpen
+          title="Add room"
+          submitLabel="Add"
+          isSaving={addRoom.isPending}
+          onClose={() => setAddingRoom(false)}
+          onSave={(name) =>
+            addRoom.mutate(
+              { orderId: order.id, roomName: name },
+              { onSuccess: () => setAddingRoom(false) },
+            )
+          }
+        />
+      )}
+
       {/* Rename room */}
       {roomToRename && (
-        <RoomRenameModal
+        <RoomNameModal
           isOpen
-          currentName={roomToRename.room_name}
+          title="Rename room"
+          submitLabel="Save"
+          initialName={roomToRename.room_name}
           isSaving={renameRoom.isPending}
           onClose={() => setRoomToRename(null)}
           onSave={(name) =>
@@ -179,6 +287,50 @@ export default function OrderDetailPage() {
               { roomId: roomToRename.id, roomName: name },
               { onSuccess: () => setRoomToRename(null) },
             )
+          }
+        />
+      )}
+
+      {/* Add item */}
+      {roomForNewItem && (
+        <AddOrderItemModal
+          isOpen
+          roomName={roomForNewItem.room_name}
+          isSaving={addItem.isPending}
+          error={addItemError}
+          onClose={() => setRoomForNewItem(null)}
+          onSave={(payload) => {
+            setAddItemError(null)
+            addItem.mutate(
+              { roomId: roomForNewItem.id, payload },
+              {
+                onSuccess: () => setRoomForNewItem(null),
+                onError: () => setAddItemError("Couldn't add the item. Please try again."),
+              },
+            )
+          }}
+        />
+      )}
+
+      {/* Delete room */}
+      {roomToDelete && (
+        <ConfirmDialog
+          isOpen
+          title="Delete this room?"
+          message={`"${roomToDelete.room_name}" has no items and will be removed from this order. This action cannot be undone.`}
+          confirmLabel="Delete"
+          destructive
+          isLoading={deleteRoom.isPending}
+          error={deleteRoomError}
+          onClose={() => setRoomToDelete(null)}
+          onConfirm={() =>
+            deleteRoom.mutate(roomToDelete.id, {
+              onSuccess: () => setRoomToDelete(null),
+              onError: () =>
+                setDeleteRoomError(
+                  "Couldn't delete this room — it may already have items. Please refresh and try again.",
+                ),
+            })
           }
         />
       )}

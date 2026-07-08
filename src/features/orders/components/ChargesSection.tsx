@@ -1,6 +1,7 @@
 import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { Textarea } from '@/components/ui/Textarea'
+import { sanitizeDecimalInput } from '@/utils/numericInput'
 
 import { useOrderMeta } from '../hooks/useOrderMeta'
 import { useOrderDraftStore } from '../store/orderDraftStore'
@@ -77,14 +78,14 @@ export function ChargesSection({ errors }: ChargesSectionProps) {
           inputMode="decimal"
           placeholder="0"
           value={advancePayment}
-          onChange={(e) => setField('advancePayment', e.target.value)}
+          onChange={(e) => setField('advancePayment', sanitizeDecimalInput(e.target.value))}
         />
         <Input
           label="Transportation Charge (₹)"
           inputMode="decimal"
           placeholder="0"
           value={transportationCharge}
-          onChange={(e) => setField('transportationCharge', e.target.value)}
+          onChange={(e) => setField('transportationCharge', sanitizeDecimalInput(e.target.value))}
         />
       </div>
 

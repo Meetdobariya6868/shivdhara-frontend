@@ -16,6 +16,15 @@ export function formatOrderDate(dateStr: string): string {
   })
 }
 
+/** Convert an ISO date string to "YYYY-MM-DD" (local calendar day) for an `<input type="date">`. */
+export function toDateInputValue(dateStr: string): string {
+  const d = new Date(dateStr)
+  const yyyy = d.getFullYear()
+  const mm = String(d.getMonth() + 1).padStart(2, '0')
+  const dd = String(d.getDate()).padStart(2, '0')
+  return `${yyyy}-${mm}-${dd}`
+}
+
 /** Count non-empty filter values (excludes page/per_page). */
 export function countActiveFilters(filters: Record<string, unknown>): number {
   const ignored = new Set(['page', 'per_page'])
