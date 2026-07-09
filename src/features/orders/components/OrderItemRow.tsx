@@ -28,7 +28,7 @@ export function OrderItemRow({ item, onEdit, onDelete }: OrderItemRowProps) {
       ? `${item.quantity} box × ${item.piecesPerBox ?? 0} pcs`
       : `${item.quantity} pcs`
 
-  const title = [item.designName, item.companyName].filter(Boolean).join(' · ')
+  const title = [item.designName, item.companyName].filter(Boolean).join(' - ')
 
   return (
     <div className="flex items-center gap-3 rounded-2xl bg-surface px-3 py-3">
@@ -48,9 +48,8 @@ export function OrderItemRow({ item, onEdit, onDelete }: OrderItemRowProps) {
       {/* Details */}
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-semibold text-foreground">{title}</p>
-        <p className="truncate text-xs text-muted">
-          {quantityLabel} · {calc.totalSqft} ft²
-        </p>
+        <p className="truncate text-xs text-muted">{quantityLabel}</p>
+        <p className="truncate text-xs text-muted">calculation : ₹{formatINR(calc.totalSqft)}</p>
       </div>
 
       {/* Amount */}

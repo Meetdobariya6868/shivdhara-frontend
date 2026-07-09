@@ -388,10 +388,11 @@ export function AddItemModal({
           />
           <Input
             label="Thickness"
-            placeholder="e.g. 9mm"
+            inputMode="numeric"
+            placeholder="e.g. 9"
             value={form.thickness}
             error={errors.thickness}
-            onChange={(e) => setIdentity('thickness', e.target.value)}
+            onChange={(e) => set('thickness', sanitizeDecimalInput(e.target.value))}
           />
         </div>
 

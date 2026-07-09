@@ -31,7 +31,7 @@ export interface NavItem {
  */
 const ADMIN_NAV: readonly NavItem[] = [
   { label: 'Home',        path: paths.dashboard,    icon: HomeIcon,    end: true },
-  { label: 'Manage Salesman',    path: paths.salesmen,     icon: UsersIcon,   end: true },
+  { label: 'Manage',    path: paths.salesmen,     icon: UsersIcon,   end: true },
   { label: 'Add Salesman', path: paths.addSalesman, icon: UserPlusIcon },
   { label: 'Create',      path: paths.ordersCreate, icon: PlusCircleIcon, emphasized: true },
   { label: 'Profile',     path: paths.profile,      icon: UserIcon },

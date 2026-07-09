@@ -26,7 +26,7 @@ export function CustomerSection({ errors }: CustomerSectionProps) {
         label="Customer Number"
         type="tel"
         inputMode="numeric"
-        maxLength={15}
+        maxLength={10}
         placeholder="Customer number"
         value={customerContact}
         error={errors.customerContact}
