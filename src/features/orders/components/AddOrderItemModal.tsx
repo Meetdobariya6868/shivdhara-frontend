@@ -254,7 +254,8 @@ export function AddOrderItemModal({
             onClick={onClose}
             disabled={isSaving}
             className="rounded-xl px-5 py-3 text-sm font-semibold text-muted transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-60"
-          >Cancel
+          >
+            Cancel
           </button>
           <Button type="submit" form={FORM_ID} isLoading={isSaving}>
             Add Item
