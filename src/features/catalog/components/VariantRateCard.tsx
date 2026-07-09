@@ -76,6 +76,7 @@ export function VariantRateCard({ designId, variant }: VariantRateCardProps) {
     <div className="rounded-2xl bg-card p-4 shadow-sm">
       {/* Immutable description */}
       <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted">
+        <span>Code: <span className="font-semibold text-card-foreground">{variant.code}</span></span>
         <span>Size: <span className="font-semibold text-card-foreground">{variant.size}</span></span>
         <span>Finish: <span className="font-semibold text-card-foreground">{variant.finish}</span></span>
         <span>Thickness: <span className="font-semibold text-card-foreground">{variant.thickness}</span></span>

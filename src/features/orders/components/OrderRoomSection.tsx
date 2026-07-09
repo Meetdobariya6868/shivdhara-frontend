@@ -92,7 +92,7 @@ export function OrderRoomSection({
             {/* Details */}
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-semibold text-surface-foreground">
-                {item.product.design_name ?? '—'}
+                {[item.product.company_name, item.product.design_name].filter(Boolean).join(' - ') || '—'}
               </p>
               <p className="truncate text-xs text-muted">
                 {[item.product.finish, item.product.size].filter(Boolean).join(' · ') || '—'}

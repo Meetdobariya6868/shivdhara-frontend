@@ -24,9 +24,11 @@ export function DesignCard({ design, onClick }: DesignCardProps) {
         </span>
       </div>
       <p className="truncate text-sm text-muted">{design.company.company_name}</p>
-      <p className="text-xs text-muted">
-        Code: <span className="font-medium text-foreground">{design.design_code}</span>
-      </p>
+      {design.code && (
+        <p className="text-xs text-muted">
+          Code: <span className="font-medium text-foreground">{design.code}</span>
+        </p>
+      )}
     </button>
   )
 }

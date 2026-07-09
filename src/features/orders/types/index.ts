@@ -72,6 +72,8 @@ export type QuotationFormat = 'name' | 'code'
  */
 export interface DesignVariantOption {
   id: number
+  /** This variant's own unique code. */
+  code: string
   size: string
   finish: string
   thickness: string
@@ -80,7 +82,6 @@ export interface DesignVariantOption {
   design: {
     id: number | null
     design_name: string | null
-    design_code: string | null
     company: {
       id: number | null
       company_name: string | null
@@ -120,8 +121,12 @@ export interface CreateOrderItemPayload {
   measurement_unit: MeasurementUnit
   height: number
   width: number
+  /** Catalogue purchase rate (seeds a new variant; not stored on the order). */
   purchase_rate: number
+  /** Catalogue sell rate (seeds a new variant; not stored on the order). */
   sell_rate: number
+  /** Per-order charged rate, stored as the order item's sqft_rate. */
+  sqft_rate: number
   /** Per-item price (editable); product_total is derived server-side. */
   price_per_item: number
 }

@@ -7,10 +7,11 @@ export interface Company {
 /** A design row in the catalogue list (GET /designs). */
 export interface DesignListItem {
   id: number
-  design_code: string
   design_name: string
   is_active: boolean
   variants_count: number
+  /** The sole variant's code, present only when the design has exactly one variant. */
+  code: string | null
   company: Company
 }
 
@@ -20,6 +21,8 @@ export interface DesignListItem {
  */
 export interface DesignVariantRate {
   id: number
+  /** This variant's own unique code (company + design + size/finish/thickness). */
+  code: string
   size: string
   finish: string
   thickness: string
@@ -31,7 +34,6 @@ export interface DesignVariantRate {
 /** A design with its variants (GET /designs/{id}). */
 export interface DesignDetail {
   id: number
-  design_code: string
   design_name: string
   is_active: boolean
   company: Company
@@ -40,7 +42,7 @@ export interface DesignDetail {
 
 /** User-controlled filters for the designs list. */
 export interface DesignFilters {
-  /** Matches design name, design code, or company name. */
+  /** Matches design name, company name, or a variant's code. */
   search?: string
 }
 

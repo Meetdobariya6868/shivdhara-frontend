@@ -73,10 +73,6 @@ export default function DesignDetailPage() {
               {design.company.company_name}
             </span>
           </p>
-          <p className="mt-1 text-muted">
-            Design code:{' '}
-            <span className="font-semibold text-card-foreground">{design.design_code}</span>
-          </p>
         </div>
 
         {/* Variants */}

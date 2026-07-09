@@ -162,10 +162,11 @@ export default function CreateOrderPage() {
             measurement_unit: it.measurementUnit,
             height: it.height,
             width: it.width,
+            // Catalogue rates (seed a new variant); the charged rate is sqft_rate.
             purchase_rate: it.purchaseRate,
-            // Backend maps sell_rate → order_items.sqft_rate; the actual charged
-            // Product Sq Ft Rate is the source of truth (not the catalogue rate).
-            sell_rate: it.sqftRate,
+            sell_rate: it.sellRate,
+            // The actual charged rate → stored as the order item's sqft_rate.
+            sqft_rate: it.sqftRate,
             // Per-item price; the server derives product_total from it.
             price_per_item: it.pricePerItem,
           })),

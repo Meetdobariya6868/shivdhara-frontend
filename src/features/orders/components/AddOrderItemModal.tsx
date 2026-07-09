@@ -233,8 +233,11 @@ export function AddOrderItemModal({
       measurement_unit: form.measurementUnit,
       height: num(form.height),
       width: num(form.width),
+      // Catalogue rates (seed a new variant); each maps to its own column.
       purchase_rate: num(form.purchaseRate),
       sell_rate: num(form.sellRate),
+      // The actual charged rate → stored as the order item's sqft_rate.
+      sqft_rate: num(form.sqftRate),
       price_per_item: num(pricePerItemValue),
     }
 
@@ -302,7 +305,7 @@ export function AddOrderItemModal({
               </span>
               <span className="flex items-center justify-between gap-2 text-xs opacity-80">
                 <span className="truncate">
-                  {o.size} · {o.finish} · {o.thickness}
+                  {o.code} · {o.size} · {o.finish} · {o.thickness}
                 </span>
                 <span className="shrink-0">
                   Buy ₹{o.purchase_rate} · Sell ₹{o.sell_rate}

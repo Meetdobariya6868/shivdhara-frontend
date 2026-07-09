@@ -355,7 +355,7 @@ export function AddItemModal({
               </span>
               <span className="flex items-center justify-between gap-2 text-xs opacity-80">
                 <span className="truncate">
-                  {o.size} · {o.finish} · {o.thickness}
+                  {o.code} · {o.size} · {o.finish} · {o.thickness}
                 </span>
                 <span className="shrink-0">
                   Buy ₹{o.purchase_rate} · Sell ₹{o.sell_rate}
