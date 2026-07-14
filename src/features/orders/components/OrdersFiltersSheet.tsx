@@ -39,6 +39,7 @@ export function OrdersFiltersSheet({
     order_category_id: activeFilters.order_category_id,
     order_type_id:     activeFilters.order_type_id,
     creator_id:        activeFilters.creator_id,
+    status:            activeFilters.status,
   }))
 
   const isAdmin = useAuthStore((s) => s.user?.is_admin ?? false)
@@ -64,6 +65,13 @@ export function OrdersFiltersSheet({
     { value: 0, label: 'All salesmen' },
     ...salesmanOptions.map((s) => ({ value: s.id, label: s.name })),
   ]
+
+  // Status options. Sentinel 'all' clears the filter (mapped to undefined).
+  const statusOptions = [
+    { value: 'all', label: 'All statuses' },
+    { value: 'pending', label: 'Pending' },
+    { value: 'confirmed', label: 'Confirmed' },
+  ] as const
 
   const set = <K extends keyof OrderFilters>(key: K, value: OrderFilters[K]) =>
     setDraft((prev) => ({ ...prev, [key]: value || undefined }))
@@ -121,6 +129,20 @@ export function OrdersFiltersSheet({
 
         {/* Scrollable fields */}
         <div className="flex-1 overflow-y-auto px-5 pb-4">
+          {/* Status — available to both admins and salesmen */}
+          <div className="mb-5">
+            <label htmlFor="filter-status" className={LABEL}>
+              Status
+            </label>
+            <Select
+              id="filter-status"
+              placeholder="All statuses"
+              value={draft.status ?? 'all'}
+              onChange={(value) => set('status', value === 'all' ? undefined : value)}
+              options={statusOptions}
+            />
+          </div>
+
           {/* Date range */}
           <div className="mb-5">
             <span className={LABEL}>Date Range</span>

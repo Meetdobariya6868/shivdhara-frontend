@@ -62,6 +62,7 @@ export default function OrdersPage() {
       order_category_id: applied.order_category_id,
       order_type_id:     applied.order_type_id,
       creator_id:        applied.creator_id,
+      status:            applied.status,
     })
     setIsSheetOpen(false)
   }
@@ -183,6 +184,12 @@ export default function OrdersPage() {
             <Chip
               label="Salesman"
               onRemove={() => setSheetFilters((p) => ({ ...p, creator_id: undefined }))}
+            />
+          )}
+          {sheetFilters.status && (
+            <Chip
+              label={sheetFilters.status === 'confirmed' ? 'Confirmed' : 'Pending'}
+              onRemove={() => setSheetFilters((p) => ({ ...p, status: undefined }))}
             />
           )}
           <button

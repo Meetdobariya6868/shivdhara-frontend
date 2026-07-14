@@ -37,6 +37,7 @@ export function useOrders(filters: OrderFilters) {
         order_category_id: filters.order_category_id,
         order_type_id: filters.order_type_id,
         creator_id: filters.creator_id,
+        status: filters.status,
         page: pageParam,
         per_page: ORDERS_PER_PAGE,
       }),

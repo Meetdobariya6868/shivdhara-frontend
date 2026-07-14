@@ -46,6 +46,7 @@ export interface OrderFilters {
   order_category_id?: number
   order_type_id?: number
   creator_id?: number
+  status?: OrderStatus
 }
 
 /** Query params for the paginated order list (filters + pagination). */

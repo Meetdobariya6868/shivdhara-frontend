@@ -74,14 +74,14 @@ export function ChargesSection({ errors }: ChargesSectionProps) {
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Input
-          label="Advance Payment (₹)"
+          label="Advance Payment"
           inputMode="decimal"
           placeholder="0"
           value={advancePayment}
           onChange={(e) => setField('advancePayment', sanitizeDecimalInput(e.target.value))}
         />
         <Input
-          label="Transportation Charge (₹)"
+          label="Transportation Charge"
           inputMode="decimal"
           placeholder="0"
           value={transportationCharge}
