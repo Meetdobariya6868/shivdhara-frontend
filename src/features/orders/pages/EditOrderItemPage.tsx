@@ -225,6 +225,7 @@ function EditItemForm({ item, ordId, itmId }: EditItemFormProps) {
         {isBox && (
           <Input
             label="Pieces per box"
+            required
             inputMode="numeric"
             placeholder="0"
             value={form.piecesPerBox}
@@ -234,6 +235,7 @@ function EditItemForm({ item, ordId, itmId }: EditItemFormProps) {
         )}
         <Input
           label={isBox ? 'Number of boxes' : 'Number of pieces'}
+          required
           inputMode="numeric"
           placeholder="0"
           value={form.quantity}
@@ -242,6 +244,7 @@ function EditItemForm({ item, ordId, itmId }: EditItemFormProps) {
         />
         <Input
           label="Product Sq Ft Rate"
+          required
           inputMode="decimal"
           placeholder="0"
           value={form.sqftRate}
@@ -254,6 +257,7 @@ function EditItemForm({ item, ordId, itmId }: EditItemFormProps) {
       <div className="grid grid-cols-3 gap-3">
         <Input
           label="Height"
+          required
           inputMode="decimal"
           placeholder="0"
           value={form.height}
@@ -262,6 +266,7 @@ function EditItemForm({ item, ordId, itmId }: EditItemFormProps) {
         />
         <Input
           label="Width"
+          required
           inputMode="decimal"
           placeholder="0"
           value={form.width}

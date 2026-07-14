@@ -181,6 +181,7 @@ export default function AddSalesmanPage() {
             {...register('name')}
             type="text"
             label="Full Name"
+            required
             placeholder="Enter salesman name"
             autoComplete="off"
             autoFocus
@@ -194,6 +195,7 @@ export default function AddSalesmanPage() {
             {...register('mobile_number')}
             type="tel"
             label="Mobile Number"
+            required
             placeholder="Enter 10-digit mobile number"
             inputMode="numeric"
             maxLength={10}
@@ -208,6 +210,7 @@ export default function AddSalesmanPage() {
             {...register('password')}
             type={showPassword ? 'text' : 'password'}
             label="Password"
+            required
             placeholder="Minimum 6 characters"
             autoComplete="new-password"
             leftIcon={<LockIcon />}

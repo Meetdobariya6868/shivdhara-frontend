@@ -111,12 +111,14 @@ export function EditOrderDetailsModal({
       <form id={FORM_ID} onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
         <Input
           label="Customer Name"
+          required
           value={form.customerName}
           error={errors.customerName}
           onChange={(e) => set('customerName', e.target.value)}
         />
         <Input
           label="Contact Number"
+          required
           type="tel"
           inputMode="numeric"
           value={form.customerContact}
@@ -127,6 +129,7 @@ export function EditOrderDetailsModal({
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Select
             label="Order Category"
+            required
             placeholder="Select category"
             value={form.categoryId}
             error={errors.categoryId}
@@ -136,6 +139,7 @@ export function EditOrderDetailsModal({
           />
           <Select
             label="Order Type"
+            required
             placeholder="Select type"
             value={form.typeId}
             error={errors.typeId}
@@ -147,6 +151,7 @@ export function EditOrderDetailsModal({
 
         <Input
           label="Order Date"
+          required
           type="date"
           value={form.orderDate}
           error={errors.orderDate}

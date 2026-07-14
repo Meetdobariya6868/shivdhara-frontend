@@ -283,6 +283,7 @@ export function AddOrderItemModal({
             variant; typing a new product leaves it unlinked (created on save). */}
         <Combobox<DesignVariantOption>
           label="Design Name"
+          required
           placeholder="Search design, code or company…"
           value={form.designName}
           error={errors.designName}
@@ -316,6 +317,7 @@ export function AddOrderItemModal({
         />
         <Input
           label="Company Name"
+          required
           placeholder="e.g. Kajaria"
           value={form.companyName}
           error={errors.companyName}
@@ -324,6 +326,7 @@ export function AddOrderItemModal({
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <Input
             label="Size"
+            required
             placeholder="e.g. 2x4"
             value={form.size}
             error={errors.size}
@@ -331,6 +334,7 @@ export function AddOrderItemModal({
           />
           <Input
             label="Finish"
+            required
             placeholder="e.g. Glossy"
             value={form.finish}
             error={errors.finish}
@@ -338,6 +342,7 @@ export function AddOrderItemModal({
           />
           <Input
             label="Thickness"
+            required
             placeholder="e.g. 9mm"
             value={form.thickness}
             error={errors.thickness}
@@ -358,6 +363,7 @@ export function AddOrderItemModal({
           {isBox && (
             <Input
               label="Pieces per box"
+              required
               inputMode="numeric"
               placeholder="0"
               value={form.piecesPerBox}
@@ -367,6 +373,7 @@ export function AddOrderItemModal({
           )}
           <Input
             label={isBox ? 'Number of boxes' : 'Number of pieces'}
+            required
             inputMode="numeric"
             placeholder="0"
             value={form.quantity}
@@ -375,6 +382,7 @@ export function AddOrderItemModal({
           />
           <Input
             label="Product Sq Ft Rate"
+            required
             inputMode="decimal"
             placeholder="0"
             value={form.sqftRate}
@@ -387,6 +395,7 @@ export function AddOrderItemModal({
         <div className="grid grid-cols-3 gap-3">
           <Input
             label="Height"
+            required
             inputMode="decimal"
             placeholder="0"
             value={form.height}
@@ -395,6 +404,7 @@ export function AddOrderItemModal({
           />
           <Input
             label="Width"
+            required
             inputMode="decimal"
             placeholder="0"
             value={form.width}

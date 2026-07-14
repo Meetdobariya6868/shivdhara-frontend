@@ -90,6 +90,7 @@ export function ProfileForm({
           {...register('name')}
           type="text"
           label="Full Name"
+          required
           placeholder="Enter full name"
           autoComplete="off"
           autoFocus
@@ -102,6 +103,7 @@ export function ProfileForm({
           {...register('mobile_number')}
           type="tel"
           label="Mobile Number"
+          required
           placeholder="Enter 10-digit mobile number"
           inputMode="numeric"
           maxLength={10}

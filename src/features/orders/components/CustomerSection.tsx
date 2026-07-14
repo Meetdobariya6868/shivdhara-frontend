@@ -17,6 +17,7 @@ export function CustomerSection({ errors }: CustomerSectionProps) {
     <section className="flex flex-col gap-4">
       <Input
         label="Customer Name"
+        required
         placeholder="Customer name"
         value={customerName}
         error={errors.customerName}
@@ -24,6 +25,7 @@ export function CustomerSection({ errors }: CustomerSectionProps) {
       />
       <Input
         label="Customer Number"
+        required
         type="tel"
         inputMode="numeric"
         maxLength={10}

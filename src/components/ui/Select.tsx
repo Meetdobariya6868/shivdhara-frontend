@@ -2,6 +2,7 @@ import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 
 import { ChevronDownIcon } from '@/components/icons'
+import { RequiredMark } from '@/components/ui/RequiredMark'
 
 export interface SelectOption<T extends string | number> {
   value: T
@@ -17,6 +18,8 @@ interface SelectProps<T extends string | number> {
   options: ReadonlyArray<SelectOption<T>>
   disabled?: boolean
   id?: string
+  /** Show a red asterisk on the label and mark the control as required. */
+  required?: boolean
 }
 
 interface PanelCoords {
@@ -48,6 +51,7 @@ export function Select<T extends string | number>({
   options,
   disabled = false,
   id,
+  required = false,
 }: SelectProps<T>) {
   const autoId = useId()
   const fieldId = id ?? autoId
@@ -164,6 +168,7 @@ export function Select<T extends string | number>({
       {label && (
         <label htmlFor={fieldId} className="text-sm font-medium text-foreground">
           {label}
+          {required && <RequiredMark />}
         </label>
       )}
 
@@ -175,6 +180,7 @@ export function Select<T extends string | number>({
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-controls={open ? listId : undefined}
+        aria-required={required || undefined}
         aria-invalid={error ? 'true' : 'false'}
         aria-describedby={error ? errorId : undefined}
         disabled={disabled}

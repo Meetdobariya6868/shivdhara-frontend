@@ -1,3 +1,5 @@
+import { useEffect } from 'react'
+
 import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { Textarea } from '@/components/ui/Textarea'
@@ -9,6 +11,10 @@ import { useOrderDraftStore } from '../store/orderDraftStore'
 interface ChargesSectionProps {
   errors: { orderCategoryId?: string; orderTypeId?: string; architectName?: string }
 }
+
+/** Preselected defaults for a fresh order, matched by name (case-insensitive). */
+const DEFAULT_CATEGORY = 'marble'
+const DEFAULT_TYPE = 'local'
 
 /** True when an order type's name marks it as an "Architect" order. */
 function isArchitectType(name: string | undefined): boolean {
@@ -27,6 +33,23 @@ export function ChargesSection({ errors }: ChargesSectionProps) {
   const architectName = useOrderDraftStore((s) => s.architectName)
   const setField = useOrderDraftStore((s) => s.setField)
 
+  // Preselect Marble / Local on a fresh order, once the reference data loads and
+  // the field is still untouched. Runs again after draft.reset() (values back to
+  // null), and never overrides a choice the user has already made.
+  useEffect(() => {
+    if (orderCategoryId === null && categories.length > 0) {
+      const category = categories.find((c) => c.name.trim().toLowerCase() === DEFAULT_CATEGORY)
+      if (category) setField('orderCategoryId', category.id)
+    }
+  }, [orderCategoryId, categories, setField])
+
+  useEffect(() => {
+    if (orderTypeId === null && types.length > 0) {
+      const type = types.find((t) => t.name.trim().toLowerCase() === DEFAULT_TYPE)
+      if (type) setField('orderTypeId', type.id)
+    }
+  }, [orderTypeId, types, setField])
+
   const showArchitectName = isArchitectType(types.find((t) => t.id === orderTypeId)?.name)
 
   // Switching the order type away from "Architect" clears any entered name so a
@@ -43,6 +66,7 @@ export function ChargesSection({ errors }: ChargesSectionProps) {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Select
           label="Category"
+          required
           placeholder="Select category"
           value={orderCategoryId}
           error={errors.orderCategoryId}
@@ -53,6 +77,7 @@ export function ChargesSection({ errors }: ChargesSectionProps) {
 
         <Select
           label="Order Type"
+          required
           placeholder="Select type"
           value={orderTypeId}
           error={errors.orderTypeId}
@@ -65,6 +90,7 @@ export function ChargesSection({ errors }: ChargesSectionProps) {
       {showArchitectName && (
         <Input
           label="Architect Name"
+          required
           placeholder="Enter architect name"
           value={architectName}
           error={errors.architectName}

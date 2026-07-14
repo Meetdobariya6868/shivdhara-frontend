@@ -64,6 +64,7 @@ export function RoomNameModal({
       <form id={FORM_ID} onSubmit={handleSubmit} noValidate>
         <Input
           label="Room name"
+          required
           placeholder="e.g. Main Cabin"
           value={name}
           error={error}

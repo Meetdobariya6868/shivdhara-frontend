@@ -1,11 +1,15 @@
 import { forwardRef } from 'react'
 import type { InputHTMLAttributes, ReactNode } from 'react'
 
+import { RequiredMark } from './RequiredMark'
+
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string
   error?: string
   leftIcon?: ReactNode
   rightElement?: ReactNode
+  /** Show a red asterisk on the label and mark the control as required. */
+  required?: boolean
 }
 
 /**
@@ -16,7 +20,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
  * - `error`        — validation message shown below the input in red.
  */
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ label, error, leftIcon, rightElement, id, className = '', ...props }, ref) => {
+  ({ label, error, leftIcon, rightElement, id, className = '', required, ...props }, ref) => {
     const inputId = id ?? label?.toLowerCase().replace(/\s+/g, '-')
     const errorId = inputId ? `${inputId}-error` : undefined
 
@@ -28,6 +32,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             className="text-sm font-medium text-foreground"
           >
             {label}
+            {required && <RequiredMark />}
           </label>
         )}
 
@@ -44,6 +49,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           <input
             ref={ref}
             id={inputId}
+            aria-required={required || undefined}
             aria-invalid={error ? 'true' : 'false'}
             aria-describedby={error ? errorId : undefined}
             className={[

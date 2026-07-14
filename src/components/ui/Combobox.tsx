@@ -3,10 +3,13 @@ import type { ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 
 import { SearchIcon, SpinnerIcon } from '@/components/icons'
+import { RequiredMark } from '@/components/ui/RequiredMark'
 
 interface ComboboxProps<T> {
   label?: string
   error?: string
+  /** Show a red asterisk on the label and mark the control as required. */
+  required?: boolean
   placeholder?: string
   /** Controlled text in the input. */
   value: string
@@ -57,6 +60,7 @@ const SKELETON_ROWS = 4
 export function Combobox<T>({
   label,
   error,
+  required = false,
   placeholder = 'Search…',
   value,
   onInputChange,
@@ -183,6 +187,7 @@ export function Combobox<T>({
       {label && (
         <label htmlFor={fieldId} className="text-sm font-medium text-foreground">
           {label}
+          {required && <RequiredMark />}
         </label>
       )}
 
@@ -201,6 +206,7 @@ export function Combobox<T>({
           aria-expanded={showPanel}
           aria-controls={showPanel ? listId : undefined}
           aria-activedescendant={open ? activeOptionId : undefined}
+          aria-required={required || undefined}
           aria-invalid={error ? 'true' : 'false'}
           aria-describedby={error ? errorId : undefined}
           disabled={disabled}

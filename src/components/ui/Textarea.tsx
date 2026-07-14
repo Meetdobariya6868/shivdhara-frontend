@@ -1,9 +1,13 @@
 import { forwardRef } from 'react'
 import type { TextareaHTMLAttributes } from 'react'
 
+import { RequiredMark } from './RequiredMark'
+
 interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string
   error?: string
+  /** Show a red asterisk on the label and mark the control as required. */
+  required?: boolean
 }
 
 /**
@@ -11,7 +15,7 @@ interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
  * Works with React Hook Form `register` via the forwarded ref.
  */
 export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
-  ({ label, error, id, className = '', rows = 3, ...props }, ref) => {
+  ({ label, error, id, className = '', rows = 3, required, ...props }, ref) => {
     const textareaId = id ?? label?.toLowerCase().replace(/\s+/g, '-')
     const errorId = textareaId ? `${textareaId}-error` : undefined
 
@@ -20,6 +24,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         {label && (
           <label htmlFor={textareaId} className="text-sm font-medium text-foreground">
             {label}
+            {required && <RequiredMark />}
           </label>
         )}
 
@@ -27,6 +32,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           ref={ref}
           id={textareaId}
           rows={rows}
+          aria-required={required || undefined}
           aria-invalid={error ? 'true' : 'false'}
           aria-describedby={error ? errorId : undefined}
           className={[
