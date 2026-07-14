@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import type { ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -8,6 +9,7 @@ import {
   UserIcon,
 } from '@/components/icons'
 import { Avatar } from '@/components/ui/Avatar'
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
 import { MenuListItem } from '@/components/ui/MenuListItem'
 import { useLogout } from '@/features/auth/hooks/useLogout'
 import { useAuthStore } from '@/features/auth/store/auth.store'
@@ -29,6 +31,8 @@ export default function ProfilePage() {
   const navigate = useNavigate()
   const user = useAuthStore((s) => s.user)
   const logout = useLogout()
+
+  const [confirmLogout, setConfirmLogout] = useState(false)
 
   const isAdmin = user?.is_admin ?? false
 
@@ -54,7 +58,7 @@ export default function ProfilePage() {
   const logoutItem: ProfileMenuItem = {
     icon: <LogOutIcon />,
     label: 'Logout',
-    onClick: () => { logout.mutate() },
+    onClick: () => setConfirmLogout(true),
     isLoading: logout.isPending,
   }
 
@@ -93,6 +97,18 @@ export default function ProfilePage() {
           <MenuListItem key={item.label} {...item} />
         ))}
       </div>
+
+      {/* Logout confirmation */}
+      <ConfirmDialog
+        isOpen={confirmLogout}
+        title="Logout"
+        message="Are you sure you want to logout?"
+        confirmLabel="Logout"
+        destructive
+        isLoading={logout.isPending}
+        onClose={() => setConfirmLogout(false)}
+        onConfirm={() => logout.mutate()}
+      />
     </div>
   )
 }
