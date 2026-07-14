@@ -1,13 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { SearchIcon, SpinnerIcon, XIcon } from '@/components/icons'
+import { DownloadCloudIcon, SearchIcon, SpinnerIcon, XIcon } from '@/components/icons'
 import { PageHeader } from '@/components/PageHeader'
 import { useDebounce } from '@/hooks/useDebounce'
 import { paths } from '@/routes/paths'
+import { saveBlob } from '@/utils/file'
 
 import { DesignsList } from '../components/DesignsList'
 import { useDesigns } from '../hooks/useDesigns'
+import { useExportDesigns } from '../hooks/useExportDesigns'
 
 /**
  * Catalogue browse screen (admin "Show products"). A single search box matches
@@ -40,6 +42,14 @@ export default function DesignsPage() {
   const total = data?.pages[0]?.meta.total ?? 0
   const hasFilters = Boolean(filters.search)
 
+  // Download the full catalogue as an .xlsx.
+  const exportDesigns = useExportDesigns()
+  const handleDownload = (): void => {
+    exportDesigns.mutate(undefined, {
+      onSuccess: (blob) => saveBlob(blob, 'designs.xlsx'),
+    })
+  }
+
   // Infinite scroll: fetch the next page when the sentinel scrolls into view.
   const loadMoreRef = useRef<HTMLDivElement | null>(null)
   useEffect(() => {
@@ -58,7 +68,7 @@ export default function DesignsPage() {
   }, [hasNextPage, isFetchingNextPage, fetchNextPage])
 
   return (
-    <div className="mx-auto flex max-w-2xl flex-col pb-24">
+    <div className="mx-auto flex max-w-2xl flex-col">
       <PageHeader title="Products" onBack={() => void navigate(-1)} />
 
       {/* Unified search — matches design name, design code, or company name */}
@@ -86,8 +96,8 @@ export default function DesignsPage() {
         </div>
       </div>
 
-      {/* List */}
-      <div className="px-5 pt-5">
+      {/* List — bottom padding clears the pinned Download bar so the last row is reachable */}
+      <div className="px-5 pb-4 pt-5">
         <DesignsList
           designs={designs}
           total={total}
@@ -104,6 +114,24 @@ export default function DesignsPage() {
             <SpinnerIcon size={20} />
           </div>
         )}
+      </div>
+
+      {/* Download bar — pinned just above the bottom navigation */}
+      <div className="sticky bottom-0 z-30 border-t border-border bg-background px-5 py-3">
+        {exportDesigns.isError && (
+          <p role="alert" className="mb-2 text-center text-xs text-error">
+            Couldn't generate the file. Please try again.
+          </p>
+        )}
+        <button
+          type="button"
+          onClick={handleDownload}
+          disabled={exportDesigns.isPending}
+          className="flex w-full items-center justify-center gap-2 rounded-2xl bg-primary px-4 py-3.5 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {exportDesigns.isPending ? <SpinnerIcon size={18} /> : <DownloadCloudIcon size={18} />}
+          {exportDesigns.isPending ? 'Preparing…' : 'Download'}
+        </button>
       </div>
     </div>
   )

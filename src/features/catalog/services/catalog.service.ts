@@ -27,6 +27,14 @@ export const catalogService = {
     return data
   },
 
+  /** The full catalogue (designs + variants) as an .xlsx Blob to save. Admin only. */
+  exportDesigns: async (): Promise<Blob> => {
+    const { data } = await httpClient.get<Blob>('/v1/designs/export', {
+      responseType: 'blob',
+    })
+    return data
+  },
+
   /** Update a variant's purchase + sell rate. Admin only. */
   updateVariantRates: async (
     id: number,
