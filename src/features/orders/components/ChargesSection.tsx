@@ -9,7 +9,12 @@ import { useOrderMeta } from '../hooks/useOrderMeta'
 import { useOrderDraftStore } from '../store/orderDraftStore'
 
 interface ChargesSectionProps {
-  errors: { orderCategoryId?: string; orderTypeId?: string; architectName?: string }
+  errors: {
+    orderCategoryId?: string
+    orderTypeId?: string
+    architectName?: string
+    advancePayment?: string
+  }
 }
 
 /** Preselected defaults for a fresh order, matched by name (case-insensitive). */
@@ -104,6 +109,7 @@ export function ChargesSection({ errors }: ChargesSectionProps) {
           inputMode="decimal"
           placeholder="0"
           value={advancePayment}
+          error={errors.advancePayment}
           onChange={(e) => setField('advancePayment', sanitizeDecimalInput(e.target.value))}
         />
         <Input

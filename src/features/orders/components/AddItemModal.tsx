@@ -104,7 +104,7 @@ function buildInitialState(
     itemType: 'box',
     quantity: '',
     piecesPerBox: '',
-    measurementUnit: 'mm',
+    measurementUnit: 'feet',
     height: '',
     width: '',
     purchaseRate: '',

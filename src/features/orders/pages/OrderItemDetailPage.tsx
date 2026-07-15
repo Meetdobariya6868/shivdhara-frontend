@@ -148,7 +148,7 @@ export default function OrderItemDetailPage() {
             <div className="flex items-center justify-between py-1.5">
               <span className="text-sm text-muted">Sq.Ft Rate :</span>
               <span className="text-sm font-semibold tabular-nums text-card-foreground">
-                ₹{formatINR(item.sqft_rate)}
+                {formatINR(item.sqft_rate)}
               </span>
             </div>
             <div className="flex items-center justify-between py-1.5">

@@ -33,7 +33,11 @@ interface FieldErrors {
   orderCategoryId?: string
   orderTypeId?: string
   architectName?: string
+  advancePayment?: string
 }
+
+const ADVANCE_TOO_HIGH =
+  'Advance payment cannot be more than the product total plus transportation charge.'
 
 interface ModalState {
   open: boolean
@@ -72,10 +76,30 @@ export default function CreateOrderPage() {
   useEffect(() => () => draft.reset(), []) // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Derived totals ────────────────────────────────────────────────────────
+  // Payable mirrors the server: product subtotal + transportation − advance.
   const totals: OrderTotals = useMemo(() => {
-    const totalSell = items.reduce((sum, item) => sum + item.productTotal, 0)
-    return { totalSell: round2(totalSell) }
-  }, [items])
+    const productSubtotal = round2(items.reduce((sum, item) => sum + item.productTotal, 0))
+    const transportation = num(draft.transportationCharge)
+    const advance = num(draft.advancePayment)
+    return {
+      productSubtotal,
+      transportation,
+      advance,
+      payable: Math.max(0, round2(productSubtotal + transportation - advance)),
+    }
+  }, [items, draft.transportationCharge, draft.advancePayment])
+
+  // The advance can never exceed what's owed (product subtotal + transportation),
+  // otherwise the payable would go negative. Surfaced live under the field.
+  const advanceExceedsTotal =
+    totals.advance > 0 && totals.advance > totals.productSubtotal + totals.transportation
+
+  // Merge the live advance warning into the save-time field errors so it shows
+  // as the user types, not only after pressing Save.
+  const chargeErrors: FieldErrors = {
+    ...fieldErrors,
+    advancePayment: advanceExceedsTotal ? ADVANCE_TOO_HIGH : fieldErrors.advancePayment,
+  }
 
   // ── Modal control ─────────────────────────────────────────────────────────
   const openAddItem = (roomTempId: string) =>
@@ -108,6 +132,7 @@ export default function CreateOrderPage() {
     if (!draft.orderTypeId) e.orderTypeId = 'Select a type'
     if (isArchitectOrder && !draft.architectName.trim())
       e.architectName = 'Architect name is required'
+    if (advanceExceedsTotal) e.advancePayment = ADVANCE_TOO_HIGH
     return e
   }
 
@@ -239,13 +264,13 @@ export default function CreateOrderPage() {
         )}
       </div>
 
-      <ChargesSection errors={fieldErrors} />
+      <ChargesSection errors={chargeErrors} />
 
       <OrderTotalsBar
         totals={totals}
         onSave={handleSave}
         isSaving={createOrder.isPending}
-        disabled={createOrder.isPending || !canCreateOrders}
+        disabled={createOrder.isPending || !canCreateOrders || advanceExceedsTotal}
       />
 
       {modal.open && (

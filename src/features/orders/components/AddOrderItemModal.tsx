@@ -71,7 +71,7 @@ const INITIAL_STATE: ItemFormState = {
   itemType: 'box',
   quantity: '',
   piecesPerBox: '',
-  measurementUnit: 'mm',
+  measurementUnit: 'feet',
   height: '',
   width: '',
   purchaseRate: '',
