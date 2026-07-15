@@ -185,7 +185,11 @@ export default function OrderDetailPage() {
               This order has no rooms.
             </p>
           ) : (
-            <QuotationActions orderId={order.id} customerName={order.customer.name} />
+            <QuotationActions
+              orderId={order.id}
+              customerName={order.customer.name}
+              customerContact={order.customer.contact}
+            />
           )}
           {order.rooms.length > 0 &&
             order.rooms.map((room) => (

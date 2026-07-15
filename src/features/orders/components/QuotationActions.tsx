@@ -9,11 +9,14 @@ import {
   type QuotationAction,
 } from '../hooks/useDownloadQuotation'
 import type { QuotationFormat } from '../types'
+import { ShareOnWhatsAppButton } from './ShareOnWhatsAppButton'
 
 interface QuotationActionsProps {
   orderId: number
   /** Used to name the downloaded file, e.g. "Ravi Sharma Quotation.pdf". */
   customerName: string
+  /** Customer contact number — target for the WhatsApp share. */
+  customerContact: string
 }
 
 const FORMATS: ReadonlyArray<{ format: QuotationFormat; label: string }> = [
@@ -27,7 +30,11 @@ const FORMATS: ReadonlyArray<{ format: QuotationFormat; label: string }> = [
  * endpoint (`?format=`); the PDF is fetched through the authenticated API
  * client as a blob, then viewed or saved client-side.
  */
-export function QuotationActions({ orderId, customerName }: QuotationActionsProps) {
+export function QuotationActions({
+  orderId,
+  customerName,
+  customerContact,
+}: QuotationActionsProps) {
   const mutation = useDownloadQuotation()
   const [viewerUrl, setViewerUrl] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -104,6 +111,13 @@ export function QuotationActions({ orderId, customerName }: QuotationActionsProp
           </button>
         ))}
       </div>
+
+      {/* Share the quotation on the customer's WhatsApp */}
+      <ShareOnWhatsAppButton
+        orderId={orderId}
+        customerName={customerName}
+        customerContact={customerContact}
+      />
 
       {error && (
         <p role="alert" className="mt-2 text-xs text-error">

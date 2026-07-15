@@ -13,6 +13,8 @@ export const ordersKeys = {
   meta: () => [...ordersKeys.all, 'meta'] as const,
   detail: (id: number) => [...ordersKeys.all, 'detail', id] as const,
   salesmen: () => [...ordersKeys.all, 'salesmen'] as const,
+  quotationShareLink: (id: number, format: string) =>
+    [...ordersKeys.detail(id), 'quotation-share-link', format] as const,
 }
 
 /** Page size for the admin order list's infinite scroll. */

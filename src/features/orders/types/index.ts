@@ -64,6 +64,16 @@ export interface SalesmanOption {
 /** Which product identifier the quotation PDF prints: design name or design code. */
 export type QuotationFormat = 'name' | 'code'
 
+/**
+ * A temporary, signed, publicly-openable link to a quotation PDF, returned by
+ * GET /orders/{id}/quotation/share-link. Used as the WhatsApp share target.
+ */
+export interface QuotationShareLink {
+  url: string
+  /** ISO 8601 timestamp after which the link stops working. */
+  expires_at: string
+}
+
 // ── Catalogue autocomplete ───────────────────────────────────────────────────
 
 /**

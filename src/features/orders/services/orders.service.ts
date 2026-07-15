@@ -12,6 +12,7 @@ import type {
   OrderStatus,
   OrderType,
   QuotationFormat,
+  QuotationShareLink,
   SalesmanOption,
   UpdateOrderDetailsPayload,
   UpdateOrderItemPayload,
@@ -47,6 +48,22 @@ export const ordersService = {
       params: { format },
       responseType: 'blob',
     })
+    return data
+  },
+
+  /**
+   * A temporary, signed, publicly-openable link to the order's quotation PDF —
+   * the target used when sharing the quotation on WhatsApp. Authorized like the
+   * PDF itself; the returned link is tamper-proof and expires server-side.
+   */
+  getQuotationShareLink: async (
+    id: number,
+    format: QuotationFormat,
+  ): Promise<ApiResponse<QuotationShareLink>> => {
+    const { data } = await httpClient.get<ApiResponse<QuotationShareLink>>(
+      `/v1/orders/${id}/quotation/share-link`,
+      { params: { format } },
+    )
     return data
   },
 
