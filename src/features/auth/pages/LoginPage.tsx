@@ -13,7 +13,7 @@ export default function LoginPage() {
 
         {/* Logo */}
         <div className="mb-8 flex justify-center">
-          <ShivdharaLogo size={110} />
+          <ShivdharaLogo size={300} />
         </div>
 
         {/* Heading */}

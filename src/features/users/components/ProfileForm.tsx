@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 
+import { PhoneIcon, UserIcon } from '@/components/icons'
 import { Alert } from '@/components/ui/Alert'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
@@ -94,7 +95,7 @@ export function ProfileForm({
           placeholder="Enter full name"
           autoComplete="off"
           autoFocus
-          leftIcon={<PersonIcon />}
+          leftIcon={<UserIcon size={18} />}
           error={errors.name?.message}
           aria-label="Full name"
         />
@@ -108,7 +109,7 @@ export function ProfileForm({
           inputMode="numeric"
           maxLength={10}
           autoComplete="off"
-          leftIcon={<PhoneIcon />}
+          leftIcon={<PhoneIcon size={18} />}
           error={errors.mobile_number?.message}
           aria-label="Mobile number"
         />
@@ -120,28 +121,5 @@ export function ProfileForm({
         </div>
       </form>
     </div>
-  )
-}
-
-// ── Inline icons ──────────────────────────────────────────────────────────────
-
-function PersonIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-      stroke="currentColor" strokeWidth="2" strokeLinecap="round"
-      strokeLinejoin="round" aria-hidden="true">
-      <circle cx="12" cy="8" r="4" />
-      <path d="M4 21a8 8 0 0 1 16 0" />
-    </svg>
-  )
-}
-
-function PhoneIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-      stroke="currentColor" strokeWidth="2" strokeLinecap="round"
-      strokeLinejoin="round" aria-hidden="true">
-      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 15.8a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.62 5h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 12.4a16 16 0 0 0 6.29 6.29l1.77-1.77a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 18.92z" />
-    </svg>
   )
 }

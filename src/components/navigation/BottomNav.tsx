@@ -25,31 +25,40 @@ export function BottomNav() {
     >
       <ul className="mx-auto flex max-w-2xl items-center justify-around px-2">
         {items.map((item) => {
-          const Icon = item.icon
+          const OutlineIcon = item.icon
+          const ActiveIcon = item.activeIcon
           return (
             <li key={item.path} className="flex-1">
               <NavLink
                 to={item.path}
                 end={item.end ?? false}
-                className={({ isActive }) =>
-                  [
-                    'flex flex-col items-center gap-1 py-2.5 text-[11px] font-medium transition-colors',
-                    'focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none',
-                    isActive
-                      ? 'text-primary'
-                      : 'text-muted hover:text-foreground',
-                  ].join(' ')
-                }
+                className="flex flex-col items-center gap-1 py-2 text-[11px] focus-visible:outline-none"
               >
                 {({ isActive }) => (
                   <>
-                    <Icon
-                      size={item.emphasized ? 28 : 24}
+                    <span
+                      className={[
+                        'flex items-center justify-center rounded-full px-5 py-1 transition-colors',
+                        isActive
+                          ? 'bg-primary text-primary-foreground'
+                          : 'text-muted',
+                      ].join(' ')}
+                    >
+                      {isActive ? (
+                        <ActiveIcon size={22} className="shrink-0" />
+                      ) : (
+                        <OutlineIcon size={22} className="shrink-0" />
+                      )}
+                    </span>
+                    <span
                       className={
-                        item.emphasized && !isActive ? 'text-foreground' : ''
+                        isActive
+                          ? 'font-semibold text-primary'
+                          : 'font-medium text-muted'
                       }
-                    />
-                    <span>{item.label}</span>
+                    >
+                      {item.label}
+                    </span>
                   </>
                 )}
               </NavLink>
