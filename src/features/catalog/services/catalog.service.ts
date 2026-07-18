@@ -10,13 +10,19 @@ import type {
 } from '../types'
 
 export const catalogService = {
-  /** A filtered, paginated page of designs. Admin only. */
+  /**
+   * A filtered, paginated page of designs. Admin only. The optional signal is
+   * forwarded to axios so React Query can abort an in-flight request the moment
+   * a newer search supersedes it — otherwise stale keystroke requests pile up
+   * against the browser's ~6-connection limit and later ones queue for seconds.
+   */
   listDesigns: async (
     params: DesignListParams,
+    signal?: AbortSignal,
   ): Promise<PaginatedResponse<DesignListItem>> => {
     const { data } = await httpClient.get<PaginatedResponse<DesignListItem>>(
       '/v1/designs',
-      { params },
+      { params, signal },
     )
     return data
   },

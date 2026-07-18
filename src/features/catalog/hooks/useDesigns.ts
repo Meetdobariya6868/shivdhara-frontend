@@ -20,12 +20,17 @@ export const DESIGNS_PER_PAGE = 20
 export function useDesigns(filters: DesignFilters) {
   return useInfiniteQuery({
     queryKey: [...catalogKeys.designs(), filters],
-    queryFn: ({ pageParam }) =>
-      catalogService.listDesigns({
-        search: filters.search?.trim() || undefined,
-        page: pageParam,
-        per_page: DESIGNS_PER_PAGE,
-      }),
+    queryFn: ({ pageParam, signal }) =>
+      catalogService.listDesigns(
+        {
+          search: filters.search?.trim() || undefined,
+          page: pageParam,
+          per_page: DESIGNS_PER_PAGE,
+        },
+        // Abort a superseded request instead of leaving it to clog the
+        // connection pool while the user keeps typing.
+        signal,
+      ),
     initialPageParam: 1,
     getNextPageParam: (lastPage) =>
       lastPage.meta.current_page < lastPage.meta.last_page
