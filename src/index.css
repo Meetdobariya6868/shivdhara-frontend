@@ -19,6 +19,33 @@
 /* Enable class-based dark mode (.dark on <html>) instead of prefers-color-scheme. */
 @custom-variant dark (&:where(.dark, .dark *));
 
+/*
+| Interactive elements get a pointer cursor. Browsers default <button> (and
+| ARIA-role clickables) to the arrow cursor, so without this every button in
+| the app looks non-interactive. Lives in @layer base so any explicit cursor-*
+| utility — e.g. `disabled:cursor-not-allowed` — still overrides it, and the
+| :disabled / aria-disabled guards keep disabled controls from showing pointer.
+*/
+@layer base {
+  button:not(:disabled),
+  [role='button']:not([aria-disabled='true']),
+  [role='tab']:not([aria-disabled='true']),
+  [role='menuitem']:not([aria-disabled='true']),
+  [role='option']:not([aria-disabled='true']),
+  a[href],
+  label[for],
+  summary,
+  select:not(:disabled),
+  input[type='checkbox']:not(:disabled),
+  input[type='radio']:not(:disabled),
+  input[type='submit']:not(:disabled),
+  input[type='button']:not(:disabled),
+  input[type='reset']:not(:disabled),
+  ::file-selector-button {
+    cursor: pointer;
+  }
+}
+
 /* ── STATIC palette ──────────────────────────────────────────────────────── */
 @theme {
   --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI',

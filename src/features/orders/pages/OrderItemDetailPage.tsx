@@ -87,7 +87,7 @@ export default function OrderItemDetailPage() {
             <img
               src={item.product_image_url}
               alt={item.product.design_name ?? 'Product'}
-              className="h-64 w-full object-cover"
+              className="h-64 w-full object-contain"
             />
           ) : (
             <div className="flex h-64 items-center justify-center text-muted">
